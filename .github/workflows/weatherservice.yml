@@ -62,15 +62,6 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-        #      - name: docker image version up
-        #        id: docker-image
-        #        env:
-        #          NEW_VERSION_IMAGE_TAG: $((${IMAGE_TAG:1} + 1))
-        #        run:
-        #          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.IMAGE_TAG }} $ECR_REGISTRY/$ECR_REPOSITORY:v${NEW_VERSION_IMAGE_TAG}
-
-
-
 
       - name: SSH into EC2 Instance
         uses: appleboy/ssh-action@master
@@ -81,5 +72,5 @@ jobs:
           port: 22
           script: |
             aws ecr get-login-password | docker login --username AWS --password-stdin 2${{env.ECR_REGISTRY}}
-            docker pull ${{env.ECR_REGISTRY}}/dev:latest
-            docker rm -f dev || true && docker run -itd --name dev -p 80:8080 ${{env.ECR_REGISTRY}}/dev:latest
+            docker pull ${{env.ECR_REGISTRY}}/weahterservice:latest
+            docker rm -f weatherservice || true && docker run -itd --name weatherservice -p 8090:8080 ${{env.ECR_REGISTRY}}/weatherservice:latest
