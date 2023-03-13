@@ -44,16 +44,16 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+#      - name: Login to Amazon ECR
+#        id: login-ecr
+#        uses: aws-actions/amazon-ecr-login@v1
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
           IMAGE_TAG: v1
           #id 가 login-ecr 인 step의 ouput중 reigistry 를 변수로 가져옴
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REGISTRY: public.ecr.aws/a5p8o7q9
         run: |
           # Build a docker container and
           # push it to ECR so that it can
