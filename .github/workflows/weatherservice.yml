@@ -6,7 +6,7 @@ on:
 env:
   AWS_REGION: ap-northeast-2             # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY: weatherservice         # set this to your Amazon ECR repository name
-#  ECR_REGISTRY: public.ecr.aws/a5p8o7q9/weatherservice
+  ECR_REGISTRY: public.ecr.aws/a5p8o7q9
   SSH_USERNAME: ubuntu
   HOST: ec2-15-165-235-188.ap-northeast-2.compute.amazonaws.com
   EC2_instance_publicIP: 15.165.235.188
@@ -71,6 +71,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            aws ecr get-login-password | docker login --username AWS --password-stdin 2${{env.ECR_REGISTRY}}
-            docker pull ${{env.ECR_REGISTRY}}/weahterservice:latest
-            docker rm -f weatherservice || true && docker run -itd --name weatherservice -p 8090:8080 ${{env.ECR_REGISTRY}}/weatherservice:latest
+            ws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
+            docker pull ${{env.ECR_REGISTRY}}/weahterservice:v1
+            docker rm -f weatherservice || true && docker run -itd --name weatherservice -p 8090:8080 ${{env.ECR_REGISTRY}}/weatherservice:v1
