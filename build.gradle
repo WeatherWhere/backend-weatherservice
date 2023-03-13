@@ -32,6 +32,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	runtimeOnly 'org.postgresql:postgresql'
+
+	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+
 }
 
 tasks.named('test') {

@@ -21,3 +21,39 @@
 #    allow-bean-definition-overriding: true
 #server:
 #  port: 8080
+
+
+server:
+  port: 3090
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_URL}:5432/${DB_NAME}?serverTimezone=Asia/Seoul
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jackson:
+    mapper:
+      accept-case-insensitive-enums: true
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
