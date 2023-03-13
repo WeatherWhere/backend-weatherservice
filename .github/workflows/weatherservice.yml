@@ -71,6 +71,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            ws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
+            aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
             docker pull ${{env.ECR_REGISTRY}}/weahterservice:v1
             docker rm -f weatherservice || true && docker run -itd --name weatherservice -p 8090:8080 ${{env.ECR_REGISTRY}}/weatherservice:v1
