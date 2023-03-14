@@ -49,35 +49,35 @@ public class WeatherShortMain {
 
     //강수확률
     @Column(name = "pop")
-    private Float pop;
+    private Double pop;
 
     //강수형태
     @Column(name = "pty")
-    private Float pty;
+    private Double pty;
 
     //하늘상태
     @Column(name = "sky")
-    private Float sky;
+    private Double sky;
 
     //1시간단위 기온
     @Column(name = "tmp")
-    private Float tmp;
+    private Double tmp;
 
     //일 최저기온
     @Column(name = "tmn")
-    private Float tmn;
+    private Double tmn;
 
     //일 최고기온
     @Column(name = "tmx")
-    private Float tmx;
+    private Double tmx;
 
     //풍속
     @Column(name = "wsd")
-    private Float wsd;
+    private Double wsd;
 
     //습도
     @Column(name = "reh")
-    private Float reh;
+    private Double reh;
 
 
 }

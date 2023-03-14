@@ -15,11 +15,12 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class WeatherJsonParsingService {
+public class WeatherShortApiService {
 
     private final WeatherShortMainRepository weatherShortMainRepository;
 
@@ -27,10 +28,7 @@ public class WeatherJsonParsingService {
         POP, PTY, SKY, TMP, TMN, TMX, WSD, REH
     }
 
-    public WeatherShortMainDto WeatherJsonParsing() throws Exception {
-
-        // 입력받은 값을 넣어둘 DTO
-        WeatherShortMainDto weatherShortMainDto = new WeatherShortMainDto();
+    public WeatherShortMainDto WeatherJsonParsing(WeatherShortMainDto weatherShortMainDto) throws Exception {
 
         // 변수 설정
         String apiURL = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst";
@@ -38,13 +36,15 @@ public class WeatherJsonParsingService {
 
         String nx = "69";
         String ny = "100";
-        String baseDate = "20230312";
+        String baseDate = "20230314";
         String baseTime = "0500";
         String dataType = "JSON";
+        String numOfRows = "519";
+        String pageNo = "1";
 
         StringBuilder urlBuilder = new StringBuilder(apiURL);
         urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + authKey);
-        urlBuilder.append("&" + URLEncoder.encode("numOfRows=153", "UTF-8"));    // 숫자 표
+        urlBuilder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + numOfRows);    // 숫자 표
         urlBuilder.append("&" + URLEncoder.encode("pageNo=1", "UTF-8"));    // 페이지 수
         urlBuilder.append("&" + URLEncoder.encode("dataType", "UTF-8") + "=" + URLEncoder.encode(dataType, "UTF-8")); // 받으려는 타입
         urlBuilder.append("&" + URLEncoder.encode("base_date", "UTF-8") + "=" + URLEncoder.encode(baseDate, "UTF-8")); /* 조회하고싶은 날짜*/
@@ -88,54 +88,61 @@ public class WeatherJsonParsingService {
         JSONObject object;
         // item 내부의 category 를 보고 사용하기 위해서 사용
         String category;
-        Float value;
-
+        Double value;
+        int limit = 10;
         // jsonArray를 반복자로 반복
         for (int temp = 0; temp < parse_item.size(); temp++) {
-            object = (JSONObject) parse_item.get(temp);
-            category = (String) object.get("category"); // item 에서 카테고리를 검색
+            try {
 
-            // Error 발생할수도 있으며 받아온 정보를 double이 아니라 문자열로 읽으면 오류
-            value = Float.parseFloat((String) object.get("fcstValue"));
+                object = (JSONObject) parse_item.get(temp);
+                category = (String) object.get("category"); // item 에서 카테고리를 검색
 
-            WeatherValue weatherValue = WeatherValue.valueOf(category);
+                // Error 발생할수도 있으며 받아온 정보를 double이 아니라 문자열로 읽으면 오류
+                value = Double.parseDouble((String) object.get("fcstValue"));
 
 
-            switch (weatherValue) {
-                case POP:
-                    weatherShortMainDto.setPop(value);
-                    break;
-                case PTY:
-                    weatherShortMainDto.setPty(value);
-                    break;
-                case SKY:
-                    weatherShortMainDto.setSky(value);
-                    break;
-                case TMP:
-                    weatherShortMainDto.setTmp(value);
-                    break;
-                case TMN:
-                    weatherShortMainDto.setTmn(value);
-                    break;
-                case TMX:
-                    weatherShortMainDto.setTmx(value);
-                    break;
-                case WSD:
-                    weatherShortMainDto.setWsd(value);
-                    break;
-                case REH:
-                    weatherShortMainDto.setReh(value);
-                    break;
-                default:
-                    break;
+                switch (category) {
+                    case "POP":
+                        weatherShortMainDto.setPop(value);
+                        break;
+                    case "PTY":
+                        weatherShortMainDto.setPty(value);
+                        break;
+                    case "SKY":
+                        weatherShortMainDto.setSky(value);
+                        break;
+                    case "TMP":
+                        weatherShortMainDto.setTmp(value);
+                        break;
+                    case "TMN":
+                        weatherShortMainDto.setTmn(value);
+                        break;
+                    case "TMX":
+                        weatherShortMainDto.setTmx(value);
+                        break;
+                    case "WSD":
+                        weatherShortMainDto.setWsd(value);
+                        break;
+                    case "REH":
+                        weatherShortMainDto.setReh(value);
+                        break;
+                    default:
+                        break;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println(e.getLocalizedMessage());
             }
+
+            weatherShortMainDto.setBase_date(baseDate);
+            weatherShortMainDto.setBase_time(baseTime);
+            weatherShortMainDto.setWeather_x(Integer.parseInt(nx));
+            weatherShortMainDto.setWeather_y(Integer.parseInt(ny));
+
         }
-        weatherShortMainDto.setBase_date(baseDate);
-        weatherShortMainDto.setBase_time(baseTime);
-        weatherShortMainDto.setWeather_x(Integer.parseInt(nx));
-        weatherShortMainDto.setWeather_y(Integer.parseInt(ny));
+
         System.out.println(weatherShortMainDto);
 
         return weatherShortMainDto;
+
     }
 }

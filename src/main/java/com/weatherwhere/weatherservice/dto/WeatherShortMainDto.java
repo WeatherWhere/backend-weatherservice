@@ -33,28 +33,28 @@ public class WeatherShortMainDto {
     private Time fcst_time;
 
     //강수확률
-    private Float pop;
+    private Double pop;
 
     //강수형태
-    private Float pty;
+    private Double pty;
 
     //하늘상태
-    private Float sky;
+    private Double sky;
 
     //1시간단위 기온
-    private Float tmp;
+    private Double tmp;
 
     //일 최저기온
-    private Float tmn;
+    private Double tmn;
 
     //일 최고기온
-    private Float tmx;
+    private Double tmx;
 
     //풍속
-    private Float wsd;
+    private Double wsd;
 
     //습도
-    private Float reh;
+    private Double reh;
 
 
     /* DTO -> Entity */
