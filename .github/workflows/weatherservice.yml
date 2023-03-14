@@ -8,8 +8,8 @@ env:
   ECR_REPOSITORY: weatherservice         # set this to your Amazon ECR repository name
   ECR_REGISTRY: public.ecr.aws/a5p8o7q9
   SSH_USERNAME: ubuntu
-  HOST: ec2-15-165-235-188.ap-northeast-2.compute.amazonaws.com
-  EC2_instance_publicIP: 15.165.235.188
+#  HOST: ec2-15-165-235-188.ap-northeast-2.compute.amazonaws.com
+  
 
 
 
@@ -66,7 +66,7 @@ jobs:
       - name: SSH into EC2 Instance
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ env.EC2_instance_publicIP }}
+          host: ${{ secrets.EC2_instance_publicIP }}
           username: ${{ env.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
