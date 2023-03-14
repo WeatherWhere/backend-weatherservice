@@ -73,4 +73,4 @@ jobs:
           script: |
             aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
             docker pull ${{env.ECR_REGISTRY}}/weahterservice:v1
-            docker rm -f weatherservice || true && docker run -itd --name weatherservice -p 8090:8080 ${{env.ECR_REGISTRY}}/weatherservice:v1
+            docker rm -f weatherservice || true && docker run -itd --name weatherservice -p 8080:8080 ${{env.ECR_REGISTRY}}/weatherservice:v1
