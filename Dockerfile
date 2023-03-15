@@ -12,6 +12,7 @@ ARG JAR_FILE=./build/libs/backend-weatherservice-0.0.1-SNAPSHOT.jar
 
 # 컨테이너에 jar 파일 복사 및 이름 변경
 COPY ${JAR_FILE} /app/weatherservice.jar
+COPY ./env.json /app/env.json
 
 EXPOSE 8080
 
