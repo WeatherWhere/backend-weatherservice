@@ -7,17 +7,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
+import java.io.Reader;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
 public class WeatherApiWebClientService {
 
-    public Flux<String> fluxService() {
+    public Object[] fluxService() {
 
         String apiURL = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst";
         String authKey = System.getenv("WEATHER_SHORT_SERVICE_KEY"); // 본인 서비스 키 입력
@@ -40,7 +45,7 @@ public class WeatherApiWebClientService {
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
 
-        Flux<String> flux = client.get()
+        Mono<Object[]> mono = client.get()
                 .uri(uriBuilder -> uriBuilder
                         .queryParam("serviceKey",authKey)
                         .queryParam("numOfRows", numOfRows)
@@ -51,14 +56,15 @@ public class WeatherApiWebClientService {
                         .queryParam("nx", nx)
                         .queryParam("ny", ny)
                         .build())
-                .accept(MediaType.APPLICATION_JSON)
-                .acceptCharset(StandardCharsets.UTF_8)
                 .retrieve()
-                .bodyToFlux(String.class);
+                .bodyToMono(Object[].class).log();
+        Object[] objects = mono
+                .share().block();
 
-        return flux;
-
+        return objects;
     }
+
+
 
 
 }

@@ -1,3 +1,4 @@
+/*
 package com.weatherwhere.weatherservice.service;
 
 
@@ -36,7 +37,8 @@ public class WeatherShortApiService {
 
         String nx = "69";
         String ny = "100";
-        String baseDate = "20230314";
+
+        String baseDate = "20230316";
         String baseTime = "0500";
         String dataType = "JSON";
         String numOfRows = "519";
@@ -47,8 +49,12 @@ public class WeatherShortApiService {
         urlBuilder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + numOfRows);    // 숫자 표
         urlBuilder.append("&" + URLEncoder.encode("pageNo=1", "UTF-8"));    // 페이지 수
         urlBuilder.append("&" + URLEncoder.encode("dataType", "UTF-8") + "=" + URLEncoder.encode(dataType, "UTF-8")); // 받으려는 타입
-        urlBuilder.append("&" + URLEncoder.encode("base_date", "UTF-8") + "=" + URLEncoder.encode(baseDate, "UTF-8")); /* 조회하고싶은 날짜*/
-        urlBuilder.append("&" + URLEncoder.encode("base_time", "UTF-8") + "=" + URLEncoder.encode(baseTime, "UTF-8")); /* 조회하고싶은 시간 AM 02시부터 3시간 단위 */
+        urlBuilder.append("&" + URLEncoder.encode("base_date", "UTF-8") + "=" + URLEncoder.encode(baseDate, "UTF-8")); */
+/* 조회하고싶은 날짜*//*
+
+        urlBuilder.append("&" + URLEncoder.encode("base_time", "UTF-8") + "=" + URLEncoder.encode(baseTime, "UTF-8")); */
+/* 조회하고싶은 시간 AM 02시부터 3시간 단위 *//*
+
         urlBuilder.append("&" + URLEncoder.encode("nx", "UTF-8") + "=" + URLEncoder.encode(nx, "UTF-8")); //격자x
         urlBuilder.append("&" + URLEncoder.encode("ny", "UTF-8") + "=" + URLEncoder.encode(ny, "UTF-8")); //격자y
 
@@ -145,4 +151,4 @@ public class WeatherShortApiService {
         return weatherShortMainDto;
 
     }
-}
+}*/

@@ -5,6 +5,8 @@ import com.weatherwhere.weatherservice.domain.WeatherShortMain;
 import lombok.*;
 
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 
 @Getter
@@ -27,10 +29,10 @@ public class WeatherShortMainDto {
     private String base_time;
 
     //예보날짜
-    private Date fcst_date;
+    private String fcst_date;
 
     //예보시간
-    private Time fcst_time;
+    private String fcst_time;
 
     //강수확률
     private Double pop;
@@ -41,20 +43,23 @@ public class WeatherShortMainDto {
     //하늘상태
     private Double sky;
 
+    private Double pcp;
+
     //1시간단위 기온
-    private Double tmp;
+    //private Double tmp;
 
     //일 최저기온
-    private Double tmn;
+    //private Double tmn;
 
     //일 최고기온
-    private Double tmx;
+    //private Double tmx;
 
     //풍속
     private Double wsd;
 
     //습도
     private Double reh;
+
 
 
     /* DTO -> Entity */
@@ -67,12 +72,13 @@ public class WeatherShortMainDto {
                 .fcst_date(fcst_date)
                 .fcst_time(fcst_time)
                 .pop(pop)
+                .pcp(pcp)
                 .pty(pty)
                 .reh(reh)
                 .sky(sky)
-                .tmn(tmn)
-                .tmp(tmp)
-                .tmx(tmx)
+                //.tmn(tmn)
+                //.tmp(tmp)
+                //.tmx(tmx)
                 .wsd(wsd)
                 .build();
         return weatherShortMain;

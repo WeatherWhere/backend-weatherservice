@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 
 @Entity
@@ -41,11 +43,11 @@ public class WeatherShortMain {
 
     //예보날짜
     @Column(name = "fcst_date")
-    private Date fcst_date;
+    private String fcst_date;
 
     //예보시간
     @Column(name = "fcst_time")
-    private Time fcst_time;
+    private String fcst_time;
 
     //강수확률
     @Column(name = "pop")
@@ -54,6 +56,9 @@ public class WeatherShortMain {
     //강수형태
     @Column(name = "pty")
     private Double pty;
+
+    @Column(name = "pcp")
+    private Double pcp;
 
     //하늘상태
     @Column(name = "sky")
