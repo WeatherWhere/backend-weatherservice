@@ -1,7 +1,11 @@
+import groovy.json.JsonSlurper
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.0.4'
 	id 'io.spring.dependency-management' version '1.1.0'
+	id 'application'
+
 }
 
 group = 'com.weatherwhere'
@@ -12,6 +16,23 @@ repositories {
 	mavenCentral()
 }
 
+def env = new JsonSlurper().parse(new File('env.json'))
+
+// env 변수를 사용하여 데이터베이스 연결 정보를 가져올 수 있습니다.
+def DB_URL = env.DB_URL
+def DB_USERNAME = env.DB_USERNAME
+def DB_PASSWORD = env.DB_PASSWORD
+def DB_NAME = env.DB_NAME
+
+// application plugin에서 사용하는 설정
+run {
+	// database.name 프로퍼티를 ${DB_NAME}의 값으로 설정
+	systemProperty 'DB_NAME', DB_NAME
+	systemProperty 'DB_URL', DB_URL
+	systemProperty 'DB_USERNAME', DB_USERNAME
+	systemProperty 'DB_PASSWORD', DB_PASSWORD
+}
+
 /**
  * 아직 의존성은 하나도 추가하지 않음.
  * spring web과 같은 의존성이 먼저 추가되어야 함.
@@ -20,6 +41,7 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:3.0.4'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.0.4'
+	implementation 'org.codehaus.groovy:groovy-json:2.5.14'
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -45,4 +67,10 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+
+		// database.name 프로퍼티를 ${DB_NAME}의 값으로 설정
+		systemProperty 'DB_NAME', DB_NAME
+		systemProperty 'DB_URL', DB_URL
+		systemProperty 'DB_USERNAME', DB_USERNAME
+		systemProperty 'DB_PASSWORD', DB_PASSWORD
 }

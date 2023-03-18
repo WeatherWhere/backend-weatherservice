@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.weatherwhere.weatherservice.dto.TestDto;
 import com.weatherwhere.weatherservice.dto.WeatherShortMainDto;
 import com.weatherwhere.weatherservice.service.WeatherApiWebClientService;
-import com.weatherwhere.weatherservice.service.WeatherRestTemService;
+//import com.weatherwhere.weatherservice.service.WeatherRestTemService;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
@@ -37,15 +37,25 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class WeatherController {
 
+    @GetMapping("test")
+    public String test(){
+        return "test";
+    }
+
+
+/*
+
     //private final WeatherShortApiService weatherShortApiService;
 
     private final WeatherRestTemService weatherRestTemService;
 
+*/
 /*    @GetMapping("/short-test")
     public WeatherShortMainDto weathertest(WeatherShortMainDto weatherShortMainDto) throws Exception{
         System.out.println("컨트롤러 서비스:"+weatherShortApiService.WeatherJsonParsing(weatherShortMainDto));
         return weatherShortApiService.WeatherJsonParsing(weatherShortMainDto);
-    }*/
+    }*//*
+
 
 
     @GetMapping("/rest-tem")
@@ -84,14 +94,17 @@ public class WeatherController {
     }
 
 
-    /*
+    */
+/*
     @GetMapping("/webclient")
     public Object[] getTweetsNonBlocking() {
         System.out.println("서비스값:" +weatherApiWebClientService.fluxService());
         return weatherApiWebClientService.fluxService();
-    }*/
+    }*//*
 
 
+
+*/
 
 
 }

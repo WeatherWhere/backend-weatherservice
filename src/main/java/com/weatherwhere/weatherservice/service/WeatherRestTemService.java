@@ -1,3 +1,4 @@
+/*
 package com.weatherwhere.weatherservice.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -107,3 +108,4 @@ public class WeatherRestTemService {
 
 
 
+*/
