@@ -16,7 +16,7 @@ public class WeatherserviceApplication {
 		String rootPath = System.getProperty("user.dir");
 		System.out.println(rootPath);
 		ObjectMapper objectMapper = new ObjectMapper();
-		Map<String, String> env = objectMapper.readValue(new File(rootPath+"\\env.json"), Map.class);
+		Map<String, String> env = objectMapper.readValue(new File(rootPath+"/env.json"), Map.class);
 
 		for (Map.Entry<String, String> entry : env.entrySet()) {
 			System.setProperty(entry.getKey(), entry.getValue());
