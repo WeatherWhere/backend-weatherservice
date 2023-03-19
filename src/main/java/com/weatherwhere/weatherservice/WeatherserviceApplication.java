@@ -3,12 +3,15 @@ package com.weatherwhere.weatherservice;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
 @SpringBootApplication
+// JPA의 변화를 감시하는 어노테이션
+@EnableJpaAuditing
 public class WeatherserviceApplication {
     public static void main(String[] args) throws IOException {
 
