@@ -10,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class WeatherMidEntity {
+public class WeatherMidEntity extends BaseEntity {
     // 중기 예보 식별자
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -1,4 +1,7 @@
 package com.weatherwhere.weatherservice.repository;
 
-public class WeatherMidRepository {
+import com.weatherwhere.weatherservice.domain.WeatherMidEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface WeatherMidRepository extends JpaRepository<WeatherMidEntity, Long> {
 }
