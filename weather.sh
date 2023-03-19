@@ -2,7 +2,7 @@
 
 # 자바 프로젝트 build
 echo "Building Spring Boot application..."
-./gradlew build
+./gradlew clean build
 
 #docker file을 참조해서 docker image 만들기
 echo "Building Docker image..."
