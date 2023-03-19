@@ -20,7 +20,7 @@ public class WeatherserviceApplication {
 
 		for (Map.Entry<String, String> entry : env.entrySet()) {
 			System.setProperty(entry.getKey(), entry.getValue());
-			System.out.println("환경변수 테스트"+env);
+			//System.out.println("환경변수 테스트"+env);
 		}
 
 

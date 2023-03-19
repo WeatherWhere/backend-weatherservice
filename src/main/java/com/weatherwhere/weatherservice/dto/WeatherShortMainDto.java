@@ -17,22 +17,22 @@ import java.util.Date;
 public class WeatherShortMainDto {
 
     //격자 x
-    private Integer weather_x;
+    private Integer weatherX;
 
     //격자 y
-    private Integer weather_y;
+    private Integer weatherY;
 
     //발표날짜
-    private String base_date;
+    private String baseDate;
 
     //발표시간
-    private String base_time;
+    private String baseTime;
 
     //예보날짜
-    private String fcst_date;
+    private String fcstDate;
 
     //예보시간
-    private String fcst_time;
+    private String fcstTime;
 
     //강수확률
     private Double pop;
@@ -43,16 +43,11 @@ public class WeatherShortMainDto {
     //하늘상태
     private Double sky;
 
+    //강수량
     private Double pcp;
 
     //1시간단위 기온
-    //private Double tmp;
-
-    //일 최저기온
-    //private Double tmn;
-
-    //일 최고기온
-    //private Double tmx;
+    private Double tmp;
 
     //풍속
     private Double wsd;
@@ -60,28 +55,33 @@ public class WeatherShortMainDto {
     //습도
     private Double reh;
 
+    //최저 최고는 중기예보에서 받아와서 사용
+    //일 최저기온
+    //private Double tmn;
+
+    //일 최고기온
+    //private Double tmx;
 
 
     /* DTO -> Entity */
     public WeatherShortMain toEntity() {
         WeatherShortMain weatherShortMain = WeatherShortMain.builder()
-                .weather_x(weather_x)
-                .weather_y(weather_y)
-                .base_date(base_date)
-                .base_time(base_time)
-                .fcst_date(fcst_date)
-                .fcst_time(fcst_time)
+                .weatherX(weatherX)
+                .weatherY(weatherY)
+                .baseDate(baseDate)
+                .baseTime(baseTime)
+                .fcstDate(fcstDate)
+                .fcstTime(fcstTime)
                 .pop(pop)
                 .pcp(pcp)
                 .pty(pty)
                 .reh(reh)
                 .sky(sky)
-                //.tmn(tmn)
-                //.tmp(tmp)
-                //.tmx(tmx)
+                .tmp(tmp)
                 .wsd(wsd)
                 .build();
         return weatherShortMain;
     }
+
 
 }

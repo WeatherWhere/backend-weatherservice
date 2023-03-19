@@ -1,6 +1,7 @@
 package com.weatherwhere.weatherservice.domain;
 
 
+import com.weatherwhere.weatherservice.dto.WeatherShortMainDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +11,8 @@ import java.time.LocalTime;
 import java.util.Date;
 
 @Entity
-@Table(name="weather_short_term_main", schema = "weather")
+@Table(name="weather_short_term_main", schema = "weather",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"fcst_date", "fcst_time"})})
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,32 +24,32 @@ public class WeatherShortMain {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "weather_short_id")
-    private Long weather_short_id;
+    private Long wetherShortId;
 
     //격자 x
     @Column(name = "weather_x")
-    private Integer weather_x;
+    private Integer weatherX;
 
     //격자 y
     @Column(name = "weather_y")
-    private Integer weather_y;
+    private Integer weatherY;
 
 
     //발표날짜
     @Column(name = "base_date")
-    private String base_date;
+    private String baseDate;
 
     //발표시간
     @Column(name = "base_time")
-    private String base_time;
+    private String baseTime;
 
     //예보날짜
     @Column(name = "fcst_date")
-    private String fcst_date;
+    private String fcstDate;
 
     //예보시간
     @Column(name = "fcst_time")
-    private String fcst_time;
+    private String fcstTime;
 
     //강수확률
     @Column(name = "pop")
@@ -67,6 +69,7 @@ public class WeatherShortMain {
     //1시간단위 기온
     @Column(name = "tmp")
     private Double tmp;
+/*
 
     //일 최저기온
     @Column(name = "tmn")
@@ -75,6 +78,7 @@ public class WeatherShortMain {
     //일 최고기온
     @Column(name = "tmx")
     private Double tmx;
+*/
 
     //풍속
     @Column(name = "wsd")
@@ -83,6 +87,18 @@ public class WeatherShortMain {
     //습도
     @Column(name = "reh")
     private Double reh;
+
+    public void update(WeatherShortMainDto dto) {
+        this.pop = dto.getPop();
+        this.pcp = dto.getPcp();
+        this.pty = dto.getPty();
+        this.reh = dto.getReh();
+        this.sky = dto.getSky();
+        this.tmp = dto.getTmp();
+        this.wsd = dto.getWsd();
+        this.baseTime = dto.getBaseTime();
+        this.baseDate = dto.getBaseDate();
+    }
 
 
 }
