@@ -1,4 +1,4 @@
 package com.weatherwhere.weatherservice.repository;
 
-public class WeatherRepository {
+public class WeatherMidMainRepository {
 }
