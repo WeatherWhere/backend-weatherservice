@@ -20,8 +20,8 @@ public class WeatherMidDTO {
     private String region_code;
     private Double r_am;
     private Double r_pm;
-    private Double w_am;
-    private Double w_pm;
+    private String w_am;
+    private String w_pm;
     private LocalDateTime regDate;
     private LocalDateTime modDate;
 }

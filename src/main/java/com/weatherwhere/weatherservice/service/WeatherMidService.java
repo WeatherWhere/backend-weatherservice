@@ -4,6 +4,8 @@ import com.weatherwhere.weatherservice.domain.WeatherMidEntity;
 import com.weatherwhere.weatherservice.dto.WeatherMidDTO;
 
 public interface WeatherMidService {
+    public Long register(WeatherMidDTO dto);
+
     // DTO를 Entity로 변환해주는 메서드
     default WeatherMidEntity dtoToEntity(WeatherMidDTO dto) {
         // 삽입 날짜와 수정 날짜는 entity가 삽입되거나 수정될 때 생성되므로 옮겨줄 필요가 없음.

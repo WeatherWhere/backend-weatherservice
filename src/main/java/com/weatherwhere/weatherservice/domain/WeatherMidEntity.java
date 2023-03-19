@@ -43,9 +43,9 @@ public class WeatherMidEntity extends BaseEntity {
 
     // 오전 날씨
     @Column(name = "w_am")
-    private Double w_am;
+    private String w_am;
 
     // 오후 날씨
     @Column(name = "w_pm")
-    private Double w_pm;
+    private String w_pm;
 }
