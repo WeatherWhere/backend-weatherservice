@@ -29,17 +29,18 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
 
-#      github-secret install
-      - name: Install git-secret
-        run: sudo apt-get update && sudo apt-get install git-secret -y
-#      secret key를 gpg가 관리하는 key로 등록(import)
-      - name: Import git-secret key
-        run: echo "${{ secrets.GIT_SECRET_KEY }}" | gpg --import
-#      reveal 하고, env 파일 복사
-      - name: Decrypt env.json
-        run: git secret reveal && cp env.json.dist env.json
-        env:
-          GIT_SECRET_KEY: ${{ secrets.GIT_SECRET_KEY }}
+      # https://github.com/marketplace/actions/import-gpg
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v3
+        with:
+          gpg-private-key: ${{ secrets.GIT_SECRET_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+
+      - name: Reveal Git-Secret
+        run: |
+          sudo apt-get install git-secret -y
+          git-secret reveal -fp ${{ secrets.GPG_PASSPHRASE }}
+          
 
       - name: Execute Gradle build
         run: ./gradlew build
