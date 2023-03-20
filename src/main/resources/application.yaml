@@ -24,4 +24,8 @@ spring:
 
 logging:
   level:
+<<<<<<< HEAD
     org.hibernate.type.descriptor.sql: trace
+=======
+    org.hibernate.type.descriptor.sql: trace
+>>>>>>> a7d1c1e1f0b1d3e4ce96d89b0a4223b212d1ffab

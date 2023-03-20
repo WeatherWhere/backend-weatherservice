@@ -1,11 +1,10 @@
 import groovy.json.JsonSlurper
 
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.0.4'
-	id 'io.spring.dependency-management' version '1.1.0'
-	id 'application'
-
+    id 'java'
+    id 'org.springframework.boot' version '3.0.4'
+    id 'io.spring.dependency-management' version '1.1.0'
+    id 'application'
 }
 
 group = 'com.weatherwhere'
@@ -13,7 +12,7 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 def env = new JsonSlurper().parse(new File('env.json'))
@@ -26,51 +25,50 @@ def DB_NAME = env.DB_NAME
 
 // application plugin에서 사용하는 설정
 run {
-	// database.name 프로퍼티를 ${DB_NAME}의 값으로 설정
-	systemProperty 'DB_NAME', DB_NAME
-	systemProperty 'DB_URL', DB_URL
-	systemProperty 'DB_USERNAME', DB_USERNAME
-	systemProperty 'DB_PASSWORD', DB_PASSWORD
+    // database.name 프로퍼티를 ${DB_NAME}의 값으로 설정
+    systemProperty 'DB_NAME', DB_NAME
+    systemProperty 'DB_URL', DB_URL
+    systemProperty 'DB_USERNAME', DB_USERNAME
+    systemProperty 'DB_PASSWORD', DB_PASSWORD
 }
 
-/**
- * 아직 의존성은 하나도 추가하지 않음.
- * spring web과 같은 의존성이 먼저 추가되어야 함.
- * jpa는 스프링부트 3.0 특성상 나중에 추가해주는 것이 빌드에 좋을듯.
- */
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:3.0.4'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.0.4'
-	implementation 'org.codehaus.groovy:groovy-json:2.5.14'
+    implementation 'org.codehaus.groovy:groovy-json:2.5.14'
+    implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:3.0.4'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.0.4'
 
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+    runtimeOnly 'org.postgresql:postgresql'
 
-	testCompileOnly 'org.projectlombok:lombok'
-	testAnnotationProcessor 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
 
-	implementation 'org.postgresql:postgresql:42.5.4'
+    implementation 'org.postgresql:postgresql:42.5.4'
 
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	runtimeOnly 'org.postgresql:postgresql'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
-	implementation 'org.springframework.boot:spring-boot-starter-webflux'
-	implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
-	implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
-	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.0'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.0'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis:3.0.4'
+}
+tasks.named('test') {
+    useJUnitPlatform()
 
-
-
+    // database.name 프로퍼티를 ${DB_NAME}의 값으로 설정
+    systemProperty 'DB_NAME', DB_NAME
+    systemProperty 'DB_URL', DB_URL
+    systemProperty 'DB_USERNAME', DB_USERNAME
+    systemProperty 'DB_PASSWORD', DB_PASSWORD
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
-
-		// database.name 프로퍼티를 ${DB_NAME}의 값으로 설정
-		systemProperty 'DB_NAME', DB_NAME
-		systemProperty 'DB_URL', DB_URL
-		systemProperty 'DB_USERNAME', DB_USERNAME
-		systemProperty 'DB_PASSWORD', DB_PASSWORD
+configurations {
+    all {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
 }
