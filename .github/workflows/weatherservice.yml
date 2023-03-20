@@ -1,7 +1,7 @@
 name: Java CI with Gradle, Build and Push Docker Image to ECS and deploy in EC2
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "feat/add-githubaction-decreption"]
 
 env:
   AWS_REGION: ap-northeast-2             # set this to your preferred AWS region, e.g. us-west-1
@@ -10,15 +10,8 @@ env:
   SSH_USERNAME: ubuntu
   IMAGE_TAG: v1
 
-
-
-
-
-
 permissions:
   contents: read
-
-
 
 jobs:
   build:
@@ -36,6 +29,18 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
 
+#      github-secret install
+      - name: Install git-secret
+        run: sudo apt-get update && sudo apt-get install git-secret -y
+#      secret key를 gpg가 관리하는 key로 등록(import)
+      - name: Import git-secret key
+        run: echo "${{ secrets.GIT_SECRET_KEY }}" | gpg --import
+#      reveal 하고, env 파일 복사
+      - name: Decrypt env.json
+        run: git secret reveal && cp env.json.dist env.json
+        env:
+          GIT_SECRET_KEY: ${{ secrets.GIT_SECRET_KEY }}
+
       - name: Execute Gradle build
         run: ./gradlew build
 
@@ -45,10 +50,6 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
-
-#      - name: Login to Amazon ECR
-#        id: login-ecr
-#        uses: aws-actions/amazon-ecr-login@v1
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
