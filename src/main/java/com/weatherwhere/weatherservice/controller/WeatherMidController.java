@@ -32,7 +32,7 @@ public class WeatherMidController {
         String numOfRows = "10"; // 한 페이지 결과 수
         String dataType = "JSON"; // 응답자료 형식
         String regId = "11B10101"; // 예보 구역 코드
-        String tmFc = "202303190600"; // 발표 시각
+        String tmFc = "202303200600"; // 발표 시각
 
         StringBuilder urlBuilder = new StringBuilder(apiUrl);
 

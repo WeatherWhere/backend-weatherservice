@@ -5,13 +5,50 @@ import com.weatherwhere.weatherservice.dto.WeatherMidDTO;
 import com.weatherwhere.weatherservice.repository.WeatherMidRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
+import java.util.List;
 
 @Service
 @Log4j2
 @RequiredArgsConstructor
 public class WeatherMidServiceImpl implements WeatherMidService {
     private final WeatherMidRepository weatherMidRepository;
+    public ResponseEntity<String> getWeatherMidTa(String regId, String tmFc) {
+        // 예보 구역코드와, 발표 시각은 변수어야 한다. - 매개변수로 받음 -
+        String apiUrl = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidTa";
+        String serviceKey = "XiXQig6ZMt9WhFnz7w2pl78HnvEb4h5S1s3n51BpoJU5L064VCaM1iT8DUUrx8Qta9OPr3nnm88UtKukLSf0xA==";
+        String dataType = "JSON";
+        String numOfRows = "1000";
+        String pageNo = "1";
+
+        // UriComponentsBuilder는 URI를 동적으로 생성해주는 클래스로, 파라미터 값 지정이나 변경이 쉽다.
+        URI uri = UriComponentsBuilder
+                .fromUriString(apiUrl)
+                .queryParam("serviceKey", serviceKey)
+                .queryParam("pageNo", pageNo)
+                .queryParam("numOfRows", numOfRows)
+                .queryParam("dataType", dataType)
+                .queryParam("regId", regId)
+                .queryParam("tmFc", tmFc)
+                .encode()
+                .build()
+                .toUri();
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity<String> entity = new HttpEntity<String>(new HttpHeaders());
+
+        ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
+        return result;
+    }
+
 
     public Long register(WeatherMidDTO dto) {
         // 파라미터가 제대로 넘어오는지 확인

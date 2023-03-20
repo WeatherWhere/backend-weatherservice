@@ -2,9 +2,14 @@ package com.weatherwhere.weatherservice.service;
 
 import com.weatherwhere.weatherservice.domain.WeatherMidEntity;
 import com.weatherwhere.weatherservice.dto.WeatherMidDTO;
+import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 public interface WeatherMidService {
     public Long register(WeatherMidDTO dto);
+
+    public ResponseEntity<String> getWeatherMidTa(String regId, String tmF);
 
     // DTO를 Entity로 변환해주는 메서드
     default WeatherMidEntity dtoToEntity(WeatherMidDTO dto) {
