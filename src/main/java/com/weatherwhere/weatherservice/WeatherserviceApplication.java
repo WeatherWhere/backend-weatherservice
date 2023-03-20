@@ -1,16 +1,33 @@
 package com.weatherwhere.weatherservice;
 
-import com.weatherwhere.weatherservice.config.EnvLoader;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
 
 @SpringBootApplication
-@Import(EnvLoader.class)
+// JPA의 변화를 감시하는 어노테이션
+@EnableJpaAuditing
 public class WeatherserviceApplication {
+    public static void main(String[] args) throws IOException {
 
-    public static void main(String[] args) {
+        String rootPath = System.getProperty("user.dir");
+        System.out.println(rootPath);
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, String> env = objectMapper.readValue(new File(rootPath + "/env.json"), Map.class);
+
+        for (Map.Entry<String, String> entry : env.entrySet()) {
+            System.setProperty(entry.getKey(), entry.getValue());
+            System.out.println("환경변수 테스트" + env);
+        }
+
+
         SpringApplication.run(WeatherserviceApplication.class, args);
-    }
 
+
+    }
 }
