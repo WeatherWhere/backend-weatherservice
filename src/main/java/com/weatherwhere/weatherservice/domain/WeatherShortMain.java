@@ -18,7 +18,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Getter
 @ToString
-public class WeatherShortMain {
+public class WeatherShortMain extends BaseEntity {
 
     //identity방식으로 아이디 1씩 자동증가
     @Id
@@ -88,6 +88,8 @@ public class WeatherShortMain {
     @Column(name = "reh")
     private Double reh;
 
+
+    //테이블 값 업데이트
     public void update(WeatherShortMainDto dto) {
         this.pop = dto.getPop();
         this.pcp = dto.getPcp();

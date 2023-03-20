@@ -63,25 +63,6 @@ public class WeatherShortMainDto {
     //private Double tmx;
 
 
-    /* DTO -> Entity */
-    public WeatherShortMain toEntity() {
-        WeatherShortMain weatherShortMain = WeatherShortMain.builder()
-                .weatherX(weatherX)
-                .weatherY(weatherY)
-                .baseDate(baseDate)
-                .baseTime(baseTime)
-                .fcstDate(fcstDate)
-                .fcstTime(fcstTime)
-                .pop(pop)
-                .pcp(pcp)
-                .pty(pty)
-                .reh(reh)
-                .sky(sky)
-                .tmp(tmp)
-                .wsd(wsd)
-                .build();
-        return weatherShortMain;
-    }
 
 
 }

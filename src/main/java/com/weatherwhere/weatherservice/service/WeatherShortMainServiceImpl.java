@@ -1,4 +1,3 @@
-/*
 package com.weatherwhere.weatherservice.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -34,20 +33,20 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
-public class WeatherRestTemService {
+public class WeatherShortMainServiceImpl implements WeatherShortMainService{
     @Autowired
     private WeatherShortMainRepository weatherShortMainRepository;
 
 
     //단기예보 api 받아서 dto에 저장한 뒤 entity로 변환하고 db에 save하는 서비스
-    public List<WeatherShortMainDto> getWeatherShortDto() throws IOException, URISyntaxException, ParseException {
+    public List<WeatherShortMainDto> getWeatherShortDto() throws URISyntaxException, JsonProcessingException {
         //http 통신방식 = rest template
         RestTemplate restTemplate = new RestTemplate();
 
         String apiUrl = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst";
         String serviceKey = System.getProperty("WEATHER_SHORT_SERVICE_KEY");
-        String baseDate = "20230319";
-        String baseTime = "2300";
+        String baseDate = "20230320";
+        String baseTime = "1700";
         String dataType = "JSON";
         String numOfRows = "1000";
         String pageNo = "1";
@@ -129,7 +128,7 @@ public class WeatherRestTemService {
                 existingEntity.update(dto);
                 entityList.add(existingEntity);
             } else { //존재하지 않을 경우 엔티티 새로 생성
-                WeatherShortMain entity = dto.toEntity();
+                WeatherShortMain entity = dtoToEntity(dto);
                 entityList.add(entity);
             }
         }
@@ -141,4 +140,4 @@ public class WeatherRestTemService {
 
     }
 
-}*/
+}

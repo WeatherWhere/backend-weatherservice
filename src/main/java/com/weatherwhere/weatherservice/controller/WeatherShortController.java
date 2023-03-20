@@ -2,7 +2,7 @@ package com.weatherwhere.weatherservice.controller;
 
 import com.weatherwhere.weatherservice.dto.WeatherShortMainDto;
 //import com.weatherwhere.weatherservice.service.WeatherRestTemService;
-import com.weatherwhere.weatherservice.service.WeatherRestTemService;
+import com.weatherwhere.weatherservice.service.WeatherShortMainServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.parser.ParseException;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,16 +16,16 @@ import java.util.List;
 @RestController
 @RequestMapping("weather")
 @RequiredArgsConstructor
-public class WeatherController {
+public class WeatherShortController {
 
 
-    private final WeatherRestTemService weatherRestTemService;
+    private final WeatherShortMainServiceImpl weatherShortMainService;
 
 
     @GetMapping("/rest-tem")
     public List<WeatherShortMainDto> weatherShortMainDtoList() throws IOException, URISyntaxException, ParseException {
 
-        return weatherRestTemService.getWeatherShortDto();
+        return weatherShortMainService.getWeatherShortDto();
     }
 
 
