@@ -6,11 +6,11 @@ import org.json.simple.parser.ParseException;
 import org.springframework.http.ResponseEntity;
 
 public interface WeatherMidService {
-    public Object getWeatherMidTa(String regId, String tmFc) throws ParseException;
+    Object getWeatherMidTa(String regId, String tmFc) throws ParseException;
 
-    public Object getWeatherMidLandFcst(String regId, String tmFc) throws ParseException;
+    Object getWeatherMidLandFcst(String regId, String tmFc) throws ParseException;
 
-    public Long register(WeatherMidDTO dto);
+    Long register(WeatherMidDTO dto);
 
     // DTO를 Entity로 변환해주는 메서드
     default WeatherMidEntity dtoToEntity(WeatherMidDTO dto) {

@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 class WeatherserviceApplicationTests {
     @Autowired
     private WeatherMidService weatherMidService;
+
     @Test
     void testMidWeatherRegister() {
         WeatherMidDTO dto = WeatherMidDTO.builder()
@@ -31,11 +32,10 @@ class WeatherserviceApplicationTests {
         try {
             System.out.println(weatherMidService.getWeatherMidTa("11B10101", "202303200600"));
             System.out.println(weatherMidService.getWeatherMidLandFcst("11B10101", "202303200600"));
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.println(e.getLocalizedMessage());
             e.printStackTrace();
         }
-
     }
 
 }

@@ -9,16 +9,11 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @Service
 @Log4j2
@@ -44,7 +39,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         return uri;
     }
 
-    private Object jsonParser(String jsonString) throws ParseException {
+    private Object customJsonParser(String jsonString) throws ParseException {
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonObject = (JSONObject) jsonParser.parse(jsonString);
 
@@ -77,7 +72,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         URI uri = makeUriForWeatherMid(apiUrl, serviceKey, pageNo, numOfRows, dataType, regId, tmFc);
 
         String jsonString = restTemplate.getForObject(uri, String.class);
-        Object result = jsonParser(jsonString);
+        Object result = customJsonParser(jsonString);
         return result;
     }
 
@@ -91,9 +86,11 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         RestTemplate restTemplate = new RestTemplate();
         URI uri = makeUriForWeatherMid(apiUrl, serviceKey, pageNo, numOfRows, dataType, regId, tmFc);
         String jsonString = restTemplate.getForObject(uri, String.class);
-        Object result = jsonParser(jsonString);
+        Object result = customJsonParser(jsonString);
         return result;
     }
+
+
 
 
     public Long register(WeatherMidDTO dto) {
