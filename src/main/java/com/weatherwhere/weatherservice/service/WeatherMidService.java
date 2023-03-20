@@ -4,12 +4,12 @@ import com.weatherwhere.weatherservice.domain.WeatherMidEntity;
 import com.weatherwhere.weatherservice.dto.WeatherMidDTO;
 import org.springframework.http.ResponseEntity;
 
-import java.util.List;
-
 public interface WeatherMidService {
-    public Long register(WeatherMidDTO dto);
+    public ResponseEntity<String> getWeatherMidTa(String regId, String tmFc);
 
-    public ResponseEntity<String> getWeatherMidTa(String regId, String tmF);
+    public ResponseEntity<String> getWeatherMidLandFcst(String regId, String tmFc);
+
+    public Long register(WeatherMidDTO dto);
 
     // DTO를 Entity로 변환해주는 메서드
     default WeatherMidEntity dtoToEntity(WeatherMidDTO dto) {

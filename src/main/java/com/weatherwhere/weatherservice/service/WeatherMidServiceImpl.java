@@ -49,6 +49,33 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         return result;
     }
 
+    public ResponseEntity<String> getWeatherMidLandFcst(String regId, String tmFc) {
+        String apiUrl = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst";
+        String serviceKey = "XiXQig6ZMt9WhFnz7w2pl78HnvEb4h5S1s3n51BpoJU5L064VCaM1iT8DUUrx8Qta9OPr3nnm88UtKukLSf0xA==";
+        String dataType = "JSON";
+        String numOfRows = "1000";
+        String pageNo = "1";
+
+        // UriComponentsBuilder는 URI를 동적으로 생성해주는 클래스로, 파라미터 값 지정이나 변경이 쉽다.
+        URI uri = UriComponentsBuilder
+                .fromUriString(apiUrl)
+                .queryParam("serviceKey", serviceKey)
+                .queryParam("pageNo", pageNo)
+                .queryParam("numOfRows", numOfRows)
+                .queryParam("dataType", dataType)
+                .queryParam("regId", regId)
+                .queryParam("tmFc", tmFc)
+                .encode()
+                .build()
+                .toUri();
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity<String> entity = new HttpEntity<String>(new HttpHeaders());
+
+        ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
+        return result;
+    }
+
 
     public Long register(WeatherMidDTO dto) {
         // 파라미터가 제대로 넘어오는지 확인

@@ -29,5 +29,6 @@ class WeatherserviceApplicationTests {
     @Test
     void testWeatherMidTa() {
         System.out.println(weatherMidService.getWeatherMidTa("11B10101", "202303200600"));
+        System.out.println(weatherMidService.getWeatherMidLandFcst("11B10101", "202303200600"));
     }
 }
