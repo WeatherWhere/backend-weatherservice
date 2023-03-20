@@ -2,12 +2,13 @@ package com.weatherwhere.weatherservice.service;
 
 import com.weatherwhere.weatherservice.domain.WeatherMidEntity;
 import com.weatherwhere.weatherservice.dto.WeatherMidDTO;
+import org.json.simple.parser.ParseException;
 import org.springframework.http.ResponseEntity;
 
 public interface WeatherMidService {
-    public ResponseEntity<String> getWeatherMidTa(String regId, String tmFc);
+    public Object getWeatherMidTa(String regId, String tmFc) throws ParseException;
 
-    public ResponseEntity<String> getWeatherMidLandFcst(String regId, String tmFc);
+    public Object getWeatherMidLandFcst(String regId, String tmFc) throws ParseException;
 
     public Long register(WeatherMidDTO dto);
 

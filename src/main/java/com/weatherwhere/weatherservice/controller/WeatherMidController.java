@@ -21,7 +21,7 @@ import java.nio.charset.Charset;
 public class WeatherMidController {
     @GetMapping("/test")
     public ResponseEntity<Object> test() throws UnsupportedEncodingException, URISyntaxException {
-        String apiUrl = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidTa";
+        String apiUrl = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst";
         String serviceKey = "XiXQig6ZMt9WhFnz7w2pl78HnvEb4h5S1s3n51BpoJU5L064VCaM1iT8DUUrx8Qta9OPr3nnm88UtKukLSf0xA%3D%3D";
 
         RestTemplate restTemplate = new RestTemplate();
@@ -31,7 +31,7 @@ public class WeatherMidController {
         String pageNo = "1"; // 페이지 번호
         String numOfRows = "10"; // 한 페이지 결과 수
         String dataType = "JSON"; // 응답자료 형식
-        String regId = "11B10101"; // 예보 구역 코드
+        String regId = "11B00000"; // 예보 구역 코드
         String tmFc = "202303200600"; // 발표 시각
 
         StringBuilder urlBuilder = new StringBuilder(apiUrl);

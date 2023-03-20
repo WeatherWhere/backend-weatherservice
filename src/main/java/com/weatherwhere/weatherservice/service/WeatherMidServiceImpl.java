@@ -5,6 +5,10 @@ import com.weatherwhere.weatherservice.dto.WeatherMidDTO;
 import com.weatherwhere.weatherservice.repository.WeatherMidRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -24,6 +28,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
 
     private URI makeUriForWeatherMid(String apiUrl, String serviceKey, String pageNo, String numOfRows, String dataType,
                                      String regId, String tmFc) {
+        // 중기 예보 조회와 육상 정보 조회의 요청 URI 형태는 동일하므로 공통 로직을 분리
         // UriComponentsBuilder는 URI를 동적으로 생성해주는 클래스로, 파라미터 값 지정이나 변경이 쉽다.
         URI uri = UriComponentsBuilder
                 .fromUriString(apiUrl)
@@ -38,7 +43,29 @@ public class WeatherMidServiceImpl implements WeatherMidService {
                 .toUri();
         return uri;
     }
-    public ResponseEntity<String> getWeatherMidTa(String regId, String tmFc) {
+
+    private Object jsonParser(String jsonString) throws ParseException {
+        JSONParser jsonParser = new JSONParser();
+        JSONObject jsonObject = (JSONObject) jsonParser.parse(jsonString);
+
+        // 가장 큰 JSON 객체 response 가져오기
+        JSONObject jsonResponse = (JSONObject) jsonObject.get("response");
+
+        // response 안의 body 부분 파싱
+        JSONObject jsonBody = (JSONObject) jsonResponse.get("body");
+
+        // body 안의 items 파싱
+        JSONObject jsonItems = (JSONObject) jsonBody.get("items");
+
+        // items 안의 item은 배열.
+        JSONArray jsonItemList = (JSONArray) jsonItems.get("item");
+
+        // item 배열의 첫 번쨰 object를 리턴
+        System.out.println(jsonItemList.get(0).getClass().getName());
+        return jsonItemList.get(0);
+    }
+
+    public Object getWeatherMidTa(String regId, String tmFc) throws ParseException {
         // 예보 구역코드와, 발표 시각은 변수어야 한다. - 매개변수로 받음 -
         String apiUrl = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidTa";
         String serviceKey = "XiXQig6ZMt9WhFnz7w2pl78HnvEb4h5S1s3n51BpoJU5L064VCaM1iT8DUUrx8Qta9OPr3nnm88UtKukLSf0xA==";
@@ -46,15 +73,15 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         String numOfRows = "1000";
         String pageNo = "1";
 
-
         RestTemplate restTemplate = new RestTemplate();
-        HttpEntity<String> entity = new HttpEntity<String>(new HttpHeaders());
-        URI uri = makeUriForWeatherMid(apiUrl, serviceKey, dataType, numOfRows, pageNo, regId, tmFc);
-        ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
+        URI uri = makeUriForWeatherMid(apiUrl, serviceKey, pageNo, numOfRows, dataType, regId, tmFc);
+
+        String jsonString = restTemplate.getForObject(uri, String.class);
+        Object result = jsonParser(jsonString);
         return result;
     }
 
-    public ResponseEntity<String> getWeatherMidLandFcst(String regId, String tmFc) {
+    public Object getWeatherMidLandFcst(String regId, String tmFc) throws ParseException {
         String apiUrl = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst";
         String serviceKey = "XiXQig6ZMt9WhFnz7w2pl78HnvEb4h5S1s3n51BpoJU5L064VCaM1iT8DUUrx8Qta9OPr3nnm88UtKukLSf0xA==";
         String dataType = "JSON";
@@ -62,9 +89,9 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         String pageNo = "1";
 
         RestTemplate restTemplate = new RestTemplate();
-        HttpEntity<String> entity = new HttpEntity<String>(new HttpHeaders());
-        URI uri = makeUriForWeatherMid(apiUrl, serviceKey, dataType, numOfRows, pageNo, regId, tmFc);
-        ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
+        URI uri = makeUriForWeatherMid(apiUrl, serviceKey, pageNo, numOfRows, dataType, regId, tmFc);
+        String jsonString = restTemplate.getForObject(uri, String.class);
+        Object result = jsonParser(jsonString);
         return result;
     }
 
