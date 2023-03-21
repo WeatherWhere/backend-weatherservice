@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Arrays;
+
 @SpringBootTest
 class WeatherserviceApplicationTests {
     @Autowired
@@ -38,4 +40,8 @@ class WeatherserviceApplicationTests {
         }
     }
 
+    @Test
+    void testGetDaysAfterToday() {
+        System.out.println(Arrays.toString(weatherMidService.getDaysAfterToday(3, 7)));
+    }
 }

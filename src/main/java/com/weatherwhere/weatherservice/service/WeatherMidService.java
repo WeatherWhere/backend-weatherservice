@@ -10,6 +10,8 @@ public interface WeatherMidService {
 
     Object getWeatherMidLandFcst(String regId, String tmFc) throws ParseException;
 
+    String[] getDaysAfterToday(int start, int end);
+
     Long register(WeatherMidDTO dto);
 
     // DTO를 Entity로 변환해주는 메서드
