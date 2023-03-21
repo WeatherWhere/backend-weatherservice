@@ -2,14 +2,21 @@ package com.weatherwhere.weatherservice;
 
 import com.weatherwhere.weatherservice.dto.WeatherMidDTO;
 import com.weatherwhere.weatherservice.service.WeatherMidService;
+import com.weatherwhere.weatherservice.service.WeatherShortMainService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.io.IOException;
 
 @SpringBootTest
 class WeatherserviceApplicationTests {
     @Autowired
     private WeatherMidService weatherMidService;
+
+    @Autowired
+    private WeatherShortMainService weatherShortMainService;
+
     @Test
     void testMidWeatherRegister() {
         WeatherMidDTO dto = WeatherMidDTO.builder()
@@ -24,6 +31,13 @@ class WeatherserviceApplicationTests {
                 .build();
         Long mid_term_forecast_id = weatherMidService.register(dto);
         System.out.println(mid_term_forecast_id);
+    }
+
+    //테이블에
+    @Test
+    void testWeatherXYRead() throws IOException {
+        weatherShortMainService.readWeatherXYLocation();
+        System.out.println(weatherShortMainService.readWeatherXYLocation());
     }
 
 }

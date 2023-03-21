@@ -1,44 +1,39 @@
 package com.weatherwhere.weatherservice.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.weatherwhere.weatherservice.domain.WeatherShortMain;
+import com.weatherwhere.weatherservice.domain.WeatherXY;
 import com.weatherwhere.weatherservice.dto.WeatherShortMainDto;
 import com.weatherwhere.weatherservice.repository.WeatherShortMainRepository;
-import jakarta.persistence.criteria.Root;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import com.weatherwhere.weatherservice.repository.WeatherXYRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.JsonNode;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
-public class WeatherShortMainServiceImpl implements WeatherShortMainService{
+@Transactional
+public class WeatherShortMainServiceImpl implements WeatherShortMainService {
     @Autowired
     private WeatherShortMainRepository weatherShortMainRepository;
 
-
     //단기예보 api 받아서 dto에 저장한 뒤 entity로 변환하고 db에 save하는 서비스
+    //override를 안해도 오류가 발생하지 않지만 해야 컴파일할떄 버그를 쉽게 찾을 수 있음.
+    //impl의 소스코드와 연결되어 있다는 걸 뜻함.
+    @Override
     public List<WeatherShortMainDto> getWeatherShortDto() throws URISyntaxException, JsonProcessingException {
         //http 통신방식 = rest template
         RestTemplate restTemplate = new RestTemplate();
@@ -139,5 +134,28 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService{
         return weatherShortMainDtoList;
 
     }
+
+    //ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+    @Autowired
+    private WeatherXYRepository weatherXYRepository;
+
+    //격자 x,y값이 담긴 csv를 postgres내의 테이블에 저장하는 메서드
+    public String readWeatherXYLocation() throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader("weatherxy.csv"));
+        String line = null;
+
+        while ((line = reader.readLine()) != null) {
+            String[] data = line.split(",");
+            WeatherXY weatherXY = new WeatherXY();
+            weatherXY.setWeatherX(Integer.parseInt(data[0]));
+            weatherXY.setWeatherY(Integer.parseInt(data[1]));
+            weatherXYRepository.save(weatherXY);
+        }
+        reader.close();
+
+        return "성공";
+
+    }
+
 
 }

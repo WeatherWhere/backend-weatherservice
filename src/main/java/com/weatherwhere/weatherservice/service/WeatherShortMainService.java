@@ -4,12 +4,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.weatherwhere.weatherservice.domain.WeatherShortMain;
 import com.weatherwhere.weatherservice.dto.WeatherShortMainDto;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 
 public interface WeatherShortMainService {
+
+
     public List<WeatherShortMainDto> getWeatherShortDto() throws URISyntaxException, JsonProcessingException;
 
+    public String readWeatherXYLocation() throws IOException;
 
     // DTO -> Entity
     default WeatherShortMain dtoToEntity(WeatherShortMainDto dto) {
