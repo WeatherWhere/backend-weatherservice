@@ -90,7 +90,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         return result;
     }
 
-
+    // public WeatherMidDTO makeCombinedDTO(Object jsonFromMidTa, Object jsonFromMidLandFcst) { // DTO 구현 }
 
 
     public Long register(WeatherMidDTO dto) {
