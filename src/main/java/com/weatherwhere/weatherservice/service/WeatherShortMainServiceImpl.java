@@ -27,8 +27,8 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
     @Autowired
     private WeatherShortMainRepository weatherShortMainRepository;
 
-    @Override
-    public JsonNode weatherShortJsonParsing(String baseDate, String baseTime, String nx, String ny) throws JsonProcessingException, URISyntaxException {
+    //공공데이터 api로부터 json값 받아와서 파싱하는 메서드
+    private JsonNode weatherShortJsonParsing(String nx, String ny, String baseDate, String baseTime) throws JsonProcessingException, URISyntaxException {
         //http 통신방식 = rest template
         RestTemplate restTemplate = new RestTemplate();
 
@@ -58,13 +58,12 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
     }
 
 
-    //단기예보 api 받아서 dto에 저장한 뒤 entity로 변환하고 db에 save하는 서비스
+    //파싱한 json값을 dto리스트에 저장하는 메서드
     //override를 안해도 오류가 발생하지 않지만 해야 컴파일할떄 버그를 쉽게 찾을 수 있음.
     //impl의 소스코드와 연결되어 있다는 걸 뜻함.
-    @Override
-    public List<WeatherShortMainDto> getWeatherShortDto(String nx, String ny, String baseDate, String baseTime) throws URISyntaxException, JsonProcessingException {
+    private List<WeatherShortMainDto> getWeatherShortDto(String nx, String ny, String baseDate, String baseTime) throws URISyntaxException, JsonProcessingException {
 
-        List<WeatherShortMainDto> weatherShortMainDtoList = StreamSupport.stream(weatherShortJsonParsing(baseDate, baseTime, nx, ny).spliterator(), false)
+        List<WeatherShortMainDto> weatherShortMainDtoList = StreamSupport.stream(weatherShortJsonParsing(nx, ny, baseDate, baseTime).spliterator(), false)
                 //예보날짜+시간을 key값으로 함
                 .collect(Collectors.groupingBy(time -> time.get("fcstTime").asText() + time.get("fcstDate").asText()))
                 .values().stream()
@@ -111,10 +110,16 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
                     return dto;
                 })
                 .collect(Collectors.toList());
+        return weatherShortMainDtoList;
+    }
 
+    //dto리스트를 entity리스트로 변환한 뒤 db에 save하는 메서드
+    //컨트롤러에서 최종적으로 이 service를 호출함.
+    @Override
+    public String getWeatherShortEntity(String nx, String ny, String baseDate, String baseTime) throws URISyntaxException, JsonProcessingException {
         //dto리스트를 entity리스트로 변환하는 부분
         List<WeatherShortMain> entityList = new ArrayList<>();
-        for (WeatherShortMainDto dto : weatherShortMainDtoList) {
+        for (WeatherShortMainDto dto : getWeatherShortDto(nx, ny, baseDate, baseTime)) {
 
             //엔티티에 fcstdate와 fcsttime이 동일한 값이 존재하는지 판별하는 메서드
             WeatherShortMain existingEntity = weatherShortMainRepository.findByFcstDateAndFcstTime(dto.getFcstDate(), dto.getFcstTime());
@@ -129,18 +134,20 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
         }
         //db에 저장
         weatherShortMainRepository.saveAll(entityList);
-        System.out.println(weatherShortMainDtoList);
+        //System.out.println(entityList);
 
-        return weatherShortMainDtoList;
-
+        return "성공";
     }
+
 
     //ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
     @Autowired
     private WeatherXYRepository weatherXYRepository;
 
     //격자 x,y값이 담긴 csv를 postgres내의 테이블에 저장하는 메서드
+    @Override
     public String readWeatherXYLocation() throws IOException {
+        String rootPath = System.getProperty("user.dir");
         BufferedReader reader = new BufferedReader(new FileReader("weatherxy.csv"));
         String line = null;
 

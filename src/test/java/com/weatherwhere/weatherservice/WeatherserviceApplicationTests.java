@@ -33,11 +33,11 @@ class WeatherserviceApplicationTests {
         System.out.println(mid_term_forecast_id);
     }
 
-    //테이블에
+    //weathercsv에 있는 격자 x,y값 db에 저장
     @Test
     void testWeatherXYRead() throws IOException {
-        weatherShortMainService.readWeatherXYLocation();
-        System.out.println(weatherShortMainService.readWeatherXYLocation());
+        //weatherShortMainService.readWeatherXYLocation();
+        //System.out.println(weatherShortMainService.readWeatherXYLocation());
     }
 
 }
