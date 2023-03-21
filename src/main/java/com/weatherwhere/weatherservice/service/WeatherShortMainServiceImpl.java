@@ -7,9 +7,6 @@ import com.weatherwhere.weatherservice.domain.WeatherXY;
 import com.weatherwhere.weatherservice.dto.WeatherShortMainDto;
 import com.weatherwhere.weatherservice.repository.WeatherShortMainRepository;
 import com.weatherwhere.weatherservice.repository.WeatherXYRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
 import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,23 +27,18 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
     @Autowired
     private WeatherShortMainRepository weatherShortMainRepository;
 
-    //단기예보 api 받아서 dto에 저장한 뒤 entity로 변환하고 db에 save하는 서비스
-    //override를 안해도 오류가 발생하지 않지만 해야 컴파일할떄 버그를 쉽게 찾을 수 있음.
-    //impl의 소스코드와 연결되어 있다는 걸 뜻함.
     @Override
-    public List<WeatherShortMainDto> getWeatherShortDto() throws URISyntaxException, JsonProcessingException {
+    public JsonNode weatherShortJsonParsing(String baseDate, String baseTime, String nx, String ny) throws JsonProcessingException, URISyntaxException {
         //http 통신방식 = rest template
         RestTemplate restTemplate = new RestTemplate();
 
         String apiUrl = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst";
         String serviceKey = System.getProperty("WEATHER_SHORT_SERVICE_KEY");
-        String baseDate = "20230320";
-        String baseTime = "1700";
+
         String dataType = "JSON";
         String numOfRows = "1000";
         String pageNo = "1";
-        String nx = "69";
-        String ny = "100";
+
         String url = String.format("%s?serviceKey=%s&pageNo=%s&numOfRows=%s&dataType=%s&base_date=%s&base_time=%s&nx=%s&ny=%s",
                 apiUrl, serviceKey, pageNo, numOfRows, dataType, baseDate, baseTime, nx, ny);
 
@@ -62,9 +54,17 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
 
         //item 값만 가져와서 itemNode에 저장
         JsonNode itemNode = rootNode.path("response").path("body").path("items").path("item");
+        return itemNode;
+    }
 
 
-        List<WeatherShortMainDto> weatherShortMainDtoList = StreamSupport.stream(itemNode.spliterator(), false)
+    //단기예보 api 받아서 dto에 저장한 뒤 entity로 변환하고 db에 save하는 서비스
+    //override를 안해도 오류가 발생하지 않지만 해야 컴파일할떄 버그를 쉽게 찾을 수 있음.
+    //impl의 소스코드와 연결되어 있다는 걸 뜻함.
+    @Override
+    public List<WeatherShortMainDto> getWeatherShortDto(String nx, String ny, String baseDate, String baseTime) throws URISyntaxException, JsonProcessingException {
+
+        List<WeatherShortMainDto> weatherShortMainDtoList = StreamSupport.stream(weatherShortJsonParsing(baseDate, baseTime, nx, ny).spliterator(), false)
                 //예보날짜+시간을 key값으로 함
                 .collect(Collectors.groupingBy(time -> time.get("fcstTime").asText() + time.get("fcstDate").asText()))
                 .values().stream()

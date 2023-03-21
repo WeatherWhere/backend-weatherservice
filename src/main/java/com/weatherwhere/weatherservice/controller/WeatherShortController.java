@@ -24,8 +24,11 @@ public class WeatherShortController {
 
     @GetMapping("/rest-tem")
     public List<WeatherShortMainDto> weatherShortMainDtoList() throws IOException, URISyntaxException, ParseException {
-
-        return weatherShortMainService.getWeatherShortDto();
+        String nx = "69";
+        String ny = "100";
+        String baseDate = "20230320";
+        String baseTime = "1700";
+        return weatherShortMainService.getWeatherShortDto(nx, ny, baseDate,baseTime);
     }
 
 
