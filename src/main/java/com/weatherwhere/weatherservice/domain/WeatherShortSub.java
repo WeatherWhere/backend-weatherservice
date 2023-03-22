@@ -1,20 +1,20 @@
 package com.weatherwhere.weatherservice.domain;
 
-
 import com.weatherwhere.weatherservice.dto.WeatherShortAllDTO;
 import com.weatherwhere.weatherservice.dto.WeatherShortMainDTO;
+import com.weatherwhere.weatherservice.dto.WeatherShortSubDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name="weather_short_term_main", schema = "weather",
+@Table(name="weather_short_term_sub", schema = "weather",
         uniqueConstraints = {@UniqueConstraint(columnNames = {"fcst_date", "fcst_time"})})
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @ToString
-public class WeatherShortMain extends BaseEntity {
+public class WeatherShortSub extends BaseEntity{
 
     //identity방식으로 아이디 1씩 자동증가
     @Id
@@ -30,6 +30,7 @@ public class WeatherShortMain extends BaseEntity {
     @Column(name = "base_time")
     private String baseTime;
 
+
     //예보날짜
     @Column(name = "fcst_date")
     private String fcstDate;
@@ -38,64 +39,50 @@ public class WeatherShortMain extends BaseEntity {
     @Column(name = "fcst_time")
     private String fcstTime;
 
-    //강수확률
-    @Column(name = "pop")
-    private Double pop;
+    //1시간 강수량
+    @Column(name = "pcp")
+    private String pcp;
 
-    //강수형태
-    @Column(name = "pty")
-    private Double pty;
+    //1시간 신적설
+    @Column(name = "sno")
+    private String sno;
 
+    //풍속(동서성분)
+    @Column(name = "uuu")
+    private Double uuu;
 
-    //하늘상태
-    @Column(name = "sky")
-    private Double sky;
+    //풍속(남북성분)
+    @Column(name = "vvv")
+    private Double vvv;
 
-    //1시간단위 기온
-    @Column(name = "tmp")
-    private Double tmp;
+    //파고
+    @Column(name = "wav")
+    private Double wav;
 
+    //풍량
+    @Column(name = "vec")
+    private Double vec;
 
-    //일 최저기온
-    @Column(name = "tmn")
-    private Double tmn;
-
-    //일 최고기온
-    @Column(name = "tmx")
-    private Double tmx;
-
-
-    //풍속
-    @Column(name = "wsd")
-    private Double wsd;
-
-    //습도
-    @Column(name = "reh")
-    private Double reh;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "weather_xy_id")
     private WeatherXY weatherXY;
 
-
-    //테이블 값 업데이트
     public void update(WeatherShortAllDTO dto) {
-        this.pop = dto.getPop();
-        this.pty = dto.getPty();
-        this.reh = dto.getReh();
-        this.sky = dto.getSky();
-        this.tmp = dto.getTmp();
-        this.wsd = dto.getWsd();
-        this.tmx = dto.getTmx();
-        this.tmn = dto.getTmn();
+        this.pcp = dto.getPcp();
+        this.sno = dto.getSno();
+        this.uuu = dto.getUuu();
+        this.vvv = dto.getVvv();
+        this.wav = dto.getWav();
+        this.vec = dto.getVec();
         this.baseTime = dto.getBaseTime();
         this.baseDate = dto.getBaseDate();
     }
 
-    //테이블 값 set
     public void setWeatherXY(WeatherXY weatherXY){
         this.weatherXY =weatherXY;
     }
 
 
 }
+
