@@ -23,11 +23,11 @@ public class WeatherMidEntity extends BaseEntity {
 
     // 일 최저기온
     @Column(name = "tmn")
-    private Double tmn;
+    private Long tmn;
 
     // 일 최고기온
     @Column(name = "tmx")
-    private Double tmx;
+    private Long tmx;
 
     // 예보 구역 코드
     @Column(name = "region_code")
@@ -35,11 +35,11 @@ public class WeatherMidEntity extends BaseEntity {
 
     // 오전 강수 확률
     @Column(name = "r_am")
-    private Double r_am;
+    private Long r_am;
 
     // 오후 강수 확률
     @Column(name = "r_pm")
-    private Double r_pm;
+    private Long r_pm;
 
     // 오전 날씨
     @Column(name = "w_am")

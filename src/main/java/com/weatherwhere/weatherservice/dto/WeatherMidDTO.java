@@ -15,11 +15,11 @@ import java.time.LocalDateTime;
 public class WeatherMidDTO {
     private Long mid_term_forecast_id;
     private String base_time;
-    private Double tmn;
-    private Double tmx;
+    private Long tmn;
+    private Long tmx;
     private String region_code;
-    private Double r_am;
-    private Double r_pm;
+    private Long r_am;
+    private Long r_pm;
     private String w_am;
     private String w_pm;
     private LocalDateTime regDate;

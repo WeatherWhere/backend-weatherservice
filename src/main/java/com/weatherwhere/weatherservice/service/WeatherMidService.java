@@ -2,8 +2,11 @@ package com.weatherwhere.weatherservice.service;
 
 import com.weatherwhere.weatherservice.domain.WeatherMidEntity;
 import com.weatherwhere.weatherservice.dto.WeatherMidDTO;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 public interface WeatherMidService {
     Object getWeatherMidTa(String regId, String tmFc) throws ParseException;
@@ -13,6 +16,10 @@ public interface WeatherMidService {
     String[] getDaysAfterToday(int start, int end);
 
     Long register(WeatherMidDTO dto);
+
+    List<WeatherMidDTO> makeDTOList(JSONObject jsonFromMidTa, JSONObject jsonFromMidLandFcst, String[] daysAfterToday);
+    List<Long> updateWeatherMid(String regId, String tmfc) throws ParseException;
+
 
     // DTO를 Entity로 변환해주는 메서드
     default WeatherMidEntity dtoToEntity(WeatherMidDTO dto) {
