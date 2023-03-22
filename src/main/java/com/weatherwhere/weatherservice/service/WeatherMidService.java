@@ -4,7 +4,6 @@ import com.weatherwhere.weatherservice.domain.WeatherMidEntity;
 import com.weatherwhere.weatherservice.dto.WeatherMidDTO;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -12,8 +11,6 @@ public interface WeatherMidService {
     Object getWeatherMidTa(String regId, String tmFc) throws ParseException;
 
     Object getWeatherMidLandFcst(String regId, String tmFc) throws ParseException;
-
-    String[] getDaysAfterToday(int start, int end);
 
     Long register(WeatherMidDTO dto);
 

@@ -3,6 +3,7 @@ package com.weatherwhere.weatherservice.service;
 import com.weatherwhere.weatherservice.domain.WeatherMidEntity;
 import com.weatherwhere.weatherservice.dto.WeatherMidDTO;
 import com.weatherwhere.weatherservice.repository.WeatherMidRepository;
+import com.weatherwhere.weatherservice.service.date.DateService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -15,9 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 @Service
@@ -25,6 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WeatherMidServiceImpl implements WeatherMidService {
     private final WeatherMidRepository weatherMidRepository;
+    private final DateService dateService;
 
     private URI makeUriForWeatherMid(String apiUrl, String serviceKey, String pageNo, String numOfRows, String dataType,
                                      String regId, String tmFc) {
@@ -95,23 +95,6 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         return result;
     }
 
-    public String[] getDaysAfterToday(int start, int end) {
-        String[] daysAfterToday = new String[end - start + 1];
-
-        // 데이터포맷
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        // Calendar 클래스 생성
-        Calendar calendar = Calendar.getInstance();
-
-        // 3일 뒤부터 7일 뒤까지 계산
-        for (int i = 0; i <= end - start; i++) {
-            calendar.add(Calendar.DAY_OF_MONTH, +1);
-            daysAfterToday[i] = sdf.format(calendar.getTime());
-        }
-
-        return daysAfterToday;
-    }
-
     public List<WeatherMidDTO> makeDTOList(JSONObject jsonFromMidTa, JSONObject jsonFromMidLandFcst, String[] daysAfterToday) {
         List<WeatherMidDTO> dtoList = new ArrayList<WeatherMidDTO>();
 
@@ -176,7 +159,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
 
         JSONObject jsonFromMidFcst = getWeatherMidLandFcst(regIdForMidFcst, tmfc);
         // 3일부터 7일후까지의 날짜 배열 받기
-        String[] daysArray = getDaysAfterToday(3, 7);
+        String[] daysArray = dateService.getDaysAfterToday(3, 7);
         List<WeatherMidDTO> dtoList = makeDTOList(jsonFromMidTa, jsonFromMidFcst, daysArray);
 
         List<Long> ids = new ArrayList<>();

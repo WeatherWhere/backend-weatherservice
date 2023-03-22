@@ -2,6 +2,7 @@ package com.weatherwhere.weatherservice;
 
 import com.weatherwhere.weatherservice.dto.WeatherMidDTO;
 import com.weatherwhere.weatherservice.service.WeatherMidService;
+import com.weatherwhere.weatherservice.service.date.DateService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,9 @@ import java.util.Arrays;
 class WeatherserviceApplicationTests {
     @Autowired
     private WeatherMidService weatherMidService;
+
+    @Autowired
+    private DateService dateService;
 
     @Test
     void testMidWeatherRegister() {
@@ -43,7 +47,7 @@ class WeatherserviceApplicationTests {
 
     @Test
     void testGetDaysAfterToday() {
-        System.out.println(Arrays.toString(weatherMidService.getDaysAfterToday(3, 7)));
+        System.out.println(Arrays.toString(dateService.getDaysAfterToday(3, 7)));
     }
 
     @Test
