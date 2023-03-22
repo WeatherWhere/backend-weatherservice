@@ -17,14 +17,14 @@ class WeatherserviceApplicationTests {
     @Test
     void testMidWeatherRegister() {
         WeatherMidDTO dto = WeatherMidDTO.builder()
-                .base_time("20230323")
+                .baseTime("20230323")
                 .tmn(Long.parseLong("11"))
                 .tmx(Long.parseLong("19"))
-                .region_code("11B10101")
-                .r_am(Long.parseLong("30"))
-                .r_pm(Long.parseLong("40"))
-                .w_am("구름많음")
-                .w_pm("흐리고 비")
+                .regionCode("11B10101")
+                .rAm(Long.parseLong("30"))
+                .rPm(Long.parseLong("40"))
+                .wAm("구름많음")
+                .wPm("흐리고 비")
                 .build();
         Long mid_term_forecast_id = weatherMidService.register(dto);
         System.out.println(mid_term_forecast_id);

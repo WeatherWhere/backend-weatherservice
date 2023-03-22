@@ -125,14 +125,14 @@ public class WeatherMidServiceImpl implements WeatherMidService {
             String wfPm = String.format("wf%dPm", i + 3);
 
             dto = WeatherMidDTO.builder()
-                    .base_time(daysAfterToday[i])
+                    .baseTime(daysAfterToday[i])
                     .tmn((Long) jsonFromMidTa.get(taMin))
                     .tmx((Long) jsonFromMidTa.get(taMax))
-                    .region_code((String) jsonFromMidTa.get("regId"))
-                    .r_am((Long) jsonFromMidLandFcst.get(rnStAm))
-                    .r_pm((Long) jsonFromMidLandFcst.get(rnStPm))
-                    .w_am((String) jsonFromMidLandFcst.get(wfAm))
-                    .w_pm((String) jsonFromMidLandFcst.get(wfPm))
+                    .regionCode((String) jsonFromMidTa.get("regId"))
+                    .rAm((Long) jsonFromMidLandFcst.get(rnStAm))
+                    .rPm((Long) jsonFromMidLandFcst.get(rnStPm))
+                    .wAm((String) jsonFromMidLandFcst.get(wfAm))
+                    .wPm((String) jsonFromMidLandFcst.get(wfPm))
                     .build();
             dtoList.add(dto);
         }
@@ -148,7 +148,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         // 이 시점에는 entity에 mid_term_forecast_id와 regDate, modDate는 없고,
         // save를 할 때 설정한 내역을 가지고 데이터를 설정
         weatherMidRepository.save(entity);
-        return entity.getMid_term_forecast_id();
+        return entity.getMidTermForecastId();
     }
 
     @Transactional
