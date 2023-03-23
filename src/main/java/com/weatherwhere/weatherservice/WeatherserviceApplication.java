@@ -17,6 +17,7 @@ import java.util.Map;
 // JPA의 변화를 감시하는 어노테이션
 @EnableJpaAuditing
 public class WeatherserviceApplication {
+
     public static void main(String[] args) throws IOException {
 
         String rootPath = System.getProperty("user.dir");
