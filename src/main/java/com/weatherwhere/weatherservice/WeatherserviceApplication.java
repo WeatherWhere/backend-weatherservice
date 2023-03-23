@@ -29,11 +29,6 @@ public class WeatherserviceApplication {
             System.setProperty(entry.getKey(), entry.getValue());
             //System.out.println("환경변수 테스트"+env);
         }
-
-
         SpringApplication.run(WeatherserviceApplication.class, args);
-
-
     }
 }
-
