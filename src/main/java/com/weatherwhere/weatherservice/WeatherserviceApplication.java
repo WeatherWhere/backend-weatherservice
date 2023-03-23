@@ -19,20 +19,15 @@ import java.util.Map;
 public class WeatherserviceApplication {
     public static void main(String[] args) throws IOException {
 
-		String rootPath = System.getProperty("user.dir");
-		System.out.println(rootPath);
-		ObjectMapper objectMapper = new ObjectMapper();
-		Map<String, String> env = objectMapper.readValue(new File(rootPath+"/env.json"), Map.class);
+        String rootPath = System.getProperty("user.dir");
+        System.out.println(rootPath);
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, String> env = objectMapper.readValue(new File(rootPath + "/env.json"), Map.class);
 
-		for (Map.Entry<String, String> entry : env.entrySet()) {
-			System.setProperty(entry.getKey(), entry.getValue());
-			//System.out.println("환경변수 테스트"+env);
-		}
-
-
-		SpringApplication.run(WeatherserviceApplication.class, args);
-
-
-	}
-
+        for (Map.Entry<String, String> entry : env.entrySet()) {
+            System.setProperty(entry.getKey(), entry.getValue());
+            //System.out.println("환경변수 테스트"+env);
+        }
+        SpringApplication.run(WeatherserviceApplication.class, args);
+    }
 }
