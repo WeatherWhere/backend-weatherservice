@@ -5,15 +5,14 @@ import com.weatherwhere.weatherservice.dto.WeatherShortAllDTO;
 import com.weatherwhere.weatherservice.dto.WeatherShortMainDTO;
 import jakarta.persistence.*;
 import lombok.*;
-
+@Builder
 @Entity
 @Table(name="weather_short_term_main", schema = "weather",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"fcst_date", "fcst_time"})})
-@Builder
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"fcst_date", "fcst_time", "weather_xy_id"})})
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString
+@ToString(exclude = "weatherXY")
 public class WeatherShortMain extends BaseEntity {
 
     //identity방식으로 아이디 1씩 자동증가
@@ -77,7 +76,6 @@ public class WeatherShortMain extends BaseEntity {
     @JoinColumn(name = "weather_xy_id")
     private WeatherXY weatherXY;
 
-
     //테이블 값 업데이트
     public void update(WeatherShortAllDTO dto) {
         this.pop = dto.getPop();
@@ -92,10 +90,11 @@ public class WeatherShortMain extends BaseEntity {
         this.baseDate = dto.getBaseDate();
     }
 
+
+
     //테이블 값 set
     public void setWeatherXY(WeatherXY weatherXY){
         this.weatherXY =weatherXY;
     }
-
 
 }

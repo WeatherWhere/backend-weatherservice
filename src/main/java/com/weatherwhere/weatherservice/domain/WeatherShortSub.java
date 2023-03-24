@@ -8,12 +8,12 @@ import lombok.*;
 
 @Entity
 @Table(name="weather_short_term_sub", schema = "weather",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"fcst_date", "fcst_time"})})
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"fcst_date", "fcst_time", "weather_xy_id"})})
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString
+@ToString(exclude = "weatherXY")
 public class WeatherShortSub extends BaseEntity{
 
     //identity방식으로 아이디 1씩 자동증가
