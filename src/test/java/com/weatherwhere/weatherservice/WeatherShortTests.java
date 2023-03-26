@@ -1,5 +1,8 @@
 package com.weatherwhere.weatherservice;
 
+import com.weatherwhere.weatherservice.dto.WeatherShortMainApiRequestDTO;
+import com.weatherwhere.weatherservice.service.weathershort.WeatherShortMainApiService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,9 @@ public class WeatherShortTests {
     //@ModelAttribute사용하여 dto값으로 request 받을 때 mockmvc패턴 사용하여 테스트
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private WeatherShortMainApiService weatherShortMainApiService;
 
     @Test
     @DisplayName("LocalDate형식으로 db에 단기예보 값 저장하기")
@@ -51,9 +57,20 @@ public class WeatherShortTests {
                         .param("baseTime", baseTime))
                 .andExpect(status().isOk())
                 .andReturn();
+    }
 
+    @Test
+    @DisplayName("위경도 nx, ny로 변경되는지 테스트")
+    void testLocationToNxNy() throws Exception{
+        WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO = new WeatherShortMainApiRequestDTO();
+        weatherShortMainApiRequestDTO.setLocationX(37.56356944444444);
+        weatherShortMainApiRequestDTO.setLocationY(126.98000833333333);
+        Double locationX = 37.56356944444444;
+        Double locationY = 126.98000833333333;
+        Assertions.assertEquals(weatherShortMainApiService.getGridXY(weatherShortMainApiRequestDTO).getNx(), 60);
 
     }
+
 
 
 }
