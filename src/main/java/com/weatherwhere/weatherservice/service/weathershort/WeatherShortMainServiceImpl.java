@@ -83,7 +83,7 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
                 .sorted(Comparator.comparing((List<JsonNode> timeList) -> timeList.get(0).get("fcstDate").asText())
                         .thenComparing((List<JsonNode> timeList) -> timeList.get(0).get("fcstTime").asText()))
                 .map(timeList -> {
-                    WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(Integer.parseInt(weatherShortRequestDTO.getNx()), Integer.parseInt(weatherShortRequestDTO.getNy()));
+                    WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(weatherShortRequestDTO.getNx(), weatherShortRequestDTO.getNy());
                     JsonNode time = timeList.get(0);
                     WeatherShortAllDTO dto = new WeatherShortAllDTO();
                     dto.setWeatherXY(weatherXY);
@@ -91,8 +91,8 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
                     dto.setBaseTime(weatherShortRequestDTO.getBaseTime());
                     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
                     DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH00");
-                    dto.setFcstDate(LocalDate.parse(time.get("fcstDate").asText(),dateFormatter));
-                    dto.setFcstTime(LocalTime.parse(time.get("fcstTime").asText(),timeFormatter));
+                    dto.setFcstDate(LocalDate.parse(time.get("fcstDate").asText(), dateFormatter));
+                    dto.setFcstTime(LocalTime.parse(time.get("fcstTime").asText(), timeFormatter));
                     for (JsonNode categoryNode : timeList) {
                         String category = categoryNode.get("category").asText();
                         switch (category) {
@@ -155,33 +155,36 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
         //dto리스트를 entity리스트로 변환하는 부분
         List<WeatherShortMain> mainEntityList = new ArrayList<>();
         List<WeatherShortSub> subEntityList = new ArrayList<>();
-        for (WeatherShortAllDTO dto : getWeatherShortDto(weatherShortRequestDTO)) {
-            //엔티티에 fcstdate, fcsttime, 격자x,y값이 동일한 엔티티가 존재하는지 판별하는 메서드
-            WeatherShortMain mainExistingEntity = weatherShortMainRepository.findByFcstDateAndFcstTimeAndWeatherXY(dto.getFcstDate(), dto.getFcstTime(),dto.getWeatherXY());
-            WeatherShortSub subExistingEntity = weatherShortSubRepository.findByFcstDateAndFcstTimeAndWeatherXY(dto.getFcstDate(), dto.getFcstTime(),dto.getWeatherXY());
-            if (mainExistingEntity != null) {
-                mainExistingEntity.update(dto);
-                subExistingEntity.update(dto);
-                mainEntityList.add(mainExistingEntity);
-                subEntityList.add(subExistingEntity);
-            } else { //존재하지 않을 경우 엔티티 새로 생성
-                WeatherShortMain mainEntity = mainDtoToEntity(dto);
-                WeatherShortSub subEntity = subDtoToEntity(dto);
-                mainEntityList.add(mainEntity);
-                subEntityList.add(subEntity);
+        Integer[] nxList = {53, 54, 54, 54};
+        Integer[] nyList = {125, 123, 126, 129};
 
+        for (int i = 0; i < nxList.length; i++) {
+            weatherShortRequestDTO.setNx(nxList[i]);
+            weatherShortRequestDTO.setNy(nyList[i]);
+
+            for (WeatherShortAllDTO dto : getWeatherShortDto(weatherShortRequestDTO)) {
+                //엔티티에 fcstdate, fcsttime, 격자x,y값이 동일한 엔티티가 존재하는지 판별하는 메서드
+                WeatherShortMain mainExistingEntity = weatherShortMainRepository.findByFcstDateAndFcstTimeAndWeatherXY(dto.getFcstDate(), dto.getFcstTime(), dto.getWeatherXY());
+                WeatherShortSub subExistingEntity = weatherShortSubRepository.findByFcstDateAndFcstTimeAndWeatherXY(dto.getFcstDate(), dto.getFcstTime(), dto.getWeatherXY());
+                if (mainExistingEntity != null) {
+                    mainExistingEntity.update(dto);
+                    subExistingEntity.update(dto);
+                    mainEntityList.add(mainExistingEntity);
+                    subEntityList.add(subExistingEntity);
+                } else { //존재하지 않을 경우 엔티티 새로 생성
+                    WeatherShortMain mainEntity = mainDtoToEntity(dto);
+                    WeatherShortSub subEntity = subDtoToEntity(dto);
+                    mainEntityList.add(mainEntity);
+                    subEntityList.add(subEntity);
+
+                }
             }
-        }
-        try{
-        //db에 저장
-        weatherShortMainRepository.saveAll(mainEntityList);
-        weatherShortSubRepository.saveAll(subEntityList);
-            return "성공";
+
+            weatherShortMainRepository.saveAll(mainEntityList);
+            weatherShortSubRepository.saveAll(subEntityList);
 
         }
-        catch (Exception e){
-            return e.getLocalizedMessage();
-        }
+        return "성공";
 
     }
 

@@ -12,6 +12,6 @@ public class WeatherShortRequestDTO {
     //발표시간
     private String baseTime;
 
-    private String nx;
-    private String ny;
+    private Integer nx;
+    private Integer ny;
 }

@@ -24,20 +24,34 @@ public class WeatherShortTests {
     @Test
     @DisplayName("LocalDate형식으로 db에 단기예보 값 저장하기")
     void testLocaDate() throws Exception {
-        String[] nxList = {"53","54","54","54"};
-        String[] nyList = {"125","123","126","129"};
+        String[] nxList = {"53", "54", "54", "54"};
+        String[] nyList = {"125", "123", "126", "129"};
         String baseDate = "20230326";
         String baseTime = "0500";
 
-        for(int i=0; i< nxList.length; i++){
+        for (int i = 0; i < nxList.length; i++) {
             MvcResult result = mockMvc.perform(get("/weather/save-weather-short-main")
-                    .param("nx",nxList[i])
-                    .param("ny",nyList[i])
-                    .param("baseDate",baseDate)
-                    .param("baseTime",baseTime))
+                            .param("nx", nxList[i])
+                            .param("ny", nyList[i])
+                            .param("baseDate", baseDate)
+                            .param("baseTime", baseTime))
                     .andExpect(status().isOk())
                     .andReturn();
         }
+
+    }
+
+    @Test
+    @DisplayName("nx,ny별 단기예보 데이터 불러오기 테스트")
+    void testNxNyRepeat() throws Exception {
+        String baseDate = "20230325";
+        String baseTime = "0500";
+        MvcResult result = mockMvc.perform(get("/weather/save-weather-short-main")
+                        .param("baseDate", baseDate)
+                        .param("baseTime", baseTime))
+                .andExpect(status().isOk())
+                .andReturn();
+
 
     }
 
