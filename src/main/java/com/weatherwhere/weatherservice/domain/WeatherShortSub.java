@@ -6,6 +6,9 @@ import com.weatherwhere.weatherservice.dto.WeatherShortSubDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 @Entity
 @Table(name="weather_short_term_sub", schema = "weather",
         uniqueConstraints = {@UniqueConstraint(columnNames = {"fcst_date", "fcst_time", "weather_xy_id"})})
@@ -33,11 +36,11 @@ public class WeatherShortSub extends BaseEntity{
 
     //예보날짜
     @Column(name = "fcst_date")
-    private String fcstDate;
+    private LocalDate fcstDate;
 
     //예보시간
     @Column(name = "fcst_time")
-    private String fcstTime;
+    private LocalTime fcstTime;
 
     //1시간 강수량
     @Column(name = "pcp")

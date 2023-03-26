@@ -5,6 +5,10 @@ import com.weatherwhere.weatherservice.dto.WeatherShortAllDTO;
 import com.weatherwhere.weatherservice.dto.WeatherShortMainDTO;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 @Builder
 @Entity
 @Table(name="weather_short_term_main", schema = "weather",
@@ -31,11 +35,11 @@ public class WeatherShortMain extends BaseEntity {
 
     //예보날짜
     @Column(name = "fcst_date")
-    private String fcstDate;
+    private LocalDate fcstDate;
 
     //예보시간
     @Column(name = "fcst_time")
-    private String fcstTime;
+    private LocalTime fcstTime;
 
     //강수확률
     @Column(name = "pop")

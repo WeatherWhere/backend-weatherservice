@@ -20,6 +20,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -86,8 +89,10 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
                     dto.setWeatherXY(weatherXY);
                     dto.setBaseDate(weatherShortRequestDTO.getBaseDate());
                     dto.setBaseTime(weatherShortRequestDTO.getBaseTime());
-                    dto.setFcstDate(time.get("fcstDate").asText());
-                    dto.setFcstTime(time.get("fcstTime").asText());
+                    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+                    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH00");
+                    dto.setFcstDate(LocalDate.parse(time.get("fcstDate").asText(),dateFormatter));
+                    dto.setFcstTime(LocalTime.parse(time.get("fcstTime").asText(),timeFormatter));
                     for (JsonNode categoryNode : timeList) {
                         String category = categoryNode.get("category").asText();
                         switch (category) {
@@ -167,11 +172,17 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
 
             }
         }
+        try{
         //db에 저장
         weatherShortMainRepository.saveAll(mainEntityList);
         weatherShortSubRepository.saveAll(subEntityList);
+            return "성공";
 
-        return "성공";
+        }
+        catch (Exception e){
+            return e.getLocalizedMessage();
+        }
+
     }
 
 

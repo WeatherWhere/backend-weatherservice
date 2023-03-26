@@ -14,6 +14,7 @@ class WeatherserviceApplicationTests {
     @Autowired
     private WeatherShortMainService weatherShortMainService;
 
+/*
     //weathercsv에 있는 격자 x,y값 db에 저장
     @Test
     @Disabled
@@ -21,6 +22,9 @@ class WeatherserviceApplicationTests {
         weatherShortMainService.readWeatherXYLocation();
         System.out.println(weatherShortMainService.readWeatherXYLocation());
     }
+*/
+
+
 
     @Test
     @DisplayName("격자 x,y 값 별 단기예보 받아오기")

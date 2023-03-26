@@ -18,13 +18,14 @@ public class WeatherShortController {
 
     private final WeatherShortMainService weatherShortMainService;
 
-
+    //getmapping에는 requestbody 사용 x
     @GetMapping("/save-weather-short-main")
-    public String weatherShortMainEntityList(@RequestBody WeatherShortRequestDTO weatherShortRequestDTO) throws IOException, URISyntaxException, ParseException {
+    public String weatherShortMainEntityList(@ModelAttribute WeatherShortRequestDTO weatherShortRequestDTO) throws IOException, URISyntaxException, ParseException {
 /*        String nx = "69";
         String ny = "100";
         String baseDate = "20230323";
         String baseTime = "1700";*/
+
         return weatherShortMainService.getWeatherShortEntity(weatherShortRequestDTO);
     }
 
