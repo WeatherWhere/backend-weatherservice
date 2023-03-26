@@ -20,8 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -89,10 +88,8 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
                     dto.setWeatherXY(weatherXY);
                     dto.setBaseDate(weatherShortRequestDTO.getBaseDate());
                     dto.setBaseTime(weatherShortRequestDTO.getBaseTime());
-                    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-                    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH00");
-                    dto.setFcstDate(LocalDate.parse(time.get("fcstDate").asText(), dateFormatter));
-                    dto.setFcstTime(LocalTime.parse(time.get("fcstTime").asText(), timeFormatter));
+                    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+                    dto.setFcstDateTime(LocalDateTime.parse(time.get("fcstDate").asText()+time.get("fcstTime").asText(), dateFormatter));
                     for (JsonNode categoryNode : timeList) {
                         String category = categoryNode.get("category").asText();
                         switch (category) {
@@ -164,8 +161,8 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
 
             for (WeatherShortAllDTO dto : getWeatherShortDto(weatherShortRequestDTO)) {
                 //엔티티에 fcstdate, fcsttime, 격자x,y값이 동일한 엔티티가 존재하는지 판별하는 메서드
-                WeatherShortMain mainExistingEntity = weatherShortMainRepository.findByFcstDateAndFcstTimeAndWeatherXY(dto.getFcstDate(), dto.getFcstTime(), dto.getWeatherXY());
-                WeatherShortSub subExistingEntity = weatherShortSubRepository.findByFcstDateAndFcstTimeAndWeatherXY(dto.getFcstDate(), dto.getFcstTime(), dto.getWeatherXY());
+                WeatherShortMain mainExistingEntity = weatherShortMainRepository.findByFcstDateTimeAndWeatherXY(dto.getFcstDateTime(), dto.getWeatherXY());
+                WeatherShortSub subExistingEntity = weatherShortSubRepository.findByFcstDateTimeAndWeatherXY(dto.getFcstDateTime(), dto.getWeatherXY());
                 if (mainExistingEntity != null) {
                     mainExistingEntity.update(dto);
                     subExistingEntity.update(dto);

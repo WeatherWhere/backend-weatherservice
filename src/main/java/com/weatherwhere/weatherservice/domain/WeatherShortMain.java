@@ -2,17 +2,14 @@ package com.weatherwhere.weatherservice.domain;
 
 
 import com.weatherwhere.weatherservice.dto.WeatherShortAllDTO;
-import com.weatherwhere.weatherservice.dto.WeatherShortMainDTO;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Builder
 @Entity
 @Table(name="weather_short_term_main", schema = "weather",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"fcst_date", "fcst_time", "weather_xy_id"})})
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"fcst_date_time", "weather_xy_id"})})
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -33,13 +30,9 @@ public class WeatherShortMain extends BaseEntity {
     @Column(name = "base_time")
     private String baseTime;
 
-    //예보날짜
-    @Column(name = "fcst_date")
-    private LocalDate fcstDate;
-
-    //예보시간
-    @Column(name = "fcst_time")
-    private LocalTime fcstTime;
+    //예보날짜+시간
+    @Column(name = "fcst_date_time")
+    private LocalDateTime fcstDateTime;
 
     //강수확률
     @Column(name = "pop")

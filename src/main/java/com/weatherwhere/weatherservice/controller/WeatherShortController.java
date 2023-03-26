@@ -1,6 +1,5 @@
 package com.weatherwhere.weatherservice.controller;
 
-//import com.weatherwhere.weatherservice.service.WeatherRestTemService;
 import com.weatherwhere.weatherservice.dto.WeatherShortMainApiRequestDTO;
 import com.weatherwhere.weatherservice.dto.WeatherShortMainDTO;
 import com.weatherwhere.weatherservice.dto.WeatherShortRequestDTO;
@@ -36,8 +35,8 @@ public class WeatherShortController {
 
     //위경도 받아서 격자 x,y로 변환한 뒤 해당 x,y에 대한 단기예보 데이터 전송하는 api
     @GetMapping("/weather-short-main-api")
-    public WeatherShortMainApiRequestDTO getWeatherShortMainResponse (@ModelAttribute WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO){
-        return weatherShortMainApiService.getGridXY(weatherShortMainApiRequestDTO);
+    public List<WeatherShortMainDTO> getWeatherShortMainResponse (@ModelAttribute WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO){
+        return weatherShortMainApiService.getWeatherShortMainData(weatherShortMainApiRequestDTO);
     }
 
 

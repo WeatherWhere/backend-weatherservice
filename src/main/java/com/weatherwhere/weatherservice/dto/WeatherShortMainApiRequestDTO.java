@@ -1,26 +1,19 @@
 package com.weatherwhere.weatherservice.dto;
-
 import lombok.Data;
-
-import java.text.DecimalFormat;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Data
 public class WeatherShortMainApiRequestDTO {
 
-    //발표날짜
-    private LocalDate fcstDate;
-
-    //발표시간
-    private LocalTime fcstTime;
+    //예보시간+날짜
+    private LocalDateTime fcstDateTime;
 
     private Double locationX;
 
     private Double locationY;
 
-    private Double nx;
-    private Double ny;
+    private Integer nx;
+    private Integer ny;
 
 
 }

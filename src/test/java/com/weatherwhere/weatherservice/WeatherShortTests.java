@@ -7,9 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -61,15 +59,25 @@ public class WeatherShortTests {
 
     @Test
     @DisplayName("위경도 nx, ny로 변경되는지 테스트")
-    void testLocationToNxNy() throws Exception{
+    void testLocationToNxNy(){
         WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO = new WeatherShortMainApiRequestDTO();
         weatherShortMainApiRequestDTO.setLocationX(37.56356944444444);
         weatherShortMainApiRequestDTO.setLocationY(126.98000833333333);
-        Double locationX = 37.56356944444444;
-        Double locationY = 126.98000833333333;
         Assertions.assertEquals(weatherShortMainApiService.getGridXY(weatherShortMainApiRequestDTO).getNx(), 60);
 
     }
+
+    @Test
+    @DisplayName("nx, ny에 해당하는 데이터 30시간씩 추출하는 테스트")
+    void testGetMainData() {
+        WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO = new WeatherShortMainApiRequestDTO();
+        weatherShortMainApiRequestDTO.setLocationX(37.489325);
+        weatherShortMainApiRequestDTO.setLocationY(126.554234);
+        weatherShortMainApiService.getWeatherShortMainData(weatherShortMainApiRequestDTO);
+        System.out.println(weatherShortMainApiService.getWeatherShortMainData(weatherShortMainApiRequestDTO));
+    }
+
+
 
 
 

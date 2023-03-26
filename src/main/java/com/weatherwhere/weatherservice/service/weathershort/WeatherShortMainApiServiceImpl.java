@@ -1,18 +1,37 @@
 package com.weatherwhere.weatherservice.service.weathershort;
 
+import com.weatherwhere.weatherservice.domain.WeatherShortMain;
+import com.weatherwhere.weatherservice.domain.WeatherXY;
 import com.weatherwhere.weatherservice.dto.WeatherShortMainApiRequestDTO;
-import jakarta.transaction.Transactional;
+import com.weatherwhere.weatherservice.dto.WeatherShortMainDTO;
+import com.weatherwhere.weatherservice.repository.WeatherShortMainRepository;
+import com.weatherwhere.weatherservice.repository.WeatherShortSubRepository;
+import com.weatherwhere.weatherservice.repository.WeatherXYRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Log4j2
+@Transactional
+@RequiredArgsConstructor
 public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiService {
 
-    /** 위경도 좌표로 격자 X Y 좌표 구하기 */
-    @Override
+    private final WeatherXYRepository weatherXYRepository;
+
+    private final WeatherShortMainRepository weatherShortMainRepository;
+
+    private final WeatherShortSubRepository weatherShortSubRepository;
+
+
+    /**
+     * 위경도 좌표로 격자 X Y 좌표 구하기
+     */
     public WeatherShortMainApiRequestDTO getGridXY(WeatherShortMainApiRequestDTO requestDTO) {
 
         double RE = 6371.00877; // 지구 반경(km)
@@ -51,10 +70,10 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
 
             theta *= sn;
 
-            requestDTO.setNx(Math.floor(ra * Math.sin(theta) + XO + 0.5));
-            requestDTO.setNy(Math.floor(ro - ra * Math.cos(theta) + YO + 0.5));
+            requestDTO.setNx((int)Math.floor(ra * Math.sin(theta) + XO + 0.5));
+            requestDTO.setNy((int)Math.floor(ro - ra * Math.cos(theta) + YO + 0.5));
 
-            log.info("======= XY : "+requestDTO);
+            log.info("======= XY : " + requestDTO);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -64,18 +83,19 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
 
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    @Override
+    //단기예보 메인 데이터 반환하는 서비스
+    public List<WeatherShortMainDTO> getWeatherShortMainData(WeatherShortMainApiRequestDTO requestDTO) {
+        getGridXY(requestDTO);
+        List<WeatherShortMainDTO> mainDataList = new ArrayList<>();
+        for(int i = 0; i<30; i++) {
+            LocalDateTime localDateTime = LocalDateTime.of(2023, 3, 25, 6, 0).plusHours(i);
+                        requestDTO.setFcstDateTime(localDateTime);
+            WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(requestDTO.getNx(), requestDTO.getNy());
+            WeatherShortMain weatherShortMain = weatherShortMainRepository.findByFcstDateTimeAndWeatherXY(requestDTO.getFcstDateTime(), weatherXY);
+            mainDataList.add(entityToDTO(weatherShortMain));
+        }
+        return mainDataList;
+    }
 
 }

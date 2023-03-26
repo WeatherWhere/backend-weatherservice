@@ -4,13 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.weatherwhere.weatherservice.domain.WeatherShortMain;
 import com.weatherwhere.weatherservice.domain.WeatherShortSub;
 import com.weatherwhere.weatherservice.dto.WeatherShortAllDTO;
-import com.weatherwhere.weatherservice.dto.WeatherShortMainDTO;
 import com.weatherwhere.weatherservice.dto.WeatherShortRequestDTO;
-import com.weatherwhere.weatherservice.dto.WeatherShortSubDTO;
-import lombok.Builder;
-import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.net.URISyntaxException;
 
 public interface WeatherShortMainService {
@@ -27,8 +22,7 @@ public interface WeatherShortMainService {
         WeatherShortMain weatherShortMain = WeatherShortMain.builder()
                 .baseDate(dto.getBaseDate())
                 .baseTime(dto.getBaseTime())
-                .fcstDate(dto.getFcstDate())
-                .fcstTime(dto.getFcstTime())
+                .fcstDateTime(dto.getFcstDateTime())
                 .pop(dto.getPop())
                 .pty(dto.getPty())
                 .reh(dto.getReh())
@@ -47,8 +41,7 @@ public interface WeatherShortMainService {
         WeatherShortSub weatherShortSub = WeatherShortSub.builder()
                 .baseDate(dto.getBaseDate())
                 .baseTime(dto.getBaseTime())
-                .fcstDate(dto.getFcstDate())
-                .fcstTime(dto.getFcstTime())
+                .fcstDateTime(dto.getFcstDateTime())
                 .pcp(dto.getPcp())
                 .sno(dto.getSno())
                 .uuu(dto.getUuu())
