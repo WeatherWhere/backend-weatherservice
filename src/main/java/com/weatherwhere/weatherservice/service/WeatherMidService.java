@@ -13,9 +13,7 @@ public interface WeatherMidService {
 
     Object getWeatherMidLandFcst(String regId, String tmFc) throws ParseException;
 
-    WeatherMidCompositeKey register(WeatherMidDTO dto);
-
-    List<WeatherMidDTO> makeDTOList(JSONObject jsonFromMidTa, JSONObject jsonFromMidLandFcst, String[] daysAfterToday);
+    List<WeatherMidEntity> makeEntityList(JSONObject jsonFromMidTa, JSONObject jsonFromMidLandFcst, String[] daysAfterToday);
     List<WeatherMidCompositeKey> updateWeatherMid(String regId, String tmfc) throws ParseException;
 
 

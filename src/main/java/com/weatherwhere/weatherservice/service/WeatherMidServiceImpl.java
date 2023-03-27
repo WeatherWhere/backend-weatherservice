@@ -66,7 +66,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         return (JSONObject) jsonItemList.get(0);
     }
 
-    public JSONObject getWeatherMidTa(String regId, String tmFc) throws ParseException {
+    public JSONObject getWeatherMidTa(String regId, String tmFc) throws ParseException{
         // 예보 구역코드와, 발표 시각은 변수어야 한다. - 매개변수로 받음 -
         String apiUrl = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidTa";
         String serviceKey = "XiXQig6ZMt9WhFnz7w2pl78HnvEb4h5S1s3n51BpoJU5L064VCaM1iT8DUUrx8Qta9OPr3nnm88UtKukLSf0xA==";
@@ -76,6 +76,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
 
         RestTemplate restTemplate = new RestTemplate();
         URI uri = makeUriForWeatherMid(apiUrl, serviceKey, pageNo, numOfRows, dataType, regId, tmFc);
+
 
         String jsonString = restTemplate.getForObject(uri, String.class);
         JSONObject result = customJsonParser(jsonString);
@@ -96,8 +97,8 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         return result;
     }
 
-    public List<WeatherMidDTO> makeDTOList(JSONObject jsonFromMidTa, JSONObject jsonFromMidLandFcst, String[] daysAfterToday) {
-        List<WeatherMidDTO> dtoList = new ArrayList<WeatherMidDTO>();
+    public List<WeatherMidEntity> makeEntityList(JSONObject jsonFromMidTa, JSONObject jsonFromMidLandFcst, String[] daysAfterToday) {
+        List<WeatherMidEntity> entities = new ArrayList<>();
 
         for (int i = 0; i < 5; i++) {
             WeatherMidDTO dto;
@@ -118,53 +119,59 @@ public class WeatherMidServiceImpl implements WeatherMidService {
                     .wAm((String) jsonFromMidLandFcst.get(wfAm))
                     .wPm((String) jsonFromMidLandFcst.get(wfPm))
                     .build();
-            dtoList.add(dto);
+            entities.add(dtoToEntity(dto));
         }
-        return dtoList;
-    }
-
-    public WeatherMidCompositeKey register(WeatherMidDTO dto) {
-        // 파라미터가 제대로 넘어오는지 확인
-        log.info("삽입 데이터:" + dto.toString());
-
-        // repository의 메서드 매개변수로 변경
-        WeatherMidEntity entity = dtoToEntity(dto);
-        // 이 시점에는 entity에 mid_term_forecast_id와 regDate, modDate는 없고,
-        // save를 할 때 설정한 내역을 가지고 데이터를 설정
-        weatherMidRepository.save(entity);
-        return entity.getId();
+        return entities;
     }
 
     @Transactional
-    public List<WeatherMidCompositeKey> updateWeatherMid(String regId, String tmfc) throws ParseException{
-        JSONObject jsonFromMidTa = getWeatherMidTa(regId, tmfc);
-
-        String prefix = regId.substring(0, 4);
-        String regIdForMidFcst;
-
-        if (prefix.equals("11B0") || prefix.equals("11B1") || prefix.equals("11A0") || prefix.equals("11B2")) {
-            // 서울, 인천, 경기도
-            // "11A0-" 은 백령도로 인천시이다.
-            regIdForMidFcst = "11B00000";
-        } else if (prefix.equals("21F1") || prefix.equals("21F2")) {
-            // 전라북도
-            regIdForMidFcst = "11F10000";
-        } else {
-            // 이 외에는 앞 4글자 + "0000"
-            regIdForMidFcst = prefix + "0000";
-        }
-        System.out.println(regIdForMidFcst);
-
-        JSONObject jsonFromMidFcst = getWeatherMidLandFcst(regIdForMidFcst, tmfc);
-        // 3일부터 7일후까지의 날짜 배열 받기
-        String[] daysArray = dateService.getDaysAfterToday(3, 7);
-        List<WeatherMidDTO> dtoList = makeDTOList(jsonFromMidTa, jsonFromMidFcst, daysArray);
-
-        List<WeatherMidCompositeKey> ids = new ArrayList<>();
+    public List<WeatherMidCompositeKey> updateWeatherMid(String regId, String tmfc){
         // 새로 만들어진 튜플의 기본키를 리스트로 리턴
-        for(WeatherMidDTO dto: dtoList) {
-            ids.add(register(dto));
+        List<WeatherMidCompositeKey> ids = new ArrayList<>();
+
+        try {
+            // 중기 예보 API 호출
+            JSONObject jsonFromMidTa = getWeatherMidTa(regId, tmfc);
+            String prefix = regId.substring(0, 4);
+            String regIdForMidFcst;
+
+            // 지역코드를 기반으로 기상예보 구역 코드 생성
+            if (prefix.equals("11B0") || prefix.equals("11B1") || prefix.equals("11A0") || prefix.equals("11B2")) {
+                // 서울, 인천, 경기도
+                // "11A0-" 은 백령도로 인천시이다.
+                regIdForMidFcst = "11B00000";
+            } else if (prefix.equals("21F1") || prefix.equals("21F2")) {
+                // 전라북도
+                regIdForMidFcst = "11F10000";
+            } else {
+                // 이 외에는 앞 4글자 + "0000"
+                regIdForMidFcst = prefix + "0000";
+            }
+
+            // 육상 예보 호출
+            JSONObject jsonFromMidFcst = getWeatherMidLandFcst(regIdForMidFcst, tmfc);
+
+            // 3일부터 7일후까지의 날짜 배열 받기
+            String[] daysArray = dateService.getDaysAfterToday(3, 7);
+
+            // 중기 예보, 육상 예보, 날짜를 매개변수로 entity 배열을 받아옴.
+            List<WeatherMidEntity> entities = makeEntityList(jsonFromMidTa, jsonFromMidFcst, daysArray);
+
+            for (WeatherMidEntity entity : entities) {
+                weatherMidRepository.save(entity);
+                ids.add(entity.getId());
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            System.out.println("Wrong regIdForMidTa or regIdForMidFcst: " + regId + e.getMessage());
+        } catch (Exception e) {
+            // 예외가 발생하면 로그를 출력하고 계속 진행한다.
+            // 이때, catch 블록 안에서는 트랜잭션이 롤백되지 않기 때문에,
+            // 다른 데이터는 여전히 저장될 수 있다.
+            System.out.println("Failed to update entity: " + e.getMessage());
         }
+
         return ids;
     }
 }
