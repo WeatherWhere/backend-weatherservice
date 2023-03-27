@@ -142,13 +142,10 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         String prefix = regId.substring(0, 4);
         String regIdForMidFcst;
 
-        if (prefix.equals("11B0") || prefix.equals("11B1") || prefix.equals("11A0")) {
+        if (prefix.equals("11B0") || prefix.equals("11B1") || prefix.equals("11A0") || prefix.equals("11B2")) {
             // 서울, 인천, 경기도
             // "11A0-" 은 백령도로 인천시이다.
             regIdForMidFcst = "11B00000";
-        } else if (prefix.equals("1100")) {
-            // "1100-" 은 울릉도, 독도로 경상북도
-            regIdForMidFcst = "11H10000";
         } else if (prefix.equals("21F1") || prefix.equals("21F2")) {
             // 전라북도
             regIdForMidFcst = "11F10000";

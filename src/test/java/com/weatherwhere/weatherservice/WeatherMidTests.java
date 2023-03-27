@@ -2,16 +2,23 @@ package com.weatherwhere.weatherservice;
 
 import com.weatherwhere.weatherservice.domain.WeatherMidCompositeKey;
 import com.weatherwhere.weatherservice.dto.WeatherMidDTO;
+import com.weatherwhere.weatherservice.dto.parse.RegionCodeDTO;
 import com.weatherwhere.weatherservice.service.WeatherMidService;
+import com.weatherwhere.weatherservice.service.parse.ParseCSVService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
+
 @SpringBootTest
 public class WeatherMidTests {
     @Autowired
     private WeatherMidService weatherMidService;
+
+    @Autowired
+    private ParseCSVService parseCSVService;
 
     @Test
     @DisplayName("중기 예보 DTO를 만들어 DB에 저장되는지 확인하는 테스트")
@@ -46,12 +53,12 @@ public class WeatherMidTests {
     @Test
     @DisplayName("중기예보 API 2개를 합쳐 하나의 테이블을 업데이트하여 생성된 기본키를 리스트로 리턴")
     void testUpdateWeatherMid() {
-        String[] regIds = {"11B10101", "11D20501", "11H20201", "11F10201", "11F10203"};
+        List<RegionCodeDTO> regionCodes = parseCSVService.ParseCSV();
         String tmfc = "202303270600";
 
         try {
-            for (int i = 0; i < regIds.length; i++) {
-                System.out.println((weatherMidService.updateWeatherMid(regIds[i], tmfc)));
+            for (int i = 0; i < regionCodes.size(); i++) {
+                System.out.println((weatherMidService.updateWeatherMid(regionCodes.get(i).getRegionCode(), tmfc)));
             }
         } catch (Exception e) {
             System.out.println(e.getLocalizedMessage());

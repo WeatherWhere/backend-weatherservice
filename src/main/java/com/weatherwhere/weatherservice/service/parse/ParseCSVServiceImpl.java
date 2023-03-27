@@ -12,7 +12,7 @@ import java.util.List;
 
 @Service
 @Log4j2
-public class parseCSVServiceImpl implements parseCSVService {
+public class ParseCSVServiceImpl implements ParseCSVService {
     @Override
     public List<RegionCodeDTO> ParseCSV() {
         ClassPathResource resource = new ClassPathResource("weatherMidRegionCode.csv");

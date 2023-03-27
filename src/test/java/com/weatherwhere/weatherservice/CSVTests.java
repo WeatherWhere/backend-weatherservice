@@ -1,6 +1,6 @@
 package com.weatherwhere.weatherservice;
 
-import com.weatherwhere.weatherservice.service.parse.parseCSVService;
+import com.weatherwhere.weatherservice.service.parse.ParseCSVService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class CSVTests {
 
     @Autowired
-    private parseCSVService parseCSVService;
+    private ParseCSVService parseCSVService;
 
     @Test
     @DisplayName("CSV 파일을 읽어와서 출력하는 테스트.")

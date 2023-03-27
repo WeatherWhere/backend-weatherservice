@@ -4,6 +4,6 @@ import com.weatherwhere.weatherservice.dto.parse.RegionCodeDTO;
 
 import java.util.List;
 
-public interface parseCSVService {
+public interface ParseCSVService {
     List<RegionCodeDTO> ParseCSV();
 }
