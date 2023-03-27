@@ -1,5 +1,6 @@
 package com.weatherwhere.weatherservice.service;
 
+import com.weatherwhere.weatherservice.domain.WeatherMidCompositeKey;
 import com.weatherwhere.weatherservice.domain.WeatherMidEntity;
 import com.weatherwhere.weatherservice.dto.WeatherMidDTO;
 import com.weatherwhere.weatherservice.repository.WeatherMidRepository;
@@ -122,7 +123,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         return dtoList;
     }
 
-    public Long register(WeatherMidDTO dto) {
+    public WeatherMidCompositeKey register(WeatherMidDTO dto) {
         // 파라미터가 제대로 넘어오는지 확인
         log.info("삽입 데이터:" + dto.toString());
 
@@ -131,11 +132,11 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         // 이 시점에는 entity에 mid_term_forecast_id와 regDate, modDate는 없고,
         // save를 할 때 설정한 내역을 가지고 데이터를 설정
         weatherMidRepository.save(entity);
-        return entity.getMidTermForecastId();
+        return entity.getId();
     }
 
     @Transactional
-    public List<Long> updateWeatherMid(String regId, String tmfc) throws ParseException{
+    public List<WeatherMidCompositeKey> updateWeatherMid(String regId, String tmfc) throws ParseException{
         JSONObject jsonFromMidTa = getWeatherMidTa(regId, tmfc);
 
         String prefix = regId.substring(0, 4);
@@ -162,7 +163,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         String[] daysArray = dateService.getDaysAfterToday(3, 7);
         List<WeatherMidDTO> dtoList = makeDTOList(jsonFromMidTa, jsonFromMidFcst, daysArray);
 
-        List<Long> ids = new ArrayList<>();
+        List<WeatherMidCompositeKey> ids = new ArrayList<>();
         // 새로 만들어진 튜플의 기본키를 리스트로 리턴
         for(WeatherMidDTO dto: dtoList) {
             ids.add(register(dto));
