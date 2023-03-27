@@ -19,6 +19,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @Log4j2
@@ -66,7 +67,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         return (JSONObject) jsonItemList.get(0);
     }
 
-    public JSONObject getWeatherMidTa(String regId, String tmFc) throws ParseException{
+    public JSONObject getWeatherMidTa(String regId, String tmFc) throws ParseException {
         // 예보 구역코드와, 발표 시각은 변수어야 한다. - 매개변수로 받음 -
         String apiUrl = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidTa";
         String serviceKey = "XiXQig6ZMt9WhFnz7w2pl78HnvEb4h5S1s3n51BpoJU5L064VCaM1iT8DUUrx8Qta9OPr3nnm88UtKukLSf0xA==";
@@ -125,7 +126,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
     }
 
     @Transactional
-    public List<WeatherMidCompositeKey> updateWeatherMid(String regId, String tmfc){
+    public List<WeatherMidCompositeKey> updateWeatherMid(String regId, String tmfc) {
         // 새로 만들어진 튜플의 기본키를 리스트로 리턴
         List<WeatherMidCompositeKey> ids = new ArrayList<>();
 
@@ -173,5 +174,16 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         }
 
         return ids;
+    }
+
+    public List<WeatherMidDTO> getMidForecast(String regionCode) {
+        String[] weeks = dateService.getDaysAfterToday(3, 7);
+        List<WeatherMidDTO> dtoList = new ArrayList<>();
+        for (int i = 0; i < weeks.length; i++) {
+            WeatherMidCompositeKey weatherMidCompositeKey = new WeatherMidCompositeKey(regionCode, weeks[i]);
+            WeatherMidEntity result = weatherMidRepository.findById(weatherMidCompositeKey).orElseThrow(() -> new NoSuchElementException());
+            dtoList.add(entityToDTO(result));
+        }
+        return dtoList;
     }
 }

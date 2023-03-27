@@ -16,12 +16,13 @@ public interface WeatherMidService {
     List<WeatherMidEntity> makeEntityList(JSONObject jsonFromMidTa, JSONObject jsonFromMidLandFcst, String[] daysAfterToday);
     List<WeatherMidCompositeKey> updateWeatherMid(String regId, String tmfc) throws ParseException;
 
+    List<WeatherMidDTO> getMidForecast(String regionCode);
 
     // DTO를 Entity로 변환해주는 메서드
     default WeatherMidEntity dtoToEntity(WeatherMidDTO dto) {
-        WeatherMidCompositeKey id = new WeatherMidCompositeKey(dto.getRegionCode(), dto.getBaseTime());
+        WeatherMidCompositeKey weatherMidCompositeKey = new WeatherMidCompositeKey(dto.getRegionCode(), dto.getBaseTime());
         WeatherMidEntity entity = WeatherMidEntity.builder()
-                .id(id)
+                .id(weatherMidCompositeKey)
                 .tmn(dto.getTmn())
                 .tmx(dto.getTmx())
                 .rAm(dto.getRAm())
