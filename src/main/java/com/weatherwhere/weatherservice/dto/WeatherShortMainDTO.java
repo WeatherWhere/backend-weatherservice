@@ -3,6 +3,8 @@ package com.weatherwhere.weatherservice.dto;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -10,17 +12,12 @@ import lombok.*;
 @Data
 public class WeatherShortMainDTO {
 
-    //발표날짜
-    private String baseDate;
+    private Long weatherShortId;
 
-    //발표시간
-    private String baseTime;
+    private Long weatherXYId;
 
-    //예보날짜
-    private String fcstDate;
-
-    //예보시간
-    private String fcstTime;
+    //예보날짜+예보시간
+    private LocalDateTime fcstDateTime;
 
     //강수확률
     private Double pop;
@@ -45,6 +42,7 @@ public class WeatherShortMainDTO {
 
     //일 최고기온
     private Double tmx;
+
 
 
 }
