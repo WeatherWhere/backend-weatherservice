@@ -12,6 +12,7 @@ import com.weatherwhere.weatherservice.repository.weathershort.WeatherShortSubRe
 import com.weatherwhere.weatherservice.repository.weathershort.WeatherXYRepository;
 import jakarta.transaction.Transactional;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,12 +30,13 @@ import java.util.stream.StreamSupport;
 @Service
 @Transactional
 @Log4j2
+@RequiredArgsConstructor
 public class WeatherShortMainServiceImpl implements WeatherShortMainService {
-    @Autowired
-    private WeatherShortMainRepository weatherShortMainRepository;
+    private final WeatherShortMainRepository weatherShortMainRepository;
 
-    @Autowired
-    private WeatherShortSubRepository weatherShortSubRepository;
+    private final WeatherShortSubRepository weatherShortSubRepository;
+
+    private final WeatherXYRepository weatherXYRepository;
 
     //공공데이터 api로부터 json값 받아와서 파싱하는 메서드
     private JsonNode weatherShortJsonParsing(WeatherShortRequestDTO weatherShortRequestDTO) throws JsonProcessingException, URISyntaxException {
@@ -45,7 +47,7 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
         String serviceKey = System.getProperty("WEATHER_SHORT_SERVICE_KEY");
 
         String dataType = "JSON";
-        String numOfRows = "1000";
+        String numOfRows = "12";
         String pageNo = "1";
 
         String url = String.format("%s?serviceKey=%s&pageNo=%s&numOfRows=%s&dataType=%s&base_date=%s&base_time=%s&nx=%s&ny=%s",
@@ -156,9 +158,14 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
         Integer[] nxList = {53, 54, 54, 54};
         Integer[] nyList = {125, 123, 126, 129};
 
-        for (int i = 0; i < nxList.length; i++) {
-            weatherShortRequestDTO.setNx(nxList[i]);
-            weatherShortRequestDTO.setNy(nyList[i]);
+        List<Object[]> xyList = weatherXYRepository.findAllNxAndNy();
+
+        for (Object[] xy : xyList) {
+            Integer nx = (Integer) xy[0];
+            Integer ny = (Integer) xy[1];
+            // nx, ny 값 사용
+            weatherShortRequestDTO.setNx(nx);
+            weatherShortRequestDTO.setNy(ny);
 
             for (WeatherShortAllDTO dto : getWeatherShortDto(weatherShortRequestDTO)) {
                 //엔티티에 fcstdate, fcsttime, 격자x,y값이 동일한 엔티티가 존재하는지 판별하는 메서드
@@ -188,8 +195,6 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
 
 
     //ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-    @Autowired
-    private WeatherXYRepository weatherXYRepository;
 
     //격자 x,y값이 담긴 csv를 postgres내의 테이블에 저장하는 메서드
 /*    @Override
