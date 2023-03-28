@@ -13,11 +13,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 public class WeatherMidDTO {
-    private Long midTermForecastId;
+    private String regionCode;
     private String baseTime;
     private Long tmn;
     private Long tmx;
-    private String regionCode;
     private Long rAm;
     private Long rPm;
     private String wAm;
