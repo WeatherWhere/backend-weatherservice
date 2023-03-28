@@ -3,6 +3,9 @@ package com.weatherwhere.weatherservice.dto;
 import com.weatherwhere.weatherservice.domain.WeatherXY;
 import lombok.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,10 +20,10 @@ public class WeatherShortAllDTO {
     private String baseTime;
 
     //예보날짜
-    private String fcstDate;
+    private LocalDate fcstDate;
 
     //예보시간
-    private String fcstTime;
+    private LocalTime fcstTime;
 
     //강수확률
     private Double pop;

@@ -1,18 +1,25 @@
-package com.weatherwhere.weatherservice.service;
+package com.weatherwhere.weatherservice.service.weathershort;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.weatherwhere.weatherservice.domain.WeatherShortMain;
 import com.weatherwhere.weatherservice.domain.WeatherShortSub;
 import com.weatherwhere.weatherservice.dto.WeatherShortAllDTO;
 import com.weatherwhere.weatherservice.dto.WeatherShortMainDTO;
+import com.weatherwhere.weatherservice.dto.WeatherShortRequestDTO;
 import com.weatherwhere.weatherservice.dto.WeatherShortSubDTO;
+import lombok.Builder;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 
 public interface WeatherShortMainService {
 
-    String getWeatherShortEntity(String nx, String ny, String baseDate, String baseTime) throws URISyntaxException, JsonProcessingException;
+
+    //dto리스트를 entity리스트로 변환한 뒤 db에 save하는 메서드
+    //컨트롤러에서 최종적으로 이 service를 호출함.
+    String getWeatherShortEntity(WeatherShortRequestDTO weatherShortRequestDTO) throws URISyntaxException, JsonProcessingException;
+
     //String readWeatherXYLocation() throws IOException;
 
     // 단기예보 메인 DTO -> Entity
@@ -30,6 +37,7 @@ public interface WeatherShortMainService {
                 .wsd(dto.getWsd())
                 .tmn(dto.getTmn())
                 .tmx(dto.getTmx())
+                .weatherXY(dto.getWeatherXY())
                 .build();
         return weatherShortMain;
     }
@@ -47,6 +55,7 @@ public interface WeatherShortMainService {
                 .vvv(dto.getVvv())
                 .wav(dto.getWav())
                 .vec(dto.getVec())
+                .weatherXY(dto.getWeatherXY())
                 .build();
         return weatherShortSub;
     }
