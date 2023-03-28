@@ -4,6 +4,7 @@ import com.weatherwhere.weatherservice.dto.WeatherShortMainApiRequestDTO;
 import com.weatherwhere.weatherservice.dto.WeatherShortMainDTO;
 import com.weatherwhere.weatherservice.dto.WeatherShortRequestDTO;
 import com.weatherwhere.weatherservice.service.weathershort.WeatherShortMainApiService;
+
 import com.weatherwhere.weatherservice.service.weathershort.WeatherShortMainService;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.parser.ParseException;
@@ -37,6 +38,7 @@ public class WeatherShortController {
     @GetMapping("/weather-short-main-api")
     public List<WeatherShortMainDTO> getWeatherShortMainResponse (@ModelAttribute WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO){
         return weatherShortMainApiService.getWeatherShortMainData(weatherShortMainApiRequestDTO);
+
     }
 
 

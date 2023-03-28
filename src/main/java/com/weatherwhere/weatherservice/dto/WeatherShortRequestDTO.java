@@ -14,4 +14,5 @@ public class WeatherShortRequestDTO {
 
     private Integer nx;
     private Integer ny;
+
 }

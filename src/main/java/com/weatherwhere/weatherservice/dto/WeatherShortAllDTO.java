@@ -4,6 +4,9 @@ import com.weatherwhere.weatherservice.domain.WeatherXY;
 import lombok.*;
 import java.time.LocalDateTime;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor

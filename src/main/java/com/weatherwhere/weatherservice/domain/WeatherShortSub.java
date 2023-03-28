@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 @Entity
 @Table(name="weather_short_term_sub", schema = "weather",
         uniqueConstraints = {@UniqueConstraint(columnNames = {"fcst_date_time", "weather_xy_id"})})

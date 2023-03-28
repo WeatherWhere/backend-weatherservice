@@ -90,6 +90,7 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
                     dto.setBaseTime(weatherShortRequestDTO.getBaseTime());
                     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
                     dto.setFcstDateTime(LocalDateTime.parse(time.get("fcstDate").asText()+time.get("fcstTime").asText(), dateFormatter));
+
                     for (JsonNode categoryNode : timeList) {
                         String category = categoryNode.get("category").asText();
                         switch (category) {

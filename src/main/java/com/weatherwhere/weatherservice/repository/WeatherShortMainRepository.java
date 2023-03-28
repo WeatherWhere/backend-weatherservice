@@ -9,4 +9,5 @@ public interface WeatherShortMainRepository extends JpaRepository<WeatherShortMa
 
     WeatherShortMain findByFcstDateTimeAndWeatherXY(LocalDateTime fcstDateTime, WeatherXY weatherXY);
 
+
 }
