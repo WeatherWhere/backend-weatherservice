@@ -1,8 +1,8 @@
 package com.weatherwhere.weatherservice.service.weathershort;
 
-import com.weatherwhere.weatherservice.domain.WeatherShortMain;
-import com.weatherwhere.weatherservice.dto.WeatherShortMainApiRequestDTO;
-import com.weatherwhere.weatherservice.dto.WeatherShortMainDTO;
+import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortMain;
+import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainApiRequestDTO;
+import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainDTO;
 
 import java.util.List;
 

@@ -1,7 +1,7 @@
-package com.weatherwhere.weatherservice.repository;
+package com.weatherwhere.weatherservice.repository.weathershort;
 
-import com.weatherwhere.weatherservice.domain.WeatherShortSub;
-import com.weatherwhere.weatherservice.domain.WeatherXY;
+import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortSub;
+import com.weatherwhere.weatherservice.domain.weathershort.WeatherXY;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;

@@ -1,7 +1,7 @@
-package com.weatherwhere.weatherservice.repository;
+package com.weatherwhere.weatherservice.repository.weathermid;
 
-import com.weatherwhere.weatherservice.domain.WeatherMidCompositeKey;
-import com.weatherwhere.weatherservice.domain.WeatherMidEntity;
+import com.weatherwhere.weatherservice.domain.weathermid.WeatherMidCompositeKey;
+import com.weatherwhere.weatherservice.domain.weathermid.WeatherMidEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

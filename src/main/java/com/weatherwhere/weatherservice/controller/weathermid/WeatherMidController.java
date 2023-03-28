@@ -1,19 +1,13 @@
-package com.weatherwhere.weatherservice.controller;
+package com.weatherwhere.weatherservice.controller.weathermid;
 
-import com.weatherwhere.weatherservice.domain.WeatherMidCompositeKey;
-import com.weatherwhere.weatherservice.dto.WeatherMidDTO;
-import com.weatherwhere.weatherservice.service.WeatherMidService;
-import com.weatherwhere.weatherservice.service.date.DateService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.weatherwhere.weatherservice.dto.weathermid.WeatherMidDTO;
+import com.weatherwhere.weatherservice.service.weathermid.WeatherMidService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.UnsupportedEncodingException;
-import java.net.*;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 
 @RestController

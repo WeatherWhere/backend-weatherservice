@@ -1,4 +1,4 @@
-package com.weatherwhere.weatherservice.dto;
+package com.weatherwhere.weatherservice.dto.weathershort;
 
 import lombok.Data;
 import lombok.Getter;

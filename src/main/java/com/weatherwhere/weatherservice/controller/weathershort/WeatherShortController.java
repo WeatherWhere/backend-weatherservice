@@ -1,8 +1,8 @@
-package com.weatherwhere.weatherservice.controller;
+package com.weatherwhere.weatherservice.controller.weathershort;
 
-import com.weatherwhere.weatherservice.dto.WeatherShortMainApiRequestDTO;
-import com.weatherwhere.weatherservice.dto.WeatherShortMainDTO;
-import com.weatherwhere.weatherservice.dto.WeatherShortRequestDTO;
+import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainApiRequestDTO;
+import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainDTO;
+import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortRequestDTO;
 import com.weatherwhere.weatherservice.service.weathershort.WeatherShortMainApiService;
 
 import com.weatherwhere.weatherservice.service.weathershort.WeatherShortMainService;

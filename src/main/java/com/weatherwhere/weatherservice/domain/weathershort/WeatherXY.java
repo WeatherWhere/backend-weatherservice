@@ -1,5 +1,7 @@
-package com.weatherwhere.weatherservice.domain;
+package com.weatherwhere.weatherservice.domain.weathershort;
 
+import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortMain;
+import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortSub;
 import jakarta.persistence.*;
 import lombok.*;
 
