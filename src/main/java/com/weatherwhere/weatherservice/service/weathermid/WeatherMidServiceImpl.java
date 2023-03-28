@@ -1,9 +1,9 @@
-package com.weatherwhere.weatherservice.service;
+package com.weatherwhere.weatherservice.service.weathermid;
 
-import com.weatherwhere.weatherservice.domain.WeatherMidCompositeKey;
-import com.weatherwhere.weatherservice.domain.WeatherMidEntity;
-import com.weatherwhere.weatherservice.dto.WeatherMidDTO;
-import com.weatherwhere.weatherservice.repository.WeatherMidRepository;
+import com.weatherwhere.weatherservice.domain.weathermid.WeatherMidCompositeKey;
+import com.weatherwhere.weatherservice.domain.weathermid.WeatherMidEntity;
+import com.weatherwhere.weatherservice.dto.weathermid.WeatherMidDTO;
+import com.weatherwhere.weatherservice.repository.weathermid.WeatherMidRepository;
 import com.weatherwhere.weatherservice.service.date.DateService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -70,7 +70,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
     public JSONObject getWeatherMidTa(String regId, String tmFc) throws ParseException {
         // 예보 구역코드와, 발표 시각은 변수어야 한다. - 매개변수로 받음 -
         String apiUrl = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidTa";
-        String serviceKey = "XiXQig6ZMt9WhFnz7w2pl78HnvEb4h5S1s3n51BpoJU5L064VCaM1iT8DUUrx8Qta9OPr3nnm88UtKukLSf0xA==";
+        String serviceKey = System.getProperty("WEATHER_MID_SERVICE_KEY");
         String dataType = "JSON";
         String numOfRows = "1000";
         String pageNo = "1";
@@ -86,7 +86,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
 
     public JSONObject getWeatherMidLandFcst(String regId, String tmFc) throws ParseException {
         String apiUrl = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst";
-        String serviceKey = "XiXQig6ZMt9WhFnz7w2pl78HnvEb4h5S1s3n51BpoJU5L064VCaM1iT8DUUrx8Qta9OPr3nnm88UtKukLSf0xA==";
+        String serviceKey = System.getProperty("WEATHER_MID_SERVICE_KEY");
         String dataType = "JSON";
         String numOfRows = "1000";
         String pageNo = "1";

@@ -1,8 +1,8 @@
-package com.weatherwhere.weatherservice.service;
+package com.weatherwhere.weatherservice.service.weathermid;
 
-import com.weatherwhere.weatherservice.domain.WeatherMidCompositeKey;
-import com.weatherwhere.weatherservice.domain.WeatherMidEntity;
-import com.weatherwhere.weatherservice.dto.WeatherMidDTO;
+import com.weatherwhere.weatherservice.domain.weathermid.WeatherMidCompositeKey;
+import com.weatherwhere.weatherservice.domain.weathermid.WeatherMidEntity;
+import com.weatherwhere.weatherservice.dto.weathermid.WeatherMidDTO;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 

@@ -1,6 +1,6 @@
 package com.weatherwhere.weatherservice;
 
-import com.weatherwhere.weatherservice.service.parse.ParseCSVService;
+import com.weatherwhere.weatherservice.service.weathermid.ParseCSVService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

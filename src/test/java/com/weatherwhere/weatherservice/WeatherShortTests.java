@@ -1,6 +1,6 @@
 package com.weatherwhere.weatherservice;
 
-import com.weatherwhere.weatherservice.dto.WeatherShortMainApiRequestDTO;
+import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainApiRequestDTO;
 import com.weatherwhere.weatherservice.service.weathershort.WeatherShortMainApiService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

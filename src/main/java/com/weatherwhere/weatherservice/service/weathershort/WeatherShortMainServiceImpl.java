@@ -2,14 +2,14 @@ package com.weatherwhere.weatherservice.service.weathershort;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.weatherwhere.weatherservice.domain.WeatherShortMain;
-import com.weatherwhere.weatherservice.domain.WeatherShortSub;
-import com.weatherwhere.weatherservice.domain.WeatherXY;
-import com.weatherwhere.weatherservice.dto.WeatherShortAllDTO;
-import com.weatherwhere.weatherservice.dto.WeatherShortRequestDTO;
-import com.weatherwhere.weatherservice.repository.WeatherShortMainRepository;
-import com.weatherwhere.weatherservice.repository.WeatherShortSubRepository;
-import com.weatherwhere.weatherservice.repository.WeatherXYRepository;
+import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortMain;
+import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortSub;
+import com.weatherwhere.weatherservice.domain.weathershort.WeatherXY;
+import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortAllDTO;
+import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortRequestDTO;
+import com.weatherwhere.weatherservice.repository.weathershort.WeatherShortMainRepository;
+import com.weatherwhere.weatherservice.repository.weathershort.WeatherShortSubRepository;
+import com.weatherwhere.weatherservice.repository.weathershort.WeatherXYRepository;
 import jakarta.transaction.Transactional;
 
 import lombok.extern.log4j.Log4j2;

@@ -1,6 +1,6 @@
-package com.weatherwhere.weatherservice.service.parse;
+package com.weatherwhere.weatherservice.service.weathermid;
 
-import com.weatherwhere.weatherservice.dto.parse.RegionCodeDTO;
+import com.weatherwhere.weatherservice.dto.weathermid.RegionCodeDTO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;

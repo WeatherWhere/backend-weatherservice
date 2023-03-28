@@ -1,11 +1,8 @@
-package com.weatherwhere.weatherservice.dto;
+package com.weatherwhere.weatherservice.dto.weathershort;
 
-import com.weatherwhere.weatherservice.domain.WeatherXY;
+import com.weatherwhere.weatherservice.domain.weathershort.WeatherXY;
 import lombok.*;
 import java.time.LocalDateTime;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Getter
 @AllArgsConstructor

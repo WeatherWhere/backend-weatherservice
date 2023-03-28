@@ -1,4 +1,4 @@
-package com.weatherwhere.weatherservice.dto;
+package com.weatherwhere.weatherservice.dto.weathermid;
 
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;

@@ -1,10 +1,10 @@
 package com.weatherwhere.weatherservice.service.weathershort;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.weatherwhere.weatherservice.domain.WeatherShortMain;
-import com.weatherwhere.weatherservice.domain.WeatherShortSub;
-import com.weatherwhere.weatherservice.dto.WeatherShortAllDTO;
-import com.weatherwhere.weatherservice.dto.WeatherShortRequestDTO;
+import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortMain;
+import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortSub;
+import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortAllDTO;
+import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortRequestDTO;
 
 import java.net.URISyntaxException;
 
