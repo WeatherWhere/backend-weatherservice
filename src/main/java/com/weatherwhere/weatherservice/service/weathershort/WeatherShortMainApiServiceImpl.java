@@ -1,12 +1,12 @@
 package com.weatherwhere.weatherservice.service.weathershort;
 
-import com.weatherwhere.weatherservice.domain.WeatherShortMain;
-import com.weatherwhere.weatherservice.domain.WeatherXY;
-import com.weatherwhere.weatherservice.dto.WeatherShortMainApiRequestDTO;
-import com.weatherwhere.weatherservice.dto.WeatherShortMainDTO;
-import com.weatherwhere.weatherservice.repository.WeatherShortMainRepository;
-import com.weatherwhere.weatherservice.repository.WeatherShortSubRepository;
-import com.weatherwhere.weatherservice.repository.WeatherXYRepository;
+import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortMain;
+import com.weatherwhere.weatherservice.domain.weathershort.WeatherXY;
+import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainApiRequestDTO;
+import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainDTO;
+import com.weatherwhere.weatherservice.repository.weathershort.WeatherShortMainRepository;
+import com.weatherwhere.weatherservice.repository.weathershort.WeatherShortSubRepository;
+import com.weatherwhere.weatherservice.repository.weathershort.WeatherXYRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;

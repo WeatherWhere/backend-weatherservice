@@ -1,10 +1,8 @@
 package com.weatherwhere.weatherservice;
 
-import com.weatherwhere.weatherservice.domain.WeatherMidCompositeKey;
-import com.weatherwhere.weatherservice.dto.WeatherMidDTO;
-import com.weatherwhere.weatherservice.dto.parse.RegionCodeDTO;
-import com.weatherwhere.weatherservice.service.WeatherMidService;
-import com.weatherwhere.weatherservice.service.parse.ParseCSVService;
+import com.weatherwhere.weatherservice.dto.weathermid.RegionCodeDTO;
+import com.weatherwhere.weatherservice.service.weathermid.WeatherMidService;
+import com.weatherwhere.weatherservice.service.weathermid.ParseCSVService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

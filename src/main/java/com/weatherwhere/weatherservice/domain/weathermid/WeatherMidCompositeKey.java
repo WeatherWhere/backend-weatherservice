@@ -1,4 +1,4 @@
-package com.weatherwhere.weatherservice.domain;
+package com.weatherwhere.weatherservice.domain.weathermid;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

@@ -1,4 +1,4 @@
-package com.weatherwhere.weatherservice.dto.parse;
+package com.weatherwhere.weatherservice.dto.weathermid;
 
 
 import lombok.AllArgsConstructor;

@@ -1,7 +1,8 @@
-package com.weatherwhere.weatherservice.domain;
+package com.weatherwhere.weatherservice.domain.weathershort;
 
 
-import com.weatherwhere.weatherservice.dto.WeatherShortAllDTO;
+import com.weatherwhere.weatherservice.domain.BaseEntity;
+import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortAllDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;

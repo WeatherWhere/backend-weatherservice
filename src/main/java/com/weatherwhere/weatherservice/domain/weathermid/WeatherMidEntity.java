@@ -1,5 +1,7 @@
-package com.weatherwhere.weatherservice.domain;
+package com.weatherwhere.weatherservice.domain.weathermid;
 
+import com.weatherwhere.weatherservice.domain.BaseEntity;
+import com.weatherwhere.weatherservice.domain.weathermid.WeatherMidCompositeKey;
 import jakarta.persistence.*;
 import lombok.*;
 

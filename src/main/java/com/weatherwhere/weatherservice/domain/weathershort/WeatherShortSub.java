@@ -1,12 +1,10 @@
-package com.weatherwhere.weatherservice.domain;
+package com.weatherwhere.weatherservice.domain.weathershort;
 
-import com.weatherwhere.weatherservice.dto.WeatherShortAllDTO;
+import com.weatherwhere.weatherservice.domain.BaseEntity;
+import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortAllDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Entity
 @Table(name="weather_short_term_sub", schema = "weather",
@@ -16,7 +14,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @Getter
 @ToString(exclude = "weatherXY")
-public class WeatherShortSub extends BaseEntity{
+public class WeatherShortSub extends BaseEntity {
 
     //identity방식으로 아이디 1씩 자동증가
     @Id
