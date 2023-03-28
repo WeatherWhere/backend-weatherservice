@@ -22,6 +22,7 @@ def DB_URL = env.DB_URL
 def DB_USERNAME = env.DB_USERNAME
 def DB_PASSWORD = env.DB_PASSWORD
 def DB_NAME = env.DB_NAME
+def WEATHER_SHORT_SERVICE_KEY = env.WEATHER_SHORT_SERVICE_KEY
 
 // application plugin에서 사용하는 설정
 run {
@@ -68,6 +69,7 @@ tasks.named('test') {
     systemProperty 'DB_URL', DB_URL
     systemProperty 'DB_USERNAME', DB_USERNAME
     systemProperty 'DB_PASSWORD', DB_PASSWORD
+    systemProperty 'WEATHER_SHORT_SERVICE_KEY', WEATHER_SHORT_SERVICE_KEY
 }
 
 configurations {

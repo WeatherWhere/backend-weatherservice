@@ -12,14 +12,8 @@ import lombok.*;
 @ToString
 public class WeatherMidEntity extends BaseEntity {
     // 중기 예보 식별자
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "mid_term_forecast_id")
-    private Long midTermForecastId;
-
-    // 예보 날짜
-    @Column(name = "base_date")
-    private String baseTime;
+    @EmbeddedId
+    private WeatherMidCompositeKey id;
 
     // 일 최저기온
     @Column(name = "tmn")
@@ -28,10 +22,6 @@ public class WeatherMidEntity extends BaseEntity {
     // 일 최고기온
     @Column(name = "tmx")
     private Long tmx;
-
-    // 예보 구역 코드
-    @Column(name = "region_code")
-    private String regionCode;
 
     // 오전 강수 확률
     @Column(name = "r_am")

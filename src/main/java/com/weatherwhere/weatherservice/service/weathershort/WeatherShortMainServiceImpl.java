@@ -1,4 +1,4 @@
-package com.weatherwhere.weatherservice.service;
+package com.weatherwhere.weatherservice.service.weathershort;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -6,26 +6,29 @@ import com.weatherwhere.weatherservice.domain.WeatherShortMain;
 import com.weatherwhere.weatherservice.domain.WeatherShortSub;
 import com.weatherwhere.weatherservice.domain.WeatherXY;
 import com.weatherwhere.weatherservice.dto.WeatherShortAllDTO;
-import com.weatherwhere.weatherservice.dto.WeatherShortMainDTO;
+import com.weatherwhere.weatherservice.dto.WeatherShortRequestDTO;
 import com.weatherwhere.weatherservice.repository.WeatherShortMainRepository;
 import com.weatherwhere.weatherservice.repository.WeatherShortSubRepository;
 import com.weatherwhere.weatherservice.repository.WeatherXYRepository;
 import jakarta.transaction.Transactional;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.JsonNode;
 
-import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
 @Transactional
+@Log4j2
 public class WeatherShortMainServiceImpl implements WeatherShortMainService {
     @Autowired
     private WeatherShortMainRepository weatherShortMainRepository;
@@ -34,7 +37,7 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
     private WeatherShortSubRepository weatherShortSubRepository;
 
     //공공데이터 api로부터 json값 받아와서 파싱하는 메서드
-    private JsonNode weatherShortJsonParsing(String nx, String ny, String baseDate, String baseTime) throws JsonProcessingException, URISyntaxException {
+    private JsonNode weatherShortJsonParsing(WeatherShortRequestDTO weatherShortRequestDTO) throws JsonProcessingException, URISyntaxException {
         //http 통신방식 = rest template
         RestTemplate restTemplate = new RestTemplate();
 
@@ -46,7 +49,9 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
         String pageNo = "1";
 
         String url = String.format("%s?serviceKey=%s&pageNo=%s&numOfRows=%s&dataType=%s&base_date=%s&base_time=%s&nx=%s&ny=%s",
-                apiUrl, serviceKey, pageNo, numOfRows, dataType, baseDate, baseTime, nx, ny);
+                apiUrl, serviceKey, pageNo, numOfRows, dataType,
+                weatherShortRequestDTO.getBaseDate(), weatherShortRequestDTO.getBaseTime(),
+                weatherShortRequestDTO.getNx(), weatherShortRequestDTO.getNy());
 
         //rest template이 String 문자열을 한 번 더 인코딩 해주는 걸 방지하기 위해 url 객체로 넣음
         URI endUrl = new URI(url);
@@ -67,9 +72,9 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
     //파싱한 json값을 dto리스트에 저장하는 메서드
     //override를 안해도 오류가 발생하지 않지만 해야 컴파일할떄 버그를 쉽게 찾을 수 있음.
     //impl의 소스코드와 연결되어 있다는 걸 뜻함.
-    private List<WeatherShortAllDTO> getWeatherShortDto(String nx, String ny, String baseDate, String baseTime) throws URISyntaxException, JsonProcessingException {
+    private List<WeatherShortAllDTO> getWeatherShortDto(WeatherShortRequestDTO weatherShortRequestDTO) throws URISyntaxException, JsonProcessingException {
 
-        List<WeatherShortAllDTO> weatherShortAllDTOList = StreamSupport.stream(weatherShortJsonParsing(nx, ny, baseDate, baseTime).spliterator(), false)
+        List<WeatherShortAllDTO> weatherShortAllDTOList = StreamSupport.stream(weatherShortJsonParsing(weatherShortRequestDTO).spliterator(), false)
                 //예보날짜+시간을 key값으로 함
                 .collect(Collectors.groupingBy(time -> time.get("fcstTime").asText() + time.get("fcstDate").asText()))
                 .values().stream()
@@ -77,14 +82,15 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
                 .sorted(Comparator.comparing((List<JsonNode> timeList) -> timeList.get(0).get("fcstDate").asText())
                         .thenComparing((List<JsonNode> timeList) -> timeList.get(0).get("fcstTime").asText()))
                 .map(timeList -> {
-                    WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(Integer.parseInt(nx), Integer.parseInt(ny));
+                    WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(weatherShortRequestDTO.getNx(), weatherShortRequestDTO.getNy());
                     JsonNode time = timeList.get(0);
                     WeatherShortAllDTO dto = new WeatherShortAllDTO();
                     dto.setWeatherXY(weatherXY);
-                    dto.setBaseDate(baseDate);
-                    dto.setBaseTime(baseTime);
-                    dto.setFcstDate(time.get("fcstDate").asText());
-                    dto.setFcstTime(time.get("fcstTime").asText());
+                    dto.setBaseDate(weatherShortRequestDTO.getBaseDate());
+                    dto.setBaseTime(weatherShortRequestDTO.getBaseTime());
+                    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+                    dto.setFcstDateTime(LocalDateTime.parse(time.get("fcstDate").asText()+time.get("fcstTime").asText(), dateFormatter));
+
                     for (JsonNode categoryNode : timeList) {
                         String category = categoryNode.get("category").asText();
                         switch (category) {
@@ -143,40 +149,41 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
     //dto리스트를 entity리스트로 변환한 뒤 db에 save하는 메서드
     //컨트롤러에서 최종적으로 이 service를 호출함.
     @Override
-    public String getWeatherShortEntity(String nx, String ny, String baseDate, String baseTime) throws URISyntaxException, JsonProcessingException {
+    public String getWeatherShortEntity(WeatherShortRequestDTO weatherShortRequestDTO) throws URISyntaxException, JsonProcessingException {
         //dto리스트를 entity리스트로 변환하는 부분
         List<WeatherShortMain> mainEntityList = new ArrayList<>();
         List<WeatherShortSub> subEntityList = new ArrayList<>();
-        for (WeatherShortAllDTO dto : getWeatherShortDto(nx, ny, baseDate, baseTime)) {
-            WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(Integer.parseInt(nx), Integer.parseInt(ny));
-            //엔티티에 fcstdate와 fcsttime이 동일한 값이 존재하는지 판별하는 메서                mainExistingEntity.setWeatherXY(weatherXY);드
-            WeatherShortMain mainExistingEntity = weatherShortMainRepository.findByFcstDateAndFcstTime(dto.getFcstDate(), dto.getFcstTime());
-            //엔티티에 fcstdate와 fcsttime이 동일한 값이 존재하는지 판별하는 메서드
-            WeatherShortSub subExistingEntity = weatherShortSubRepository.findByFcstDateAndFcstTime(dto.getFcstDate(), dto.getFcstTime());
-            //해당하는 fcsttime+fcstdate가 존재할 경우 엔티티 업데이트
-            if (mainExistingEntity != null || subExistingEntity != null) {
-                mainExistingEntity.update(dto);
-                mainExistingEntity.setWeatherXY(weatherXY);
-                subExistingEntity.update(dto);
-                subExistingEntity.setWeatherXY(weatherXY);
-                mainEntityList.add(mainExistingEntity);
-                subEntityList.add(subExistingEntity);
-            } else { //존재하지 않을 경우 엔티티 새로 생성
-                WeatherShortMain mainEntity = mainDtoToEntity(dto);
-                mainEntity.setWeatherXY(weatherXY);
-                WeatherShortSub subEntity = subDtoToEntity(dto);
-                subEntity.setWeatherXY(weatherXY);
-                mainEntityList.add(mainEntity);
-                subEntityList.add(subEntity);
+        Integer[] nxList = {53, 54, 54, 54};
+        Integer[] nyList = {125, 123, 126, 129};
 
+        for (int i = 0; i < nxList.length; i++) {
+            weatherShortRequestDTO.setNx(nxList[i]);
+            weatherShortRequestDTO.setNy(nyList[i]);
+
+            for (WeatherShortAllDTO dto : getWeatherShortDto(weatherShortRequestDTO)) {
+                //엔티티에 fcstdate, fcsttime, 격자x,y값이 동일한 엔티티가 존재하는지 판별하는 메서드
+                WeatherShortMain mainExistingEntity = weatherShortMainRepository.findByFcstDateTimeAndWeatherXY(dto.getFcstDateTime(), dto.getWeatherXY());
+                WeatherShortSub subExistingEntity = weatherShortSubRepository.findByFcstDateTimeAndWeatherXY(dto.getFcstDateTime(), dto.getWeatherXY());
+                if (mainExistingEntity != null) {
+                    mainExistingEntity.update(dto);
+                    subExistingEntity.update(dto);
+                    mainEntityList.add(mainExistingEntity);
+                    subEntityList.add(subExistingEntity);
+                } else { //존재하지 않을 경우 엔티티 새로 생성
+                    WeatherShortMain mainEntity = mainDtoToEntity(dto);
+                    WeatherShortSub subEntity = subDtoToEntity(dto);
+                    mainEntityList.add(mainEntity);
+                    subEntityList.add(subEntity);
+
+                }
             }
-        }
-        //db에 저장
-        weatherShortMainRepository.saveAll(mainEntityList);
-        weatherShortSubRepository.saveAll(subEntityList);
-        //System.out.println(entityList);
 
+            weatherShortMainRepository.saveAll(mainEntityList);
+            weatherShortSubRepository.saveAll(subEntityList);
+
+        }
         return "성공";
+
     }
 
 
