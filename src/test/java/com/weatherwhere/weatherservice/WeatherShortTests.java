@@ -55,7 +55,7 @@ public class WeatherShortTests {
     @Test
     @DisplayName("nx,ny별 단기예보 데이터 불러오기 테스트")
     void testNxNyRepeat() throws Exception {
-        String baseDate = "20230328";
+        String baseDate = "20220329";
         String baseTime = "0500";
         MvcResult result = mockMvc.perform(get("/weather/save-weather-short-main")
                         .param("baseDate", baseDate)
