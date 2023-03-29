@@ -29,11 +29,11 @@ public class WeatherXY {
     private Integer weatherY;
 
 
-    @OneToMany(mappedBy = "weatherXY")
+ /*   @OneToMany(mappedBy = "weatherXY")
     private List<WeatherShortMain> weatherShortMainList;
 
     @OneToMany(mappedBy = "weatherXY")
     private List<WeatherShortSub> weatherShortSubList;
-
+*/
 
 }

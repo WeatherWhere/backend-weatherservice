@@ -88,14 +88,20 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
     public List<WeatherShortMainDTO> getWeatherShortMainData(WeatherShortMainApiRequestDTO requestDTO) {
         getGridXY(requestDTO);
         List<WeatherShortMainDTO> mainDataList = new ArrayList<>();
-        for(int i = 0; i<30; i++) {
-            LocalDateTime localDateTime = LocalDateTime.of(2023, 3, 25, 6, 0).plusHours(i);
-                        requestDTO.setFcstDateTime(localDateTime);
+        try {
             WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(requestDTO.getNx(), requestDTO.getNy());
-            WeatherShortMain weatherShortMain = weatherShortMainRepository.findByFcstDateTimeAndWeatherXY(requestDTO.getFcstDateTime(), weatherXY);
-            mainDataList.add(entityToDTO(weatherShortMain));
+            for (int i = 0; i < 12; i++) {
+                //여기 실시간 시간(분 없애기) 으로 수정하기
+                LocalDateTime localDateTime = LocalDateTime.of(2023, 3, 29, 6, 0).plusHours(i);
+                System.out.println(localDateTime);
+                requestDTO.setFcstDateTime(localDateTime);
+                WeatherShortMain weatherShortMain = weatherShortMainRepository.findByFcstDateTimeAndWeatherXY(requestDTO.getFcstDateTime(), weatherXY);
+                mainDataList.add(entityToDTO(weatherShortMain));
+            }
+            return mainDataList;
+        }catch (NullPointerException e){
+            throw new NullPointerException();
         }
-        return mainDataList;
     }
 
 }
