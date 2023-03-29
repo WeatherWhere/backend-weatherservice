@@ -24,18 +24,18 @@ public class WeatherShortController {
 
 
     //getmapping에는 requestbody 사용 x
-    @GetMapping("/save-weather-short-main")
-    public String weatherShortMainEntityList(@ModelAttribute WeatherShortRequestDTO weatherShortRequestDTO) throws IOException, URISyntaxException, ParseException {
+    @GetMapping("/forecast/short")
+    public String weatherShortMainEntityList(@ModelAttribute WeatherShortRequestDTO weatherShortRequestDTO) throws Exception {
 /*        String nx = "69";
         String ny = "100";
         String baseDate = "20230323";
         String baseTime = "1700";*/
 
-        return weatherShortMainService.getWeatherShortEntity(weatherShortRequestDTO);
+        return weatherShortMainService.saveWeatherShortEntity(weatherShortRequestDTO);
     }
 
     //위경도 받아서 격자 x,y로 변환한 뒤 해당 x,y에 대한 단기예보 데이터 전송하는 api
-    @GetMapping("/weather-short-main-api")
+    @GetMapping("/api/short/main")
     public List<WeatherShortMainDTO> getWeatherShortMainResponse (@ModelAttribute WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO){
         return weatherShortMainApiService.getWeatherShortMainData(weatherShortMainApiRequestDTO);
 
