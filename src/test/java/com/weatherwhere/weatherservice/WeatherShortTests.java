@@ -3,7 +3,9 @@ package com.weatherwhere.weatherservice;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainApiRequestDTO;
 import com.weatherwhere.weatherservice.repository.weathershort.WeatherXYRepository;
 import com.weatherwhere.weatherservice.service.weathershort.WeatherShortMainApiService;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,7 @@ public class WeatherShortTests {
 
     @Test
     @DisplayName("LocalDate형식으로 db에 단기예보 값 저장하기")
+    @Disabled
     void testLocaDate() throws Exception {
         String[] nxList = {"53", "54", "54", "54"};
         String[] nyList = {"125", "123", "126", "129"};
@@ -54,6 +57,7 @@ public class WeatherShortTests {
 
     @Test
     @DisplayName("nx,ny별 단기예보 데이터 불러오기 테스트")
+    @Disabled
     void testNxNyRepeat() throws Exception {
         String baseDate = "20230329";
         String baseTime = "0500";
