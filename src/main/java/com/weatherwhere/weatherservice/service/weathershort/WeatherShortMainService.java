@@ -13,7 +13,7 @@ public interface WeatherShortMainService {
 
     //dto리스트를 entity리스트로 변환한 뒤 db에 save하는 메서드
     //컨트롤러에서 최종적으로 이 service를 호출함.
-    String getWeatherShortEntity(WeatherShortRequestDTO weatherShortRequestDTO) throws Exception;
+    String saveWeatherShortEntity(WeatherShortRequestDTO weatherShortRequestDTO) throws Exception;
 
     //String readWeatherXYLocation() throws IOException;
 

@@ -40,7 +40,7 @@ public class WeatherShortTests {
         String baseTime = "0500";
 
         for (int i = 0; i < nxList.length; i++) {
-            MvcResult result = mockMvc.perform(get("/weather/save-weather-short-main")
+            MvcResult result = mockMvc.perform(get("/weather/forecast/short")
                             .param("nx", nxList[i])
                             .param("ny", nyList[i])
                             .param("baseDate", baseDate)
@@ -55,9 +55,9 @@ public class WeatherShortTests {
     @Test
     @DisplayName("nx,ny별 단기예보 데이터 불러오기 테스트")
     void testNxNyRepeat() throws Exception {
-        String baseDate = "20220329";
+        String baseDate = "20230329";
         String baseTime = "0500";
-        MvcResult result = mockMvc.perform(get("/weather/save-weather-short-main")
+        MvcResult result = mockMvc.perform(get("/weather/forecast/short")
                         .param("baseDate", baseDate)
                         .param("baseTime", baseTime))
                 .andExpect(status().isOk())

@@ -31,7 +31,7 @@ public class WeatherShortController {
         String baseDate = "20230323";
         String baseTime = "1700";*/
 
-        return weatherShortMainService.getWeatherShortEntity(weatherShortRequestDTO);
+        return weatherShortMainService.saveWeatherShortEntity(weatherShortRequestDTO);
     }
 
     //위경도 받아서 격자 x,y로 변환한 뒤 해당 x,y에 대한 단기예보 데이터 전송하는 api

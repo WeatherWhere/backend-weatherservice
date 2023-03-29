@@ -72,9 +72,10 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
             //item 값만 가져와서 itemNode에 저장
             JsonNode itemNode = rootNode.path("response").path("body").path("items").path("item");
             Integer resultCode = rootNode.path("response").path("header").get("resultCode").asInt();
-            if (resultCode == 2) {
+            if (resultCode == 00) {
                 return itemNode;
             } else {
+                System.out.println("resultcode"+resultCode);
                 throw new Exception("올바르지 않은 요청입니다.");
             }
         }catch (JsonParseException e){
@@ -103,12 +104,14 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
                     .map(timeList -> {
                         WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(weatherShortRequestDTO.getNx(), weatherShortRequestDTO.getNy());
                         JsonNode time = timeList.get(0);
-                        WeatherShortAllDTO dto = new WeatherShortAllDTO();
-                        dto.setWeatherXY(weatherXY);
-                        dto.setBaseDate(weatherShortRequestDTO.getBaseDate());
-                        dto.setBaseTime(weatherShortRequestDTO.getBaseTime());
                         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
-                        dto.setFcstDateTime(LocalDateTime.parse(time.get("fcstDate").asText()+time.get("fcstTime").asText(), dateFormatter));
+
+                        WeatherShortAllDTO dto = WeatherShortAllDTO.builder()
+                                .baseDate(weatherShortRequestDTO.getBaseDate())
+                                .baseTime(weatherShortRequestDTO.getBaseTime())
+                                .weatherXY(weatherXY)
+                                .fcstDateTime(LocalDateTime.parse(time.get("fcstDate").asText()+time.get("fcstTime").asText(), dateFormatter))
+                                .build();
 
                         for (JsonNode categoryNode : timeList) {
                             String category = categoryNode.get("category").asText();
@@ -172,7 +175,7 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
     //dto리스트를 entity리스트로 변환한 뒤 db에 save하는 메서드
     //컨트롤러에서 최종적으로 이 service를 호출함.
     @Override
-    public String getWeatherShortEntity(WeatherShortRequestDTO weatherShortRequestDTO) throws Exception {
+    public String saveWeatherShortEntity(WeatherShortRequestDTO weatherShortRequestDTO) throws Exception {
         //dto리스트를 entity리스트로 변환하는 부분
         List<WeatherShortMain> mainEntityList = new ArrayList<>();
         List<WeatherShortSub> subEntityList = new ArrayList<>();
