@@ -1,9 +1,11 @@
 package com.weatherwhere.weatherservice.service.weathershort;
 
 import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortMain;
+import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortSub;
 import com.weatherwhere.weatherservice.domain.weathershort.WeatherXY;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainApiRequestDTO;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainDTO;
+import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortSubDTO;
 import com.weatherwhere.weatherservice.repository.weathershort.WeatherShortMainRepository;
 import com.weatherwhere.weatherservice.repository.weathershort.WeatherShortSubRepository;
 import com.weatherwhere.weatherservice.repository.weathershort.WeatherXYRepository;
@@ -103,5 +105,28 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
             throw new NullPointerException();
         }
     }
+    @Override
+    //단기예보 서브 데이터 반환하는 서비스
+    public List<WeatherShortSubDTO> getWeatherShortSubData(WeatherShortMainApiRequestDTO requestDTO) {
+        getGridXY(requestDTO);
+        List<WeatherShortSubDTO> subDataList = new ArrayList<>();
+        try {
+            WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(requestDTO.getNx(), requestDTO.getNy());
+            for (int i = 0; i < 12; i++) {
+                //여기 실시간 시간(분 없애기) 으로 수정하기
+                LocalDateTime localDateTime = LocalDateTime.of(2023, 3, 29, 6, 0).plusHours(i);
+                System.out.println(localDateTime);
+                requestDTO.setFcstDateTime(localDateTime);
+                WeatherShortSub weatherShortSub = weatherShortSubRepository.findByFcstDateTimeAndWeatherXY(requestDTO.getFcstDateTime(), weatherXY);
+                subDataList.add(subEntityToDTO(weatherShortSub));
+            }
+            return subDataList;
+        }catch (NullPointerException e){
+            throw new NullPointerException();
+        }
+    }
+
+
+
 
 }

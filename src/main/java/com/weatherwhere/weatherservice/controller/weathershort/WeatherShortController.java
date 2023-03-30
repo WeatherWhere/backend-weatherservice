@@ -3,6 +3,7 @@ package com.weatherwhere.weatherservice.controller.weathershort;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainApiRequestDTO;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainDTO;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortRequestDTO;
+import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortSubDTO;
 import com.weatherwhere.weatherservice.service.weathershort.WeatherShortMainApiService;
 
 import com.weatherwhere.weatherservice.service.weathershort.WeatherShortMainService;
@@ -34,14 +35,19 @@ public class WeatherShortController {
         return weatherShortMainService.saveWeatherShortEntity(weatherShortRequestDTO);
     }
 
-    //위경도 받아서 격자 x,y로 변환한 뒤 해당 x,y에 대한 단기예보 데이터 전송하는 api
-    @GetMapping("/api/short/main")
+    //단기예보 메인 api
+    @GetMapping("/forecast/short/main")
     public List<WeatherShortMainDTO> getWeatherShortMainResponse (@ModelAttribute WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO){
         return weatherShortMainApiService.getWeatherShortMainData(weatherShortMainApiRequestDTO);
 
     }
 
+    //단기예보 서브 api
+    @GetMapping("/forecast/short/sub")
+    public List<WeatherShortSubDTO> getWeatherShortSubResponse (@ModelAttribute WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO){
+        return weatherShortMainApiService.getWeatherShortSubData(weatherShortMainApiRequestDTO);
 
+    }
 
 
 

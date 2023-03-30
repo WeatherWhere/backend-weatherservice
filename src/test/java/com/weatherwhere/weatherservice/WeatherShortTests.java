@@ -79,7 +79,7 @@ public class WeatherShortTests {
     }
 
     @Test
-    @DisplayName("nx, ny에 해당하는 데이터 30시간씩 추출하는 테스트")
+    @DisplayName("단기에보 메인 api 테스트")
     void testGetMainData() {
         WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO = new WeatherShortMainApiRequestDTO();
         weatherShortMainApiRequestDTO.setLocationX(37.489325);
@@ -88,6 +88,14 @@ public class WeatherShortTests {
         System.out.println(weatherShortMainApiService.getWeatherShortMainData(weatherShortMainApiRequestDTO));
     }
 
+    @Test
+    @DisplayName("단기에보 서브 api 테스트")
+    void testGetSubData() {
+        WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO = new WeatherShortMainApiRequestDTO();
+        weatherShortMainApiRequestDTO.setLocationX(37.489325);
+        weatherShortMainApiRequestDTO.setLocationY(126.554234);
+        System.out.println(weatherShortMainApiService.getWeatherShortSubData(weatherShortMainApiRequestDTO));
+    }
 
     @Test
     @DisplayName("테이블에서 모든 nx, ny값 불러오기")
