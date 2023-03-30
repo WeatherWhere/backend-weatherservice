@@ -115,8 +115,10 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
             for (int i = 0; i < 12; i++) {
                 //여기 실시간 시간(분 없애기) 으로 수정하기
                 LocalDateTime localDateTime = LocalDateTime.of(2023, 3, 29, 6, 0).plusHours(i);
-                System.out.println(localDateTime);
-                requestDTO.setFcstDateTime(localDateTime);
+                //분, 초는 0으로 만들어서 현재 시간 찍기
+                LocalDateTime now = LocalDateTime.now();
+                LocalDateTime ldt = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), 0);
+                requestDTO.setFcstDateTime(ldt);
                 WeatherShortSub weatherShortSub = weatherShortSubRepository.findByFcstDateTimeAndWeatherXY(requestDTO.getFcstDateTime(), weatherXY);
                 subDataList.add(subEntityToDTO(weatherShortSub));
             }
