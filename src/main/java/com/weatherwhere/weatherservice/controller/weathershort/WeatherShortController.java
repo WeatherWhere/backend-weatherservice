@@ -31,25 +31,28 @@ public class WeatherShortController {
         String ny = "100";
         String baseDate = "20230323";
         String baseTime = "1700";*/
+        try {
+            return weatherShortMainService.saveWeatherShortEntity(weatherShortRequestDTO);
 
-        return weatherShortMainService.saveWeatherShortEntity(weatherShortRequestDTO);
+        } catch (Exception e) {
+            throw new Exception(e);
+
+        }
     }
 
     //단기예보 메인 api
     @GetMapping("/forecast/short/main")
-    public List<WeatherShortMainDTO> getWeatherShortMainResponse (@ModelAttribute WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO){
+    public List<WeatherShortMainDTO> getWeatherShortMainResponse(@ModelAttribute WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO) {
         return weatherShortMainApiService.getWeatherShortMainData(weatherShortMainApiRequestDTO);
 
     }
 
     //단기예보 서브 api
     @GetMapping("/forecast/short/sub")
-    public List<WeatherShortSubDTO> getWeatherShortSubResponse (@ModelAttribute WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO){
+    public List<WeatherShortSubDTO> getWeatherShortSubResponse(@ModelAttribute WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO) {
         return weatherShortMainApiService.getWeatherShortSubData(weatherShortMainApiRequestDTO);
 
     }
-
-
 
 
 }
