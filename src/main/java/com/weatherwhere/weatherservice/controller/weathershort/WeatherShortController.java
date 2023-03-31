@@ -9,6 +9,8 @@ import com.weatherwhere.weatherservice.service.weathershort.WeatherShortMainApiS
 import com.weatherwhere.weatherservice.service.weathershort.WeatherShortMainService;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.parser.ParseException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -42,16 +44,24 @@ public class WeatherShortController {
 
     //단기예보 메인 api
     @GetMapping("/forecast/short/main")
-    public List<WeatherShortMainDTO> getWeatherShortMainResponse(@ModelAttribute WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO) {
-        return weatherShortMainApiService.getWeatherShortMainData(weatherShortMainApiRequestDTO);
-
+    public ResponseEntity<List<WeatherShortMainDTO>> getWeatherShortMainResponse(@ModelAttribute WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO) {
+        try {
+            List<WeatherShortMainDTO> mainDTOList = weatherShortMainApiService.getWeatherShortMainData(weatherShortMainApiRequestDTO);
+            return new ResponseEntity<>(mainDTOList, HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     //단기예보 서브 api
     @GetMapping("/forecast/short/sub")
-    public List<WeatherShortSubDTO> getWeatherShortSubResponse(@ModelAttribute WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO) {
-        return weatherShortMainApiService.getWeatherShortSubData(weatherShortMainApiRequestDTO);
-
+    public ResponseEntity<List<WeatherShortSubDTO>> getWeatherShortSubResponse(@ModelAttribute WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO) {
+        try {
+            List<WeatherShortSubDTO> subDTOList = weatherShortMainApiService.getWeatherShortSubData(weatherShortMainApiRequestDTO);
+            return new ResponseEntity<>(subDTOList, HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 

@@ -10,12 +10,11 @@ import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortSubDTO;
 import java.util.List;
 
 public interface WeatherShortMainApiService {
-    WeatherShortMainApiRequestDTO getGridXY(WeatherShortMainApiRequestDTO requestDTO);
     //단기예보 메인 데이터 반환하는 서비스
-    List<WeatherShortMainDTO> getWeatherShortMainData(WeatherShortMainApiRequestDTO requestDTO);
+    List<WeatherShortMainDTO> getWeatherShortMainData(WeatherShortMainApiRequestDTO requestDTO) throws Exception;
 
     //단기예보 서브 데이터 반환하는 서비스
-    List<WeatherShortSubDTO> getWeatherShortSubData(WeatherShortMainApiRequestDTO requestDTO);
+    List<WeatherShortSubDTO> getWeatherShortSubData(WeatherShortMainApiRequestDTO requestDTO) throws Exception;
 
     default WeatherShortMainDTO entityToDTO(WeatherShortMain entity) {
         WeatherShortMainDTO dto = WeatherShortMainDTO.builder()

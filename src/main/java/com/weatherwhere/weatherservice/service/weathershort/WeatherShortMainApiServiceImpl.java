@@ -34,7 +34,7 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
     /**
      * 위경도 좌표로 격자 X Y 좌표 구하기
      */
-    public WeatherShortMainApiRequestDTO getGridXY(WeatherShortMainApiRequestDTO requestDTO) {
+    private WeatherShortMainApiRequestDTO getGridXY(WeatherShortMainApiRequestDTO requestDTO) throws Exception {
 
         double RE = 6371.00877; // 지구 반경(km)
         double GRID = 5.0; // 격자 간격(km)
@@ -45,41 +45,37 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
         double XO = 43; // 기준점 X좌표(GRID)
         double YO = 136; // 기1준점 Y좌표(GRID)
 
-        try {
-            double DEGRAD = Math.PI / 180.0;
-            // double RADDEG = 180.0 / Math.PI;
-            double re = RE / GRID;
-            double slat1 = SLAT1 * DEGRAD;
-            double slat2 = SLAT2 * DEGRAD;
-            double olon = OLON * DEGRAD;
-            double olat = OLAT * DEGRAD;
+        double DEGRAD = Math.PI / 180.0;
+        // double RADDEG = 180.0 / Math.PI;
+        double re = RE / GRID;
+        double slat1 = SLAT1 * DEGRAD;
+        double slat2 = SLAT2 * DEGRAD;
+        double olon = OLON * DEGRAD;
+        double olat = OLAT * DEGRAD;
 
-            double sn = Math.tan(Math.PI * 0.25 + slat2 * 0.5) / Math.tan(Math.PI * 0.25 + slat1 * 0.5);
-            sn = Math.log(Math.cos(slat1) / Math.cos(slat2)) / Math.log(sn);
-            double sf = Math.tan(Math.PI * 0.25 + slat1 * 0.5);
-            sf = Math.pow(sf, sn) * Math.cos(slat1) / sn;
-            double ro = Math.tan(Math.PI * 0.25 + olat * 0.5);
-            ro = re * sf / Math.pow(ro, sn);
-            double ra = Math.tan(Math.PI * 0.25 + (requestDTO.getLocationX()) * DEGRAD * 0.5);
-            ra = re * sf / Math.pow(ra, sn);
-            double theta = requestDTO.getLocationY() * DEGRAD - olon;
+        double sn = Math.tan(Math.PI * 0.25 + slat2 * 0.5) / Math.tan(Math.PI * 0.25 + slat1 * 0.5);
+        sn = Math.log(Math.cos(slat1) / Math.cos(slat2)) / Math.log(sn);
+        double sf = Math.tan(Math.PI * 0.25 + slat1 * 0.5);
+        sf = Math.pow(sf, sn) * Math.cos(slat1) / sn;
+        double ro = Math.tan(Math.PI * 0.25 + olat * 0.5);
+        ro = re * sf / Math.pow(ro, sn);
+        double ra = Math.tan(Math.PI * 0.25 + (requestDTO.getLocationX()) * DEGRAD * 0.5);
+        ra = re * sf / Math.pow(ra, sn);
+        double theta = requestDTO.getLocationY() * DEGRAD - olon;
 
-            if (theta > Math.PI)
-                theta -= 2.0 * Math.PI;
+        if (theta > Math.PI)
+            theta -= 2.0 * Math.PI;
 
-            if (theta < -Math.PI)
-                theta += 2.0 * Math.PI;
+        if (theta < -Math.PI)
+            theta += 2.0 * Math.PI;
 
-            theta *= sn;
+        theta *= sn;
 
-            requestDTO.setNx((int)Math.floor(ra * Math.sin(theta) + XO + 0.5));
-            requestDTO.setNy((int)Math.floor(ro - ra * Math.cos(theta) + YO + 0.5));
+        requestDTO.setNx((int) Math.floor(ra * Math.sin(theta) + XO + 0.5));
+        requestDTO.setNy((int) Math.floor(ro - ra * Math.cos(theta) + YO + 0.5));
 
-            log.info("======= XY : " + requestDTO);
+        log.info("======= XY : " + requestDTO);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         return requestDTO;
 
@@ -87,48 +83,53 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
 
     @Override
     //단기예보 메인 데이터 반환하는 서비스
-    public List<WeatherShortMainDTO> getWeatherShortMainData(WeatherShortMainApiRequestDTO requestDTO) {
-        getGridXY(requestDTO);
-        List<WeatherShortMainDTO> mainDataList = new ArrayList<>();
+    public List<WeatherShortMainDTO> getWeatherShortMainData(WeatherShortMainApiRequestDTO requestDTO) throws Exception {
         try {
+            getGridXY(requestDTO);
+            List<WeatherShortMainDTO> mainDataList = new ArrayList<>();
             WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(requestDTO.getNx(), requestDTO.getNy());
             for (int i = 0; i < 12; i++) {
                 //여기 실시간 시간(분 없애기) 으로 수정하기
                 LocalDateTime localDateTime = LocalDateTime.of(2023, 3, 29, 6, 0).plusHours(i);
                 System.out.println(localDateTime);
-                requestDTO.setFcstDateTime(localDateTime);
+                LocalDateTime now = LocalDateTime.now();
+                LocalDateTime ldt = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), 0).plusHours(i);
+                requestDTO.setFcstDateTime(ldt);
                 WeatherShortMain weatherShortMain = weatherShortMainRepository.findByFcstDateTimeAndWeatherXY(requestDTO.getFcstDateTime(), weatherXY);
                 mainDataList.add(entityToDTO(weatherShortMain));
             }
             return mainDataList;
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             throw new NullPointerException();
+        } catch (Exception e){
+            throw new Exception(e);
         }
     }
+
     @Override
     //단기예보 서브 데이터 반환하는 서비스
-    public List<WeatherShortSubDTO> getWeatherShortSubData(WeatherShortMainApiRequestDTO requestDTO) {
-        getGridXY(requestDTO);
-        List<WeatherShortSubDTO> subDataList = new ArrayList<>();
+    public List<WeatherShortSubDTO> getWeatherShortSubData(WeatherShortMainApiRequestDTO requestDTO) throws Exception {
         try {
+            getGridXY(requestDTO);
+            List<WeatherShortSubDTO> subDataList = new ArrayList<>();
             WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(requestDTO.getNx(), requestDTO.getNy());
             for (int i = 0; i < 12; i++) {
                 //여기 실시간 시간(분 없애기) 으로 수정하기
                 LocalDateTime localDateTime = LocalDateTime.of(2023, 3, 29, 6, 0).plusHours(i);
                 //분, 초는 0으로 만들어서 현재 시간 찍기
                 LocalDateTime now = LocalDateTime.now();
-                LocalDateTime ldt = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), 0);
+                LocalDateTime ldt = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), 0).plusHours(i);
                 requestDTO.setFcstDateTime(ldt);
                 WeatherShortSub weatherShortSub = weatherShortSubRepository.findByFcstDateTimeAndWeatherXY(requestDTO.getFcstDateTime(), weatherXY);
                 subDataList.add(subEntityToDTO(weatherShortSub));
             }
             return subDataList;
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             throw new NullPointerException();
+        } catch (Exception e){
+            throw new Exception(e);
         }
     }
-
-
 
 
 }
