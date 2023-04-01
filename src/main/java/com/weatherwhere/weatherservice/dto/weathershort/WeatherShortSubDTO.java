@@ -2,6 +2,8 @@ package com.weatherwhere.weatherservice.dto.weathershort;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -9,16 +11,14 @@ import lombok.*;
 @Data
 public class WeatherShortSubDTO {
 
-    //발표날짜
-    private String baseDate;
 
-    //발표시간
-    private String baseTime;
-    //예보날짜
-    private String fcstDate;
+    private Long weatherShortId;
 
-    //예보시간
-    private String fcstTime;
+    private Long weatherXYId;
+
+    //예보날짜+예보시간
+    private LocalDateTime fcstDateTime;
+
 
     //1시간 강수량
     private String pcp;
