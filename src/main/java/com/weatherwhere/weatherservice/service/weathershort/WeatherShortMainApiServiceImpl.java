@@ -82,7 +82,7 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
     }
 
     @Override
-    //단기예보 메인 데이터 반환하는 서비스
+    //단기예보 메인 데이터(12시간) 반환하는 서비스
     public List<WeatherShortMainDTO> getWeatherShortMainData(WeatherShortMainApiRequestDTO requestDTO) throws Exception {
         try {
             getGridXY(requestDTO);
@@ -101,10 +101,32 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
             return mainDataList;
         } catch (NullPointerException e) {
             throw new NullPointerException();
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new Exception(e);
         }
     }
+
+    @Override
+    //단기예보 메인 데이터(현재 시간만) 반환하는 서비스
+    public WeatherShortMainDTO getWeatherShortMainNowData(WeatherShortMainApiRequestDTO requestDTO) throws Exception {
+        try {
+            getGridXY(requestDTO);
+            WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(requestDTO.getNx(), requestDTO.getNy());
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime ldt = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), 0);
+            LocalDateTime tmn = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 6, 0);
+            LocalDateTime tmx = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 15, 0);
+            requestDTO.setFcstDateTime(ldt);
+            WeatherShortMain weatherShortMain = weatherShortMainRepository.findByFcstDateTimeAndWeatherXY(requestDTO.getFcstDateTime(), weatherXY);
+            WeatherShortMainDTO mainData = entityToDTO(weatherShortMain);
+            return mainData;
+        } catch (NullPointerException e) {
+            throw new NullPointerException();
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
+    }
+
 
     @Override
     //단기예보 서브 데이터 반환하는 서비스
@@ -126,7 +148,7 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
             return subDataList;
         } catch (NullPointerException e) {
             throw new NullPointerException();
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new Exception(e);
         }
     }

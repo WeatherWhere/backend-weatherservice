@@ -53,6 +53,19 @@ public class WeatherShortController {
         }
     }
 
+    //단기예보 메인(현재시간) api
+    @GetMapping("/forecast/short/main/now")
+    public ResponseEntity<WeatherShortMainDTO> getWeatherShortMainNowResponse(@ModelAttribute WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO) {
+        try {
+            WeatherShortMainDTO mainNowDTO = weatherShortMainApiService.getWeatherShortMainNowData(weatherShortMainApiRequestDTO);
+            return new ResponseEntity<>(mainNowDTO, HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+
     //단기예보 서브 api
     @GetMapping("/forecast/short/sub")
     public ResponseEntity<List<WeatherShortSubDTO>> getWeatherShortSubResponse(@ModelAttribute WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO) {

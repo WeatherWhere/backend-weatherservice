@@ -13,6 +13,9 @@ public interface WeatherShortMainApiService {
     //단기예보 메인 데이터 반환하는 서비스
     List<WeatherShortMainDTO> getWeatherShortMainData(WeatherShortMainApiRequestDTO requestDTO) throws Exception;
 
+    //단기예보 메인 데이터(현재 시간만) 반환하는 서비스
+    WeatherShortMainDTO getWeatherShortMainNowData(WeatherShortMainApiRequestDTO requestDTO) throws Exception;
+
     //단기예보 서브 데이터 반환하는 서비스
     List<WeatherShortSubDTO> getWeatherShortSubData(WeatherShortMainApiRequestDTO requestDTO) throws Exception;
 
