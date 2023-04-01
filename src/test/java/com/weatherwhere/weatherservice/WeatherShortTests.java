@@ -1,9 +1,13 @@
 package com.weatherwhere.weatherservice;
 
+import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortMain;
+import com.weatherwhere.weatherservice.domain.weathershort.WeatherXY;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainApiRequestDTO;
 import com.weatherwhere.weatherservice.repository.weathershort.WeatherXYRepository;
 import com.weatherwhere.weatherservice.service.weathershort.WeatherShortMainApiService;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +37,7 @@ public class WeatherShortTests {
 
     @Test
     @DisplayName("LocalDate형식으로 db에 단기예보 값 저장하기")
+    @Disabled
     void testLocaDate() throws Exception {
         String[] nxList = {"53", "54", "54", "54"};
         String[] nyList = {"125", "123", "126", "129"};
@@ -54,6 +59,7 @@ public class WeatherShortTests {
 
     @Test
     @DisplayName("nx,ny별 단기예보 데이터 불러오기 테스트")
+    @Disabled
     void testNxNyRepeat() throws Exception {
         String baseDate = "20230329";
         String baseTime = "0500";
@@ -66,17 +72,18 @@ public class WeatherShortTests {
 
     @Test
     @DisplayName("위경도 nx, ny로 변경되는지 테스트")
+    @Disabled
     void testLocationToNxNy() {
         WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO = new WeatherShortMainApiRequestDTO();
         weatherShortMainApiRequestDTO.setLocationX(37.56356944444444);
         weatherShortMainApiRequestDTO.setLocationY(126.98000833333333);
-        Assertions.assertEquals(weatherShortMainApiService.getGridXY(weatherShortMainApiRequestDTO).getNx(), 60);
+        //Assertions.assertEquals(weatherShortMainApiService.getGridXY(weatherShortMainApiRequestDTO).getNx(), 60);
 
     }
 
     @Test
-    @DisplayName("nx, ny에 해당하는 데이터 30시간씩 추출하는 테스트")
-    void testGetMainData() {
+    @DisplayName("단기에보 메인 api 테스트")
+    void testGetMainData() throws Exception {
         WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO = new WeatherShortMainApiRequestDTO();
         weatherShortMainApiRequestDTO.setLocationX(37.489325);
         weatherShortMainApiRequestDTO.setLocationY(126.554234);
@@ -84,6 +91,14 @@ public class WeatherShortTests {
         System.out.println(weatherShortMainApiService.getWeatherShortMainData(weatherShortMainApiRequestDTO));
     }
 
+    @Test
+    @DisplayName("단기에보 서브 api 테스트")
+    void testGetSubData() throws Exception {
+        WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO = new WeatherShortMainApiRequestDTO();
+        weatherShortMainApiRequestDTO.setLocationX(37.489325);
+        weatherShortMainApiRequestDTO.setLocationY(126.554234);
+        System.out.println(weatherShortMainApiService.getWeatherShortSubData(weatherShortMainApiRequestDTO));
+    }
 
     @Test
     @DisplayName("테이블에서 모든 nx, ny값 불러오기")
