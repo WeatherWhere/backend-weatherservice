@@ -19,6 +19,23 @@ public interface WeatherShortMainApiService {
     //단기예보 서브 데이터 반환하는 서비스
     List<WeatherShortSubDTO> getWeatherShortSubData(WeatherShortMainApiRequestDTO requestDTO) throws Exception;
 
+    default WeatherShortMainDTO nowEntityToDTO(WeatherShortMain entity, Double tmn, Double tmx) {
+        WeatherShortMainDTO dto = WeatherShortMainDTO.builder()
+                .weatherShortId(entity.getWeatherShortId())
+                .weatherXYId(entity.getWeatherXY().getId())
+                .fcstDateTime(entity.getFcstDateTime())
+                .pop(entity.getPop())
+                .pty(entity.getPty())
+                .reh(entity.getReh())
+                .sky(entity.getSky())
+                .tmp(entity.getTmp())
+                .wsd(entity.getWsd())
+                .tmn(tmn)
+                .tmx(tmx)
+                .build();
+        return dto;
+    }
+
     default WeatherShortMainDTO entityToDTO(WeatherShortMain entity) {
         WeatherShortMainDTO dto = WeatherShortMainDTO.builder()
                 .weatherShortId(entity.getWeatherShortId())
@@ -30,8 +47,6 @@ public interface WeatherShortMainApiService {
                 .sky(entity.getSky())
                 .tmp(entity.getTmp())
                 .wsd(entity.getWsd())
-                .tmn(entity.getTmn())
-                .tmx(entity.getTmx())
                 .build();
         return dto;
     }

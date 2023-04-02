@@ -35,33 +35,12 @@ public class WeatherShortTests {
     @Autowired
     private WeatherXYRepository weatherXYRepository;
 
-    @Test
-    @DisplayName("LocalDate형식으로 db에 단기예보 값 저장하기")
-    @Disabled
-    void testLocaDate() throws Exception {
-        String[] nxList = {"53", "54", "54", "54"};
-        String[] nyList = {"125", "123", "126", "129"};
-        String baseDate = "20230326";
-        String baseTime = "0500";
-
-        for (int i = 0; i < nxList.length; i++) {
-            MvcResult result = mockMvc.perform(get("/weather/forecast/short")
-                            .param("nx", nxList[i])
-                            .param("ny", nyList[i])
-                            .param("baseDate", baseDate)
-                            .param("baseTime", baseTime))
-
-                    .andExpect(status().isOk())
-                    .andReturn();
-        }
-
-    }
 
     @Test
     @DisplayName("nx,ny별 단기예보 데이터 불러오기 테스트")
     @Disabled
     void testNxNyRepeat() throws Exception {
-        String baseDate = "20230329";
+        String baseDate = "20230401";
         String baseTime = "0500";
         MvcResult result = mockMvc.perform(get("/weather/forecast/short")
                         .param("baseDate", baseDate)
@@ -70,16 +49,6 @@ public class WeatherShortTests {
                 .andReturn();
     }
 
-    @Test
-    @DisplayName("위경도 nx, ny로 변경되는지 테스트")
-    @Disabled
-    void testLocationToNxNy() {
-        WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO = new WeatherShortMainApiRequestDTO();
-        weatherShortMainApiRequestDTO.setLocationX(37.56356944444444);
-        weatherShortMainApiRequestDTO.setLocationY(126.98000833333333);
-        //Assertions.assertEquals(weatherShortMainApiService.getGridXY(weatherShortMainApiRequestDTO).getNx(), 60);
-
-    }
 
     @Test
     @DisplayName("단기에보 메인 api 테스트")
@@ -90,6 +59,16 @@ public class WeatherShortTests {
         weatherShortMainApiService.getWeatherShortMainData(weatherShortMainApiRequestDTO);
         System.out.println(weatherShortMainApiService.getWeatherShortMainData(weatherShortMainApiRequestDTO));
     }
+
+    @Test
+    @DisplayName("단기에보 메인 api(현재 시간) 테스트")
+    void testGetMainDataNow() throws Exception {
+        WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO = new WeatherShortMainApiRequestDTO();
+        weatherShortMainApiRequestDTO.setLocationX(37.489325);
+        weatherShortMainApiRequestDTO.setLocationY(126.554234);
+        System.out.println(weatherShortMainApiService.getWeatherShortMainNowData(weatherShortMainApiRequestDTO));
+    }
+
 
     @Test
     @DisplayName("단기에보 서브 api 테스트")
