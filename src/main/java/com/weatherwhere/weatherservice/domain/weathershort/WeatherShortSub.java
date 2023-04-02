@@ -18,7 +18,7 @@ public class WeatherShortSub extends BaseEntity {
 
     //identity방식으로 아이디 1씩 자동증가
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "weather_short_id")
     private Long weatherShortId;
 
