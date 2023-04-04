@@ -165,12 +165,13 @@ public class WeatherMidServiceImpl implements WeatherMidService {
 
         } catch (ParseException e) {
             e.printStackTrace();
-            System.out.println("Wrong regIdForMidTa or regIdForMidFcst: " + regId + e.getMessage());
+            log.warn("Failed parsing JSON: " + regId + e.getMessage());
         } catch (Exception e) {
             // 예외가 발생하면 로그를 출력하고 계속 진행한다.
             // 이때, catch 블록 안에서는 트랜잭션이 롤백되지 않기 때문에,
             // 다른 데이터는 여전히 저장될 수 있다.
-            System.out.println("Failed to update entity: " + e.getMessage());
+            e.printStackTrace();
+            log.warn("Failed to update entity: " + e.getMessage());
         }
 
         return ids;

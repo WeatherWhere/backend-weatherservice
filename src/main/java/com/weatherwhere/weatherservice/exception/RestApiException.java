@@ -1,7 +1,6 @@
 package com.weatherwhere.weatherservice.exception;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 public class RestApiException extends RuntimeException{
