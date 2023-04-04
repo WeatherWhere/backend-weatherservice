@@ -2,6 +2,7 @@ package com.weatherwhere.weatherservice.service.weathermid;
 
 import com.weatherwhere.weatherservice.domain.weathermid.WeatherMidCompositeKey;
 import com.weatherwhere.weatherservice.domain.weathermid.WeatherMidEntity;
+import com.weatherwhere.weatherservice.dto.weathermid.RegionCodeDTO;
 import com.weatherwhere.weatherservice.dto.weathermid.WeatherMidDTO;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
@@ -13,8 +14,9 @@ public interface WeatherMidService {
 
     Object getWeatherMidLandFcst(String regId, String tmFc) throws ParseException;
 
-    List<WeatherMidEntity> makeEntityList(JSONObject jsonFromMidTa, JSONObject jsonFromMidLandFcst, String[] daysAfterToday);
-    List<WeatherMidCompositeKey> updateWeatherMid(String regId, String tmfc) throws ParseException;
+    List<WeatherMidEntity> makeEntityList(JSONObject jsonFromMidTa, JSONObject jsonFromMidLandFcst,
+                                          String[] daysAfterToday, String regName, String city);
+    List<WeatherMidCompositeKey> updateWeatherMid(RegionCodeDTO regionCodeDTO, String tmfc) throws ParseException;
 
     List<WeatherMidDTO> getMidForecast(String regionCode);
 
@@ -23,6 +25,8 @@ public interface WeatherMidService {
         WeatherMidCompositeKey weatherMidCompositeKey = new WeatherMidCompositeKey(dto.getRegionCode(), dto.getBaseTime());
         WeatherMidEntity entity = WeatherMidEntity.builder()
                 .id(weatherMidCompositeKey)
+                .regionName(dto.getRegionName())
+                .city(dto.getCity())
                 .tmn(dto.getTmn())
                 .tmx(dto.getTmx())
                 .rAm(dto.getRAm())
@@ -39,6 +43,8 @@ public interface WeatherMidService {
         WeatherMidDTO dto = WeatherMidDTO.builder()
                 .regionCode(entity.getId().getRegionCode())
                 .baseTime(entity.getId().getBaseTime())
+                .regionName(entity.getRegionName())
+                .city(entity.getCity())
                 .tmn(entity.getTmn())
                 .tmx(entity.getTmx())
                 .rAm(entity.getRAm())

@@ -15,7 +15,7 @@ import java.util.List;
 public class ParseCSVServiceImpl implements ParseCSVService {
     @Override
     public List<RegionCodeDTO> ParseCSV() {
-        ClassPathResource resource = new ClassPathResource("weatherMidRegionCode.csv");
+        ClassPathResource resource = new ClassPathResource("weatherMidRegionCodeEx.csv");
         List<RegionCodeDTO> regionCodes = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
 
@@ -35,9 +35,11 @@ public class ParseCSVServiceImpl implements ParseCSVService {
 
                 String[] ar = line.split(",");
 
-                RegionCodeDTO regionCodeDTO = new RegionCodeDTO();
-                regionCodeDTO.setRegionName(ar[0]);
-                regionCodeDTO.setRegionCode(ar[1]);
+                RegionCodeDTO regionCodeDTO = RegionCodeDTO.builder()
+                        .regionName(ar[0])
+                        .regionCode(ar[1])
+                        .city(ar[2]).build();
+
                 regionCodes.add(regionCodeDTO);
             }
 
