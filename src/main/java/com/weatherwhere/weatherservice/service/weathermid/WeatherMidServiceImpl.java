@@ -2,6 +2,7 @@ package com.weatherwhere.weatherservice.service.weathermid;
 
 import com.weatherwhere.weatherservice.domain.weathermid.WeatherMidCompositeKey;
 import com.weatherwhere.weatherservice.domain.weathermid.WeatherMidEntity;
+import com.weatherwhere.weatherservice.dto.ResultDTO;
 import com.weatherwhere.weatherservice.dto.weathermid.WeatherMidDTO;
 import com.weatherwhere.weatherservice.repository.weathermid.WeatherMidRepository;
 import com.weatherwhere.weatherservice.service.date.DateService;
@@ -12,6 +13,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -177,7 +179,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         return ids;
     }
 
-    public List<WeatherMidDTO> getMidForecast(String regionCode) {
+    public ResultDTO<List<WeatherMidDTO>> getMidForecast(String regionCode) {
         String[] weeks = dateService.getDaysAfterToday(3, 7);
         List<WeatherMidDTO> dtoList = new ArrayList<>();
         for (int i = 0; i < weeks.length; i++) {
@@ -185,6 +187,6 @@ public class WeatherMidServiceImpl implements WeatherMidService {
             WeatherMidEntity result = weatherMidRepository.findById(weatherMidCompositeKey).orElseThrow(() -> new NoSuchElementException());
             dtoList.add(entityToDTO(result));
         }
-        return dtoList;
+        return ResultDTO.of(HttpStatus.OK.value(), "날씨 중기 예보를 조회하는데 성공하였습니다.", dtoList);
     }
 }

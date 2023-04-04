@@ -35,7 +35,7 @@ public class WeatherMidTests {
     @DisplayName("중기예보 API 2개를 합쳐 하나의 테이블을 업데이트하여 생성된 기본키를 리스트로 리턴")
     void testUpdateWeatherMid() {
         List<RegionCodeDTO> regionCodes = parseCSVService.ParseCSV();
-        String tmfc = "202303270600";
+        String tmfc = "202304040600";
 
         try {
             for (int i = 0; i < regionCodes.size(); i++) {

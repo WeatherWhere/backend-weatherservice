@@ -2,6 +2,7 @@ package com.weatherwhere.weatherservice.service.weathermid;
 
 import com.weatherwhere.weatherservice.domain.weathermid.WeatherMidCompositeKey;
 import com.weatherwhere.weatherservice.domain.weathermid.WeatherMidEntity;
+import com.weatherwhere.weatherservice.dto.ResultDTO;
 import com.weatherwhere.weatherservice.dto.weathermid.WeatherMidDTO;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
@@ -16,7 +17,7 @@ public interface WeatherMidService {
     List<WeatherMidEntity> makeEntityList(JSONObject jsonFromMidTa, JSONObject jsonFromMidLandFcst, String[] daysAfterToday);
     List<WeatherMidCompositeKey> updateWeatherMid(String regId, String tmfc) throws ParseException;
 
-    List<WeatherMidDTO> getMidForecast(String regionCode);
+    ResultDTO<List<WeatherMidDTO>> getMidForecast(String regionCode);
 
     // DTO를 Entity로 변환해주는 메서드
     default WeatherMidEntity dtoToEntity(WeatherMidDTO dto) {

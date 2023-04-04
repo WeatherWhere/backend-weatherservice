@@ -1,5 +1,6 @@
 package com.weatherwhere.weatherservice.controller.weathermid;
 
+import com.weatherwhere.weatherservice.dto.ResultDTO;
 import com.weatherwhere.weatherservice.dto.weathermid.WeatherMidDTO;
 import com.weatherwhere.weatherservice.exception.ErrorCode;
 import com.weatherwhere.weatherservice.exception.RestApiException;
@@ -19,11 +20,11 @@ public class WeatherMidController {
     private final WeatherMidService weatherMidService;
 
     @GetMapping("/forecast/week")
-    public ResponseEntity<List<WeatherMidDTO>> getWeatherMidForecast(@RequestParam("regionCode") String regionCode) {
+    public ResultDTO<List<WeatherMidDTO>> getWeatherMidForecast(@RequestParam("regionCode") String regionCode) {
         if (regionCode.length() != 8) {
             throw new RestApiException(ErrorCode.BAD_REQUEST, "지역 코드는 8글자이어야 합니다.");
         }
-        List<WeatherMidDTO> data = weatherMidService.getMidForecast(regionCode);
-        return new ResponseEntity<>(data, HttpStatus.OK);
+        ResultDTO<List<WeatherMidDTO>> data = weatherMidService.getMidForecast(regionCode);
+        return data;
     }
 }
