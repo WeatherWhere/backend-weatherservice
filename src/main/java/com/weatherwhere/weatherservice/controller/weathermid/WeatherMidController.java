@@ -15,15 +15,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WeatherMidController {
     private final WeatherMidService weatherMidService;
+
     @GetMapping("/forecast/week")
     public ResponseEntity<List<WeatherMidDTO>> getWeatherMidForecast(@RequestParam("regionCode") String regionCode) {
-        try {
-            List<WeatherMidDTO> data = weatherMidService.getMidForecast(regionCode);
-            return new ResponseEntity<>(data, HttpStatus.OK);
-        } catch (Exception e) {
-            System.out.println(e.getLocalizedMessage());
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        List<WeatherMidDTO> data = weatherMidService.getMidForecast(regionCode);
+        return new ResponseEntity<>(data, HttpStatus.OK);
     }
 }
