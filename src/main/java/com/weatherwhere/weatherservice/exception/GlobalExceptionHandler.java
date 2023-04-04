@@ -15,13 +15,25 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(RestApiException.class)
     protected ResponseEntity<ErrorResponse> handleCustomException(RestApiException ex) {
         ErrorCode errorCode = ex.getErrorCode();
-        return handleExceptionInternal(errorCode);
+        String customMessage = ex.getCustomMessage();
+        if (customMessage == null || customMessage.length() == 0) {
+            return handleExceptionInternal(errorCode);
+        }
+        return handleExceptionInternal(errorCode, customMessage);
     };
+
+
 
     // handleExceptionInternal() 메소드를 오버라이딩해 응답 커스터마이징
     private ResponseEntity<ErrorResponse> handleExceptionInternal(ErrorCode errorCode) {
         return ResponseEntity
-                .status(errorCode.getHttpStatus().value())
+                .status(errorCode.getHttpStatus())
                 .body(new ErrorResponse(errorCode));
+    }
+
+    // 추가적으로 message를 던져주고 싶을 경우
+    private ResponseEntity<ErrorResponse> handleExceptionInternal(ErrorCode errorCode, String customMessage) {
+        return ResponseEntity.status(errorCode.getHttpStatus())
+                .body(new ErrorResponse(errorCode, customMessage));
     }
 }
