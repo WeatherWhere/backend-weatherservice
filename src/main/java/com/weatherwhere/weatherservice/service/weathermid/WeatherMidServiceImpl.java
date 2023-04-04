@@ -3,6 +3,7 @@ package com.weatherwhere.weatherservice.service.weathermid;
 import com.weatherwhere.weatherservice.domain.weathermid.WeatherMidCompositeKey;
 import com.weatherwhere.weatherservice.domain.weathermid.WeatherMidEntity;
 import com.weatherwhere.weatherservice.dto.ResultDTO;
+import com.weatherwhere.weatherservice.dto.weathermid.RegionCodeDTO;
 import com.weatherwhere.weatherservice.dto.weathermid.WeatherMidDTO;
 import com.weatherwhere.weatherservice.repository.weathermid.WeatherMidRepository;
 import com.weatherwhere.weatherservice.service.date.DateService;
@@ -100,7 +101,8 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         return result;
     }
 
-    public List<WeatherMidEntity> makeEntityList(JSONObject jsonFromMidTa, JSONObject jsonFromMidLandFcst, String[] daysAfterToday) {
+    public List<WeatherMidEntity> makeEntityList(JSONObject jsonFromMidTa, JSONObject jsonFromMidLandFcst,
+                                                 String[] daysAfterToday, String regName, String city) {
         List<WeatherMidEntity> entities = new ArrayList<>();
 
         for (int i = 0; i < 5; i++) {
@@ -113,10 +115,12 @@ public class WeatherMidServiceImpl implements WeatherMidService {
             String wfPm = String.format("wf%dPm", i + 3);
 
             dto = WeatherMidDTO.builder()
+                    .regionCode((String) jsonFromMidTa.get("regId"))
                     .baseTime(daysAfterToday[i])
+                    .regionName(regName)
+                    .city(city)
                     .tmn((Long) jsonFromMidTa.get(taMin))
                     .tmx((Long) jsonFromMidTa.get(taMax))
-                    .regionCode((String) jsonFromMidTa.get("regId"))
                     .rAm((Long) jsonFromMidLandFcst.get(rnStAm))
                     .rPm((Long) jsonFromMidLandFcst.get(rnStPm))
                     .wAm((String) jsonFromMidLandFcst.get(wfAm))
@@ -128,9 +132,12 @@ public class WeatherMidServiceImpl implements WeatherMidService {
     }
 
     @Transactional
-    public List<WeatherMidCompositeKey> updateWeatherMid(String regId, String tmfc) {
+    public List<WeatherMidCompositeKey> updateWeatherMid(RegionCodeDTO regionCodeDTO, String tmfc) {
         // 새로 만들어진 튜플의 기본키를 리스트로 리턴
         List<WeatherMidCompositeKey> ids = new ArrayList<>();
+        String regId = regionCodeDTO.getRegionCode();
+        String regName = regionCodeDTO.getRegionName();
+        String city = regionCodeDTO.getCity();
 
         try {
             // 중기 예보 API 호출
@@ -158,7 +165,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
             String[] daysArray = dateService.getDaysAfterToday(3, 7);
 
             // 중기 예보, 육상 예보, 날짜를 매개변수로 entity 배열을 받아옴.
-            List<WeatherMidEntity> entities = makeEntityList(jsonFromMidTa, jsonFromMidFcst, daysArray);
+            List<WeatherMidEntity> entities = makeEntityList(jsonFromMidTa, jsonFromMidFcst, daysArray, regName, city);
 
             for (WeatherMidEntity entity : entities) {
                 weatherMidRepository.save(entity);

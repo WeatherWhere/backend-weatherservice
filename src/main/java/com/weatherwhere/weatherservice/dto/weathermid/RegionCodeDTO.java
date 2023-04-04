@@ -13,4 +13,5 @@ import lombok.NoArgsConstructor;
 public class RegionCodeDTO {
     private String regionName;
     private String regionCode;
+    private String city;
 }

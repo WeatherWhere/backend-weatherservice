@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 public class WeatherMidDTO {
     private String regionCode;
     private String baseTime;
+    private String regionName;
+    private String city;
     private Long tmn;
     private Long tmx;
     private Long rAm;
