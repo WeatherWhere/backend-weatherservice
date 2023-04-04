@@ -16,7 +16,7 @@ import java.util.List;
 public class WeatherMidController {
     private final WeatherMidService weatherMidService;
     @GetMapping("/forecast/week")
-    public ResponseEntity<List<WeatherMidDTO>> getWeatherMidForecast (@RequestParam("regionCode") String regionCode) {
+    public ResponseEntity<List<WeatherMidDTO>> getWeatherMidForecast(@RequestParam("regionCode") String regionCode) {
         try {
             List<WeatherMidDTO> data = weatherMidService.getMidForecast(regionCode);
             return new ResponseEntity<>(data, HttpStatus.OK);
