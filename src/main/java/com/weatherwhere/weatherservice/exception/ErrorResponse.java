@@ -1,8 +1,6 @@
-package com.weatherwhere.weatherservice.dto.result;
+package com.weatherwhere.weatherservice.exception;
 
-import com.weatherwhere.weatherservice.exception.ErrorCode;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 
