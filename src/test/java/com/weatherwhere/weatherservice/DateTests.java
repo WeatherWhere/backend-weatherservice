@@ -18,4 +18,10 @@ public class DateTests {
     void testGetDaysAfterToday() {
         System.out.println(Arrays.toString(dateService.getDaysAfterToday(3, 7)));
     }
+
+    @Test
+    @DisplayName("openAPI에 변수로 넘겨줄 적절한 tmfc를 반환하는 메서드")
+    void testGetTmfc() {
+        System.out.println(dateService.getTmfc());
+    }
 }

@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Arrays;
 import java.util.List;
 
 @SpringBootTest
@@ -28,8 +29,8 @@ public class WeatherMidTests {
     @DisplayName("중기 기온 예보와 중기 육상 예보 2개의 openAPI를 호출하는 테스트")
     void testWeatherOpenAPI() {
         try {
-            System.out.println(weatherMidService.getWeatherMidTa("11111111", "202304041800"));
-            System.out.println(weatherMidService.getWeatherMidLandFcst("11H20000", "202304041800"));
+            System.out.println(weatherMidService.getWeatherMidTa("11111111", dateService.getTmfc()));
+            System.out.println(weatherMidService.getWeatherMidLandFcst("11H20000", dateService.getTmfc()));
         } catch (Exception e) {
             System.out.println(e.getLocalizedMessage());
             e.printStackTrace();
@@ -42,13 +43,14 @@ public class WeatherMidTests {
     void testGetWeatherMidEntities() {
         long start = System.nanoTime();
         List<WeatherMidEntity> entities = weatherMidService.makeEntityList(parseCSVService.ParseCSV(),
-                dateService.getDaysAfterToday(3, 7), "202304051800");
+                dateService.getDaysAfterToday(3, 7), dateService.getTmfc());
         long openApiEnd = System.nanoTime();
-        System.out.println(openApiEnd - start);
+        System.out.println("약 850번의 OpenAPI 호출을 통해 850개의 Entity리스트를 만드는데 소요되는시간: " + (openApiEnd - start) + "ns");
+
 
         List<WeatherMidCompositeKey> keys = weatherMidService.updateWeatherMid(entities);
         long dbEnd = System.nanoTime();
-        System.out.println(dbEnd - openApiEnd);
-        System.out.println(keys);
+        System.out.println("약 850개의 Entity리스트를 DB에 업데이트하는데 소요되는 시간: " + (dbEnd - openApiEnd) + "ns");
+        System.out.println(keys.toString());
     }
 }
