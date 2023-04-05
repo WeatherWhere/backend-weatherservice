@@ -3,7 +3,7 @@ package com.weatherwhere.weatherservice.service.weathershort;
 import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortMain;
 import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortSub;
 import com.weatherwhere.weatherservice.domain.weathershort.WeatherXY;
-import com.weatherwhere.weatherservice.dto.ResultDto;
+import com.weatherwhere.weatherservice.dto.ResultDTO;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainApiRequestDTO;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainDTO;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortSubDTO;
@@ -15,7 +15,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.ObjectError;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -86,7 +85,7 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
 
     @Override
     //단기예보 메인 데이터(12시간) 반환하는 서비스
-    public ResultDto<Object> getWeatherShortMainData(WeatherShortMainApiRequestDTO requestDTO){
+    public ResultDTO<Object> getWeatherShortMainData(WeatherShortMainApiRequestDTO requestDTO){
         try {
             getGridXY(requestDTO);
             List<WeatherShortMainDTO> mainDataList = new ArrayList<>();
@@ -98,17 +97,17 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
                 WeatherShortMain weatherShortMain = weatherShortMainRepository.findByFcstDateTimeAndWeatherXY(requestDTO.getFcstDateTime(), weatherXY);
                 mainDataList.add(entityToDTO(weatherShortMain));
             }
-            return ResultDto.of(HttpStatus.OK.value(),"메인 데이터(12시간)를 반환하는데 성공했습니다.",mainDataList);
+            return ResultDTO.of(HttpStatus.OK.value(),"메인 데이터(12시간)를 반환하는데 성공했습니다.",mainDataList);
         } catch (NullPointerException e) {
-            return ResultDto.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "NullPointerExceptiond이 발생했습니다.", null);
+            return ResultDTO.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "NullPointerExceptiond이 발생했습니다.", null);
         } catch (Exception e) {
-            return ResultDto.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "예기치 못한 에러가 발생했습니다.", null);
+            return ResultDTO.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "예기치 못한 에러가 발생했습니다.", null);
         }
     }
 
     @Override
     //단기예보 메인 데이터(현재 시간만) 반환하는 서비스
-    public ResultDto<Object> getWeatherShortMainNowData(WeatherShortMainApiRequestDTO requestDTO) {
+    public ResultDTO<Object> getWeatherShortMainNowData(WeatherShortMainApiRequestDTO requestDTO) {
         try {
             getGridXY(requestDTO);
             WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(requestDTO.getNx(), requestDTO.getNy());
@@ -125,18 +124,18 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
             System.out.println("최고기온: "+weatherShortMainTmx);
             WeatherShortMainDTO mainData = nowEntityToDTO(weatherShortMain, weatherShortMainTmn, weatherShortMainTmx);
             System.out.println("nowMainData: "+mainData);
-            return ResultDto.of(HttpStatus.OK.value(),"메인 데이터(현재시간)를 반환하는데 성공했습니다.",mainData);
+            return ResultDTO.of(HttpStatus.OK.value(),"메인 데이터(현재시간)를 반환하는데 성공했습니다.",mainData);
         } catch (NullPointerException e) {
-            return ResultDto.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "NullPointerExceptiond이 발생했습니다.", null);
+            return ResultDTO.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "NullPointerExceptiond이 발생했습니다.", null);
         } catch (Exception e) {
-            return ResultDto.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "예기치 못한 에러가 발생했습니다.", null);
+            return ResultDTO.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "예기치 못한 에러가 발생했습니다.", null);
         }
     }
 
 
     @Override
     //단기예보 서브 데이터 반환하는 서비스
-    public ResultDto<Object> getWeatherShortSubData(WeatherShortMainApiRequestDTO requestDTO) {
+    public ResultDTO<Object> getWeatherShortSubData(WeatherShortMainApiRequestDTO requestDTO) {
         try {
             getGridXY(requestDTO);
             List<WeatherShortSubDTO> subDataList = new ArrayList<>();
@@ -149,11 +148,11 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
                 WeatherShortSub weatherShortSub = weatherShortSubRepository.findByFcstDateTimeAndWeatherXY(requestDTO.getFcstDateTime(), weatherXY);
                 subDataList.add(subEntityToDTO(weatherShortSub));
             }
-            return ResultDto.of(HttpStatus.OK.value(),"서브 데이터를 반환하는데 성공했습니다.",subDataList);
+            return ResultDTO.of(HttpStatus.OK.value(),"서브 데이터를 반환하는데 성공했습니다.",subDataList);
         } catch (NullPointerException e) {
-            return ResultDto.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "NullPointerExceptiond이 발생했습니다.", null);
+            return ResultDTO.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "NullPointerExceptiond이 발생했습니다.", null);
         } catch (Exception e) {
-            return ResultDto.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "예기치 못한 에러가 발생했습니다.", null);
+            return ResultDTO.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "예기치 못한 에러가 발생했습니다.", null);
         }
     }
 

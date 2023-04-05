@@ -6,8 +6,6 @@ import com.weatherwhere.weatherservice.exception.ErrorCode;
 import com.weatherwhere.weatherservice.exception.RestApiException;
 import com.weatherwhere.weatherservice.service.weathermid.WeatherMidService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
