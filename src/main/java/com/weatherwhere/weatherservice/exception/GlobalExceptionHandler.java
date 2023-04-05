@@ -34,13 +34,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(errorCode);
     }
 
-    // 500
+    // 500 - 모든 예외의 경우에 처리하는 것 보다는 구체화하는 것이 좋을 것 같다는 생각입니다.
+    /*
     @ExceptionHandler({Exception.class})
     public ResponseEntity<ErrorResponse> handleAllException(Exception ex) {
         log.warn("handleAllException", ex);
         ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
         return handleExceptionInternal(errorCode, "요청을 처리할 수 없습니다.");
     }
+     */
 
     // handleExceptionInternal() 메소드를 오버라이딩해 응답 커스터마이징
     private ResponseEntity<ErrorResponse> handleExceptionInternal(ErrorCode errorCode) {
