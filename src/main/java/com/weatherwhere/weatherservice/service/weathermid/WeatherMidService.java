@@ -16,7 +16,8 @@ public interface WeatherMidService {
     Object getWeatherMidLandFcst(String regId, String tmFc) throws ParseException;
 
     List<WeatherMidEntity> makeEntityList(List<RegionCodeDTO> regionCodeDTOList, String[] threeToSevenDays, String tmfc);
-//    List<WeatherMidCompositeKey> updateWeatherMid(RegionCodeDTO regionCodeDTO, String tmfc) throws ParseException;
+
+    List<WeatherMidCompositeKey> updateWeatherMid(List<WeatherMidEntity> weatherMidEntityList);
 
     ResultDTO<List<WeatherMidDTO>> getMidForecast(String regionCode);
 

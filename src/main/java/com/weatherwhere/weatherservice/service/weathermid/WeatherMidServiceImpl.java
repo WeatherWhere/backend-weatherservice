@@ -66,7 +66,6 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         JSONArray jsonItemList = (JSONArray) jsonItems.get("item");
 
         // item 배열의 첫 번쨰 object를 리턴
-        System.out.println(jsonItemList.get(0).getClass().getName());
         return (JSONObject) jsonItemList.get(0);
     }
 
@@ -168,54 +167,27 @@ public class WeatherMidServiceImpl implements WeatherMidService {
                 log.warn("Failed parsing JSON: " + e.getMessage());
             } catch (Exception e) {
                 e.printStackTrace();
-                log.warn("Failed to update entity: " + e.getMessage());
+                log.warn("UnExpected Exception: " + e.getMessage());
             }
         }
-
         return entities;
     }
 
-//    @Override
-//    @Transactional
-//    public List<WeatherMidCompositeKey> updateWeatherMid(RegionCodeDTO regionCodeDTO, String tmfc) {
-//        // 새로 만들어진 튜플의 기본키를 리스트로 리턴
-//        List<WeatherMidCompositeKey> ids = new ArrayList<>();
-//        String regId = regionCodeDTO.getRegionCode();
-//        String regName = regionCodeDTO.getRegionName();
-//        String city = regionCodeDTO.getCity();
-//
-//        try {
-//            // 중기 예보 API 호출
-//            JSONObject jsonFromMidTa = getWeatherMidTa(regId, tmfc);
-//            String regIdForMidFcst = changeRegIdForFcst(regId);
-//
-//            // 육상 예보 호출
-//            JSONObject jsonFromMidFcst = getWeatherMidLandFcst(regIdForMidFcst, tmfc);
-//
-//            // 3일부터 7일후까지의 날짜 배열 받기
-//            String[] daysArray = dateService.getDaysAfterToday(3, 7);
-//
-//            // 중기 예보, 육상 예보, 날짜를 매개변수로 entity 배열을 받아옴.
-//            List<WeatherMidEntity> entities = makeEntityList(jsonFromMidTa, jsonFromMidFcst, daysArray, regName, city);
-//
-//            for (WeatherMidEntity entity : entities) {
-//                weatherMidRepository.save(entity);
-//                ids.add(entity.getId());
-//            }
-//
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//            log.warn("Failed parsing JSON: " + regId + e.getMessage());
-//        } catch (Exception e) {
-//            // 예외가 발생하면 로그를 출력하고 계속 진행한다.
-//            // 이때, catch 블록 안에서는 트랜잭션이 롤백되지 않기 때문에,
-//            // 다른 데이터는 여전히 저장될 수 있다.
-//            e.printStackTrace();
-//            log.warn("Failed to update entity: " + e.getMessage());
-//        }
-//
-//        return ids;
-//    }
+    @Override
+    @Transactional
+    public List<WeatherMidCompositeKey> updateWeatherMid(List<WeatherMidEntity> entities) {
+        List<WeatherMidCompositeKey> ids = new ArrayList<>();
+        for (WeatherMidEntity entity : entities) {
+            try {
+                weatherMidRepository.save(entity);
+                ids.add(entity.getId());
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.warn("Failed to update entity: " + e.getMessage());
+            }
+        }
+        return ids;
+    }
 
     @Override
     public ResultDTO<List<WeatherMidDTO>> getMidForecast(String regionCode) {
