@@ -1,5 +1,6 @@
 package com.weatherwhere.weatherservice.controller.weathershort;
 
+import com.weatherwhere.weatherservice.dto.ResultDto;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainApiRequestDTO;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainDTO;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortRequestDTO;
@@ -26,13 +27,9 @@ public class WeatherShortController {
     private final WeatherShortMainApiService weatherShortMainApiService;
 
 
-    //getmapping에는 requestbody 사용 x
+    //nx, ny별 단기예보 데이터 저장하는 api
     @GetMapping("/forecast/short")
     public String weatherShortMainEntityList(@ModelAttribute WeatherShortRequestDTO weatherShortRequestDTO) throws Exception {
-/*        String nx = "69";
-        String ny = "100";
-        String baseDate = "20230323";
-        String baseTime = "1700";*/
         try {
             return weatherShortMainService.saveWeatherShortEntity(weatherShortRequestDTO);
 
@@ -44,37 +41,22 @@ public class WeatherShortController {
 
     //단기예보 메인 api
     @GetMapping("/forecast/short/main")
-    public ResponseEntity<List<WeatherShortMainDTO>> getWeatherShortMainResponse(@ModelAttribute WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO) {
-        try {
-            List<WeatherShortMainDTO> mainDTOList = weatherShortMainApiService.getWeatherShortMainData(weatherShortMainApiRequestDTO);
-            return new ResponseEntity<>(mainDTOList, HttpStatus.OK);
-        }catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResultDto<Object> getWeatherShortMainResponse(@ModelAttribute WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO) throws Exception{
+            return weatherShortMainApiService.getWeatherShortMainData(weatherShortMainApiRequestDTO);
     }
 
     //단기예보 메인(현재시간) api
     @GetMapping("/forecast/short/main/now")
-    public ResponseEntity<WeatherShortMainDTO> getWeatherShortMainNowResponse(@ModelAttribute WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO) {
-        try {
-            WeatherShortMainDTO mainNowDTO = weatherShortMainApiService.getWeatherShortMainNowData(weatherShortMainApiRequestDTO);
-            return new ResponseEntity<>(mainNowDTO, HttpStatus.OK);
-        }catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResultDto<Object> getWeatherShortMainNowResponse(@ModelAttribute WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO) throws Exception{
+         return weatherShortMainApiService.getWeatherShortMainNowData(weatherShortMainApiRequestDTO);
     }
 
 
 
     //단기예보 서브 api
     @GetMapping("/forecast/short/sub")
-    public ResponseEntity<List<WeatherShortSubDTO>> getWeatherShortSubResponse(@ModelAttribute WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO) {
-        try {
-            List<WeatherShortSubDTO> subDTOList = weatherShortMainApiService.getWeatherShortSubData(weatherShortMainApiRequestDTO);
-            return new ResponseEntity<>(subDTOList, HttpStatus.OK);
-        }catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResultDto<Object> getWeatherShortSubResponse(@ModelAttribute WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO) throws Exception{
+            return weatherShortMainApiService.getWeatherShortSubData(weatherShortMainApiRequestDTO);
     }
 
 
