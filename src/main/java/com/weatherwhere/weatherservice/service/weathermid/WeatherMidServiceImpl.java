@@ -70,6 +70,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         return (JSONObject) jsonItemList.get(0);
     }
 
+    @Override
     public JSONObject getWeatherMidTa(String regId, String tmFc) throws ParseException {
         // 예보 구역코드와, 발표 시각은 변수어야 한다. - 매개변수로 받음 -
         String apiUrl = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidTa";
@@ -87,6 +88,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         return result;
     }
 
+    @Override
     public JSONObject getWeatherMidLandFcst(String regId, String tmFc) throws ParseException {
         String apiUrl = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst";
         String serviceKey = System.getProperty("WEATHER_MID_SERVICE_KEY");
@@ -101,6 +103,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         return result;
     }
 
+    @Override
     public List<WeatherMidEntity> makeEntityList(JSONObject jsonFromMidTa, JSONObject jsonFromMidLandFcst,
                                                  String[] daysAfterToday, String regName, String city) {
         List<WeatherMidEntity> entities = new ArrayList<>();
@@ -131,6 +134,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         return entities;
     }
 
+    @Override
     @Transactional
     public List<WeatherMidCompositeKey> updateWeatherMid(RegionCodeDTO regionCodeDTO, String tmfc) {
         // 새로 만들어진 튜플의 기본키를 리스트로 리턴
@@ -186,6 +190,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         return ids;
     }
 
+    @Override
     public ResultDTO<List<WeatherMidDTO>> getMidForecast(String regionCode) {
         String[] weeks = dateService.getDaysAfterToday(3, 7);
         List<WeatherMidDTO> dtoList = new ArrayList<>();
