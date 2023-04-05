@@ -2,6 +2,7 @@ package com.weatherwhere.weatherservice.service.weathermid;
 
 import com.weatherwhere.weatherservice.domain.weathermid.WeatherMidCompositeKey;
 import com.weatherwhere.weatherservice.domain.weathermid.WeatherMidEntity;
+import com.weatherwhere.weatherservice.dto.ResultDTO;
 import com.weatherwhere.weatherservice.dto.weathermid.RegionCodeDTO;
 import com.weatherwhere.weatherservice.dto.weathermid.WeatherMidDTO;
 import com.weatherwhere.weatherservice.repository.weathermid.WeatherMidRepository;
@@ -13,6 +14,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -172,18 +174,19 @@ public class WeatherMidServiceImpl implements WeatherMidService {
 
         } catch (ParseException e) {
             e.printStackTrace();
-            System.out.println("Wrong regIdForMidTa or regIdForMidFcst: " + regId + e.getMessage());
+            log.warn("Failed parsing JSON: " + regId + e.getMessage());
         } catch (Exception e) {
             // 예외가 발생하면 로그를 출력하고 계속 진행한다.
             // 이때, catch 블록 안에서는 트랜잭션이 롤백되지 않기 때문에,
             // 다른 데이터는 여전히 저장될 수 있다.
-            System.out.println("Failed to update entity: " + e.getMessage());
+            e.printStackTrace();
+            log.warn("Failed to update entity: " + e.getMessage());
         }
 
         return ids;
     }
 
-    public List<WeatherMidDTO> getMidForecast(String regionCode) {
+    public ResultDTO<List<WeatherMidDTO>> getMidForecast(String regionCode) {
         String[] weeks = dateService.getDaysAfterToday(3, 7);
         List<WeatherMidDTO> dtoList = new ArrayList<>();
         for (int i = 0; i < weeks.length; i++) {
@@ -191,6 +194,6 @@ public class WeatherMidServiceImpl implements WeatherMidService {
             WeatherMidEntity result = weatherMidRepository.findById(weatherMidCompositeKey).orElseThrow(() -> new NoSuchElementException());
             dtoList.add(entityToDTO(result));
         }
-        return dtoList;
+        return ResultDTO.of(HttpStatus.OK.value(), "날씨 중기 예보를 조회하는데 성공하였습니다.", dtoList);
     }
 }
