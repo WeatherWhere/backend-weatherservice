@@ -17,6 +17,14 @@ public class WeatherMidEntity extends BaseEntity {
     @EmbeddedId
     private WeatherMidCompositeKey id;
 
+    // 지역 이름
+    @Column(name = "region_name")
+    private String regionName;
+
+    // 도시
+    @Column(name = "city")
+    private String city;
+
     // 일 최저기온
     @Column(name = "tmn")
     private Long tmn;

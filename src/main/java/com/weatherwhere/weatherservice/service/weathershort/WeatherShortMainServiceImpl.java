@@ -181,7 +181,7 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
         String ny = "100";
         System.out.println("xylist=====================================================================");
         List<Object[]> xyList = weatherXYRepository.findAllNxAndNy();
-        List<Object[]> subList = xyList.subList(1600, 1603);
+        List<Object[]> subList = xyList.subList(0, 3);
 
         for (Object[] xy : subList) {
             Integer nx2 = (Integer) xy[0];

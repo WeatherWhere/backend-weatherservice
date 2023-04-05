@@ -3,6 +3,7 @@ package com.weatherwhere.weatherservice.service.weathershort;
 import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortMain;
 import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortSub;
 import com.weatherwhere.weatherservice.domain.weathershort.WeatherXY;
+import com.weatherwhere.weatherservice.dto.ResultDto;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainApiRequestDTO;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainDTO;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortSubDTO;
@@ -11,8 +12,10 @@ import com.weatherwhere.weatherservice.repository.weathershort.WeatherShortSubRe
 import com.weatherwhere.weatherservice.repository.weathershort.WeatherXYRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.ObjectError;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -83,32 +86,29 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
 
     @Override
     //단기예보 메인 데이터(12시간) 반환하는 서비스
-    public List<WeatherShortMainDTO> getWeatherShortMainData(WeatherShortMainApiRequestDTO requestDTO) throws Exception {
+    public ResultDto<Object> getWeatherShortMainData(WeatherShortMainApiRequestDTO requestDTO){
         try {
             getGridXY(requestDTO);
             List<WeatherShortMainDTO> mainDataList = new ArrayList<>();
             WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(requestDTO.getNx(), requestDTO.getNy());
             for (int i = 0; i < 12; i++) {
-                //여기 실시간 시간(분 없애기) 으로 수정하기
-                LocalDateTime localDateTime = LocalDateTime.of(2023, 3, 29, 6, 0).plusHours(i);
-                System.out.println(localDateTime);
                 LocalDateTime now = LocalDateTime.now();
                 LocalDateTime ldt = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), 0).plusHours(i);
                 requestDTO.setFcstDateTime(ldt);
                 WeatherShortMain weatherShortMain = weatherShortMainRepository.findByFcstDateTimeAndWeatherXY(requestDTO.getFcstDateTime(), weatherXY);
                 mainDataList.add(entityToDTO(weatherShortMain));
             }
-            return mainDataList;
+            return ResultDto.of(HttpStatus.OK.value(),"메인 데이터(12시간)를 반환하는데 성공했습니다.",mainDataList);
         } catch (NullPointerException e) {
-            throw new NullPointerException();
+            return ResultDto.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "NullPointerExceptiond이 발생했습니다.", null);
         } catch (Exception e) {
-            throw new Exception(e);
+            return ResultDto.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "예기치 못한 에러가 발생했습니다.", null);
         }
     }
 
     @Override
     //단기예보 메인 데이터(현재 시간만) 반환하는 서비스
-    public WeatherShortMainDTO getWeatherShortMainNowData(WeatherShortMainApiRequestDTO requestDTO) throws Exception {
+    public ResultDto<Object> getWeatherShortMainNowData(WeatherShortMainApiRequestDTO requestDTO) {
         try {
             getGridXY(requestDTO);
             WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(requestDTO.getNx(), requestDTO.getNy());
@@ -118,26 +118,30 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
             LocalDateTime tmx = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 15, 0);
             requestDTO.setFcstDateTime(ldt);
             WeatherShortMain weatherShortMain = weatherShortMainRepository.findByFcstDateTimeAndWeatherXY(requestDTO.getFcstDateTime(), weatherXY);
-            WeatherShortMainDTO mainData = entityToDTO(weatherShortMain);
-            return mainData;
+            //6시의 최저기온
+            Double weatherShortMainTmn = weatherShortMainRepository.findTmnByFcstDateTimeAndWeatherXY(tmn, weatherXY);
+            //15시의 최고기온
+            Double weatherShortMainTmx = weatherShortMainRepository.findTmxByFcstDateTimeAndWeatherXY(tmx, weatherXY);
+            System.out.println("최고기온: "+weatherShortMainTmx);
+            WeatherShortMainDTO mainData = nowEntityToDTO(weatherShortMain, weatherShortMainTmn, weatherShortMainTmx);
+            System.out.println("nowMainData: "+mainData);
+            return ResultDto.of(HttpStatus.OK.value(),"메인 데이터(현재시간)를 반환하는데 성공했습니다.",mainData);
         } catch (NullPointerException e) {
-            throw new NullPointerException();
+            return ResultDto.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "NullPointerExceptiond이 발생했습니다.", null);
         } catch (Exception e) {
-            throw new Exception(e);
+            return ResultDto.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "예기치 못한 에러가 발생했습니다.", null);
         }
     }
 
 
     @Override
     //단기예보 서브 데이터 반환하는 서비스
-    public List<WeatherShortSubDTO> getWeatherShortSubData(WeatherShortMainApiRequestDTO requestDTO) throws Exception {
+    public ResultDto<Object> getWeatherShortSubData(WeatherShortMainApiRequestDTO requestDTO) {
         try {
             getGridXY(requestDTO);
             List<WeatherShortSubDTO> subDataList = new ArrayList<>();
             WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(requestDTO.getNx(), requestDTO.getNy());
             for (int i = 0; i < 12; i++) {
-                //여기 실시간 시간(분 없애기) 으로 수정하기
-                LocalDateTime localDateTime = LocalDateTime.of(2023, 3, 29, 6, 0).plusHours(i);
                 //분, 초는 0으로 만들어서 현재 시간 찍기
                 LocalDateTime now = LocalDateTime.now();
                 LocalDateTime ldt = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), 0).plusHours(i);
@@ -145,11 +149,11 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
                 WeatherShortSub weatherShortSub = weatherShortSubRepository.findByFcstDateTimeAndWeatherXY(requestDTO.getFcstDateTime(), weatherXY);
                 subDataList.add(subEntityToDTO(weatherShortSub));
             }
-            return subDataList;
+            return ResultDto.of(HttpStatus.OK.value(),"서브 데이터를 반환하는데 성공했습니다.",subDataList);
         } catch (NullPointerException e) {
-            throw new NullPointerException();
+            return ResultDto.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "NullPointerExceptiond이 발생했습니다.", null);
         } catch (Exception e) {
-            throw new Exception(e);
+            return ResultDto.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "예기치 못한 에러가 발생했습니다.", null);
         }
     }
 

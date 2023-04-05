@@ -2,6 +2,7 @@ package com.weatherwhere.weatherservice.service.weathershort;
 
 import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortMain;
 import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortSub;
+import com.weatherwhere.weatherservice.dto.ResultDto;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortAllDTO;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainApiRequestDTO;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainDTO;
@@ -11,13 +12,30 @@ import java.util.List;
 
 public interface WeatherShortMainApiService {
     //단기예보 메인 데이터 반환하는 서비스
-    List<WeatherShortMainDTO> getWeatherShortMainData(WeatherShortMainApiRequestDTO requestDTO) throws Exception;
+    ResultDto<Object> getWeatherShortMainData(WeatherShortMainApiRequestDTO requestDTO) throws Exception;
 
     //단기예보 메인 데이터(현재 시간만) 반환하는 서비스
-    WeatherShortMainDTO getWeatherShortMainNowData(WeatherShortMainApiRequestDTO requestDTO) throws Exception;
+    ResultDto<Object> getWeatherShortMainNowData(WeatherShortMainApiRequestDTO requestDTO) throws Exception;
 
     //단기예보 서브 데이터 반환하는 서비스
-    List<WeatherShortSubDTO> getWeatherShortSubData(WeatherShortMainApiRequestDTO requestDTO) throws Exception;
+    ResultDto<Object> getWeatherShortSubData(WeatherShortMainApiRequestDTO requestDTO) throws Exception;
+
+    default WeatherShortMainDTO nowEntityToDTO(WeatherShortMain entity, Double tmn, Double tmx) {
+        WeatherShortMainDTO dto = WeatherShortMainDTO.builder()
+                .weatherShortId(entity.getWeatherShortId())
+                .weatherXYId(entity.getWeatherXY().getId())
+                .fcstDateTime(entity.getFcstDateTime())
+                .pop(entity.getPop())
+                .pty(entity.getPty())
+                .reh(entity.getReh())
+                .sky(entity.getSky())
+                .tmp(entity.getTmp())
+                .wsd(entity.getWsd())
+                .tmn(tmn)
+                .tmx(tmx)
+                .build();
+        return dto;
+    }
 
     default WeatherShortMainDTO entityToDTO(WeatherShortMain entity) {
         WeatherShortMainDTO dto = WeatherShortMainDTO.builder()
@@ -30,8 +48,6 @@ public interface WeatherShortMainApiService {
                 .sky(entity.getSky())
                 .tmp(entity.getTmp())
                 .wsd(entity.getWsd())
-                .tmn(entity.getTmn())
-                .tmx(entity.getTmx())
                 .build();
         return dto;
     }

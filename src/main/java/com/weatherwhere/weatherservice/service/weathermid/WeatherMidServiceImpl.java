@@ -2,6 +2,8 @@ package com.weatherwhere.weatherservice.service.weathermid;
 
 import com.weatherwhere.weatherservice.domain.weathermid.WeatherMidCompositeKey;
 import com.weatherwhere.weatherservice.domain.weathermid.WeatherMidEntity;
+import com.weatherwhere.weatherservice.dto.ResultDTO;
+import com.weatherwhere.weatherservice.dto.weathermid.RegionCodeDTO;
 import com.weatherwhere.weatherservice.dto.weathermid.WeatherMidDTO;
 import com.weatherwhere.weatherservice.repository.weathermid.WeatherMidRepository;
 import com.weatherwhere.weatherservice.service.date.DateService;
@@ -12,6 +14,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -98,7 +101,8 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         return result;
     }
 
-    public List<WeatherMidEntity> makeEntityList(JSONObject jsonFromMidTa, JSONObject jsonFromMidLandFcst, String[] daysAfterToday) {
+    public List<WeatherMidEntity> makeEntityList(JSONObject jsonFromMidTa, JSONObject jsonFromMidLandFcst,
+                                                 String[] daysAfterToday, String regName, String city) {
         List<WeatherMidEntity> entities = new ArrayList<>();
 
         for (int i = 0; i < 5; i++) {
@@ -111,10 +115,12 @@ public class WeatherMidServiceImpl implements WeatherMidService {
             String wfPm = String.format("wf%dPm", i + 3);
 
             dto = WeatherMidDTO.builder()
+                    .regionCode((String) jsonFromMidTa.get("regId"))
                     .baseTime(daysAfterToday[i])
+                    .regionName(regName)
+                    .city(city)
                     .tmn((Long) jsonFromMidTa.get(taMin))
                     .tmx((Long) jsonFromMidTa.get(taMax))
-                    .regionCode((String) jsonFromMidTa.get("regId"))
                     .rAm((Long) jsonFromMidLandFcst.get(rnStAm))
                     .rPm((Long) jsonFromMidLandFcst.get(rnStPm))
                     .wAm((String) jsonFromMidLandFcst.get(wfAm))
@@ -126,9 +132,12 @@ public class WeatherMidServiceImpl implements WeatherMidService {
     }
 
     @Transactional
-    public List<WeatherMidCompositeKey> updateWeatherMid(String regId, String tmfc) {
+    public List<WeatherMidCompositeKey> updateWeatherMid(RegionCodeDTO regionCodeDTO, String tmfc) {
         // 새로 만들어진 튜플의 기본키를 리스트로 리턴
         List<WeatherMidCompositeKey> ids = new ArrayList<>();
+        String regId = regionCodeDTO.getRegionCode();
+        String regName = regionCodeDTO.getRegionName();
+        String city = regionCodeDTO.getCity();
 
         try {
             // 중기 예보 API 호출
@@ -156,7 +165,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
             String[] daysArray = dateService.getDaysAfterToday(3, 7);
 
             // 중기 예보, 육상 예보, 날짜를 매개변수로 entity 배열을 받아옴.
-            List<WeatherMidEntity> entities = makeEntityList(jsonFromMidTa, jsonFromMidFcst, daysArray);
+            List<WeatherMidEntity> entities = makeEntityList(jsonFromMidTa, jsonFromMidFcst, daysArray, regName, city);
 
             for (WeatherMidEntity entity : entities) {
                 weatherMidRepository.save(entity);
@@ -165,18 +174,19 @@ public class WeatherMidServiceImpl implements WeatherMidService {
 
         } catch (ParseException e) {
             e.printStackTrace();
-            System.out.println("Wrong regIdForMidTa or regIdForMidFcst: " + regId + e.getMessage());
+            log.warn("Failed parsing JSON: " + regId + e.getMessage());
         } catch (Exception e) {
             // 예외가 발생하면 로그를 출력하고 계속 진행한다.
             // 이때, catch 블록 안에서는 트랜잭션이 롤백되지 않기 때문에,
             // 다른 데이터는 여전히 저장될 수 있다.
-            System.out.println("Failed to update entity: " + e.getMessage());
+            e.printStackTrace();
+            log.warn("Failed to update entity: " + e.getMessage());
         }
 
         return ids;
     }
 
-    public List<WeatherMidDTO> getMidForecast(String regionCode) {
+    public ResultDTO<List<WeatherMidDTO>> getMidForecast(String regionCode) {
         String[] weeks = dateService.getDaysAfterToday(3, 7);
         List<WeatherMidDTO> dtoList = new ArrayList<>();
         for (int i = 0; i < weeks.length; i++) {
@@ -184,6 +194,6 @@ public class WeatherMidServiceImpl implements WeatherMidService {
             WeatherMidEntity result = weatherMidRepository.findById(weatherMidCompositeKey).orElseThrow(() -> new NoSuchElementException());
             dtoList.add(entityToDTO(result));
         }
-        return dtoList;
+        return ResultDTO.of(HttpStatus.OK.value(), "날씨 중기 예보를 조회하는데 성공하였습니다.", dtoList);
     }
 }
