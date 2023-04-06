@@ -23,6 +23,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
@@ -176,6 +178,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
     @Override
     @Transactional
     public List<WeatherMidCompositeKey> updateWeatherMid(List<WeatherMidEntity> entities) {
+        /* 기존 메서드
         List<WeatherMidCompositeKey> ids = new ArrayList<>();
         for (WeatherMidEntity entity : entities) {
             try {
@@ -187,6 +190,19 @@ public class WeatherMidServiceImpl implements WeatherMidService {
             }
         }
         return ids;
+         */
+        // 병렬 처리
+        return entities.parallelStream().map(entity -> {
+                    try {
+                        weatherMidRepository.save(entity);
+                        return entity.getId();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        log.warn("Failed to update entity: " + e.getMessage());
+                        return null;
+                    }
+                }).filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     @Override

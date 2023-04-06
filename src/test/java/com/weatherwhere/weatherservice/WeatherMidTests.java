@@ -45,7 +45,7 @@ public class WeatherMidTests {
         List<WeatherMidEntity> entities = weatherMidService.makeEntityList(parseCSVService.ParseCSV(),
                 dateService.getDaysAfterToday(3, 7), dateService.getTmfc());
         long openApiEnd = System.nanoTime();
-        System.out.println("약 850번의 OpenAPI 호출을 통해 850개의 Entity리스트를 만드는데 소요되는시간: " + (openApiEnd - start) + "ns");
+        System.out.println("약 172번의 OpenAPI 호출을 통해 850개의 Entity리스트를 만드는데 소요되는시간: " + (openApiEnd - start) + "ns");
 
 
         List<WeatherMidCompositeKey> keys = weatherMidService.updateWeatherMid(entities);
