@@ -62,7 +62,9 @@ public class WeatherShortAllDTO {
     //풍량
     private Double vec;
 
-    private WeatherXY weatherXY;
+    private Integer nx;
+
+    private Integer ny;
 
 
 }

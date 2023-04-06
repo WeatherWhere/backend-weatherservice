@@ -2,6 +2,7 @@ package com.weatherwhere.weatherservice.domain.weathershort;
 
 
 import com.weatherwhere.weatherservice.domain.BaseEntity;
+import com.weatherwhere.weatherservice.domain.weathermid.WeatherMidCompositeKey;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortAllDTO;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,19 +10,15 @@ import java.time.LocalDateTime;
 
 @Builder
 @Entity
-@Table(name="weather_short_term_main", schema = "weather",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"fcst_date_time", "weather_xy_id"})})
+@Table(name="weather_short_term_main", schema = "weather")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString(exclude = "weatherXY")
 public class WeatherShortMain extends BaseEntity {
 
-    //identity방식으로 아이디 1씩 자동증가
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "weather_short_id")
-    private Long weatherShortId;
+    // 단기 예보 식별자
+    @EmbeddedId
+    private WeatherShortCompositeKey id;
 
     //발표날짜
     @Column(name = "base_date")
@@ -30,10 +27,6 @@ public class WeatherShortMain extends BaseEntity {
     //발표시간
     @Column(name = "base_time")
     private String baseTime;
-
-    //예보날짜+시간
-    @Column(name = "fcst_date_time")
-    private LocalDateTime fcstDateTime;
 
     //강수확률
     @Column(name = "pop")
@@ -70,10 +63,6 @@ public class WeatherShortMain extends BaseEntity {
     @Column(name = "reh")
     private Double reh;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "weather_xy_id")
-    private WeatherXY weatherXY;
-
     //테이블 값 업데이트
     public void update(WeatherShortAllDTO dto) {
         this.pop = dto.getPop();
@@ -89,10 +78,5 @@ public class WeatherShortMain extends BaseEntity {
     }
 
 
-
-    //테이블 값 set
-    public void setWeatherXY(WeatherXY weatherXY){
-        this.weatherXY =weatherXY;
-    }
 
 }

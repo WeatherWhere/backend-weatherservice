@@ -3,6 +3,7 @@ package com.weatherwhere.weatherservice;
 import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortMain;
 import com.weatherwhere.weatherservice.domain.weathershort.WeatherXY;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainApiRequestDTO;
+import com.weatherwhere.weatherservice.repository.weathershort.WeatherShortMainRepository;
 import com.weatherwhere.weatherservice.repository.weathershort.WeatherXYRepository;
 import com.weatherwhere.weatherservice.service.weathershort.WeatherShortMainApiService;
 import org.junit.Ignore;
@@ -16,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -35,13 +37,16 @@ public class WeatherShortTests {
     @Autowired
     private WeatherXYRepository weatherXYRepository;
 
+    @Autowired
+    private WeatherShortMainRepository weatherShortMainRepository;
+
 
     @Test
     @DisplayName("nx,ny별 단기예보 데이터 불러오기 테스트")
     @Disabled
     void testNxNyRepeat() throws Exception {
-        String baseDate = "20230401";
-        String baseTime = "0500";
+        String baseDate = "20230406";
+        String baseTime = "2000";
         MvcResult result = mockMvc.perform(get("/weather/forecast/short")
                         .param("baseDate", baseDate)
                         .param("baseTime", baseTime))
@@ -94,4 +99,9 @@ public class WeatherShortTests {
         }
 
     }
+
+
+
+
+
 }
