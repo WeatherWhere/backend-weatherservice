@@ -2,7 +2,6 @@ package com.weatherwhere.weatherservice;
 
 import com.weatherwhere.weatherservice.domain.weathermid.WeatherMidCompositeKey;
 import com.weatherwhere.weatherservice.domain.weathermid.WeatherMidEntity;
-import com.weatherwhere.weatherservice.dto.weathermid.RegionCodeDTO;
 import com.weatherwhere.weatherservice.service.date.DateService;
 import com.weatherwhere.weatherservice.service.weathermid.WeatherMidService;
 import com.weatherwhere.weatherservice.service.weathermid.ParseCSVService;
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Arrays;
 import java.util.List;
 
 @SpringBootTest

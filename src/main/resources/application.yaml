@@ -22,6 +22,9 @@ spring:
         show_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
     persistence-unit-name: my-persistence-unit
+  batch:
+    jdbc:
+      initialize-schema: always
 
 logging:
   level:

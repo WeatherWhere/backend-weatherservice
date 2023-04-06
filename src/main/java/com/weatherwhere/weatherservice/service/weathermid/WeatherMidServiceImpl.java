@@ -90,7 +90,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
     }
 
     @Override
-    public JSONObject getWeatherMidTa(String regId, String tmFc) throws ParseException {
+    public JSONObject getWeatherMidTa(String regId, String tmFc) throws ParseException, NullPointerException {
         // 예보 구역코드와, 발표 시각은 변수어야 한다. - 매개변수로 받음 -
         String apiUrl = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidTa";
         String serviceKey = System.getProperty("WEATHER_MID_SERVICE_KEY");
@@ -108,7 +108,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
     }
 
     @Override
-    public JSONObject getWeatherMidLandFcst(String regId, String tmFc) throws ParseException {
+    public JSONObject getWeatherMidLandFcst(String regId, String tmFc) throws ParseException, NullPointerException {
         String apiUrl = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst";
         String serviceKey = System.getProperty("WEATHER_MID_SERVICE_KEY");
         String dataType = "JSON";
@@ -127,13 +127,17 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         List<WeatherMidEntity> entities = new ArrayList<>();
         Integer dtoListLength = regionCodeDTOList.size();
         Integer daysListLength = threeToSevenDays.length;
+        String regId = "";
+        String regIdForMidFcst = "";
+        String city = "";
+        String regName = "";
 
         for (int i = 0; i < dtoListLength; i++) {
             try {
-                String regId = regionCodeDTOList.get(i).getRegionCode();
-                String regName = regionCodeDTOList.get(i).getRegionName();
-                String city = regionCodeDTOList.get(i).getCity();
-                String regIdForMidFcst = changeRegIdForFcst(regId);
+                regId = regionCodeDTOList.get(i).getRegionCode();
+                regName = regionCodeDTOList.get(i).getRegionName();
+                city = regionCodeDTOList.get(i).getCity();
+                regIdForMidFcst = changeRegIdForFcst(regId);
 
                 JSONObject jsonFromMidTa = getWeatherMidTa(regId, tmfc);
                 JSONObject jsonFromMidLandFcst = getWeatherMidLandFcst(regIdForMidFcst, tmfc);
@@ -163,7 +167,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
                 }
             } catch (NullPointerException e) {
                 e.printStackTrace();
-                log.warn("OpenAPi returns null: " + e.getMessage());
+                log.warn("OpenAPi returns null: " + regId + " , "  + regIdForMidFcst + e.getMessage());
             } catch (ParseException e) {
                 e.printStackTrace();
                 log.warn("Failed parsing JSON: " + e.getMessage());
