@@ -35,7 +35,7 @@ public class BatchConfiguration {
 
     private List<RegionCodeDTO> regionCodeDTOList;
     private String[] threeToSevenDays;
-    private List<WeatherMidEntity> collectData;
+    private List<WeatherMidEntity> collectData = new ArrayList<>();
     private String tmfc;
 
     // 리스트의 데이터를 하나씩 인덱스를 통해 가져온다.
@@ -45,7 +45,6 @@ public class BatchConfiguration {
         regionCodeDTOList = parseCSVService.ParseCSV();
         threeToSevenDays = dateService.getDaysAfterToday(3, 7);
         tmfc = dateService.getTmfc();
-        collectData = new ArrayList<>();
         collectData = weatherMidService.makeEntityList(regionCodeDTOList, threeToSevenDays, tmfc);
         nextIndex = 0;
     }
