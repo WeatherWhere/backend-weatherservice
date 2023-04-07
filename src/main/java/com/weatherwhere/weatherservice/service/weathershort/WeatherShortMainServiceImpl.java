@@ -1,9 +1,6 @@
 package com.weatherwhere.weatherservice.service.weathershort;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.weatherwhere.weatherservice.domain.weathermid.WeatherMidEntity;
 import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortMain;
 import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortSub;
 import com.weatherwhere.weatherservice.domain.weathershort.WeatherXY;
@@ -16,13 +13,11 @@ import jakarta.transaction.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -38,6 +33,15 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
     private final WeatherShortSubRepository weatherShortSubRepository;
 
     private final WeatherXYRepository weatherXYRepository;
+
+
+    //xylist 잘게 쪼개는 메서드
+    private List<Object[]> splitXyList() throws Exception {
+        List<Object[]> xyList = weatherXYRepository.findAllNxAndNy();
+        List<Object[]> subList = xyList.subList(0, 100);
+        return subList;
+    }
+
 
     //uri 생성하는 메서드
     private URI makeUri(WeatherShortRequestDTO weatherShortRequestDTO) throws Exception {
@@ -87,141 +91,164 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
 
     }
 
-    //파싱한 json값을 dto리스트에 저장하는 메서드
-    //override를 안해도 오류가 발생하지 않지만 해야 컴파일할떄 버그를 쉽게 찾을 수 있음.
-    //impl의 소스코드와 연결되어 있다는 걸 뜻함.
-    private List<WeatherShortAllDTO> getWeatherShortDto(WeatherShortRequestDTO weatherShortRequestDTO) throws Exception {
+    //파싱한 json값을 fcstDate+fcstTime을 key로 한 dto리스트에 저장(12시간)
+    private List<WeatherShortAllDTO> jsonToFcstDateMap(WeatherShortRequestDTO weatherShortRequestDTO) throws Exception {
+
         JsonNode itemNode = weatherShortJsonParsing(weatherShortRequestDTO);
+
         List<WeatherShortAllDTO> weatherShortAllDTOList = StreamSupport.stream(itemNode.spliterator(), false)
                 //예보날짜+시간을 key값으로 함
                 .collect(Collectors.groupingBy(time -> time.get("fcstTime").asText() + time.get("fcstDate").asText()))
                 .values().stream()
                 //예보날짜+시간순으로 정렬
-                .sorted(Comparator.comparing((List<JsonNode> timeList) -> timeList.get(0).get("fcstDate").asText())
-                        .thenComparing((List<JsonNode> timeList) -> timeList.get(0).get("fcstTime").asText()))
-                .map(timeList -> {
-                    WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(weatherShortRequestDTO.getNx(), weatherShortRequestDTO.getNy());
-                    JsonNode time = timeList.get(0);
-                    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
-
-                    WeatherShortAllDTO dto = WeatherShortAllDTO.builder()
-                            .baseDate(weatherShortRequestDTO.getBaseDate())
-                            .baseTime(weatherShortRequestDTO.getBaseTime())
-                            .weatherXY(weatherXY)
-                            .fcstDateTime(LocalDateTime.parse(time.get("fcstDate").asText() + time.get("fcstTime").asText(), dateFormatter))
-                            .build();
-
-                    for (JsonNode categoryNode : timeList) {
-                        String category = categoryNode.get("category").asText();
-                        switch (category) {
-                            case "POP":
-                                dto.setPop(categoryNode.get("fcstValue").asDouble());
-                                break;
-                            case "PCP":
-                                dto.setPcp(categoryNode.get("fcstValue").asText());
-                                break;
-                            case "PTY":
-                                dto.setPty(categoryNode.get("fcstValue").asDouble());
-                                break;
-                            case "SKY":
-                                dto.setSky(categoryNode.get("fcstValue").asDouble());
-                                break;
-                            case "WSD":
-                                dto.setWsd(categoryNode.get("fcstValue").asDouble());
-                                break;
-                            case "REH":
-                                dto.setReh(categoryNode.get("fcstValue").asDouble());
-                                break;
-                            case "TMP":
-                                dto.setTmp(categoryNode.get("fcstValue").asDouble());
-                                break;
-                            case "TMN":
-                                dto.setTmn(categoryNode.get("fcstValue").asDouble());
-                                break;
-                            case "TMX":
-                                dto.setTmx(categoryNode.get("fcstValue").asDouble());
-                                break;
-                            case "SNO":
-                                dto.setSno(categoryNode.get("fcstValue").asText());
-                                break;
-                            case "UUU":
-                                dto.setUuu(categoryNode.get("fcstValue").asDouble());
-                                break;
-                            case "VVV":
-                                dto.setVvv(categoryNode.get("fcstValue").asDouble());
-                                break;
-                            case "WAV":
-                                dto.setWav(categoryNode.get("fcstValue").asDouble());
-                                break;
-                            case "VEC":
-                                dto.setVec(categoryNode.get("fcstValue").asDouble());
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                    return dto;
-                })
+/*                .sorted(Comparator.comparing((List<JsonNode> timeList) -> timeList.get(0).get("fcstDate").asText())
+                        .thenComparing((List<JsonNode> timeList) -> timeList.get(0).get("fcstTime").asText()))*/
+                .map(timeList -> JsonToDTOWeatherShort(weatherShortRequestDTO, timeList))
                 .collect(Collectors.toList());
         return weatherShortAllDTOList;
     }
 
+    //weatherShortAllDTOList의 시간 당 하나의 dto 요소 저장하는 메서드
+    private WeatherShortAllDTO JsonToDTOWeatherShort(WeatherShortRequestDTO weatherShortRequestDTO, List<JsonNode> timeList) {
+
+        JsonNode time = timeList.get(0);
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+
+        WeatherShortAllDTO dto = WeatherShortAllDTO.builder()
+                .baseDate(weatherShortRequestDTO.getBaseDate())
+                .baseTime(weatherShortRequestDTO.getBaseTime())
+                .nx(weatherShortRequestDTO.getNx())
+                .ny(weatherShortRequestDTO.getNy())
+                .fcstDateTime(LocalDateTime.parse(time.get("fcstDate").asText() + time.get("fcstTime").asText(), dateFormatter))
+                .build();
+
+        for (JsonNode categoryNode : timeList) {
+            String category = categoryNode.get("category").asText();
+            switch (category) {
+                case "POP":
+                    dto.setPop(categoryNode.get("fcstValue").asDouble());
+                    break;
+                case "PCP":
+                    dto.setPcp(categoryNode.get("fcstValue").asText());
+                    break;
+                case "PTY":
+                    dto.setPty(categoryNode.get("fcstValue").asDouble());
+                    break;
+                case "SKY":
+                    dto.setSky(categoryNode.get("fcstValue").asDouble());
+                    break;
+                case "WSD":
+                    dto.setWsd(categoryNode.get("fcstValue").asDouble());
+                    break;
+                case "REH":
+                    dto.setReh(categoryNode.get("fcstValue").asDouble());
+                    break;
+                case "TMP":
+                    dto.setTmp(categoryNode.get("fcstValue").asDouble());
+                    break;
+                case "TMN":
+                    dto.setTmn(categoryNode.get("fcstValue").asDouble());
+                    break;
+                case "TMX":
+                    dto.setTmx(categoryNode.get("fcstValue").asDouble());
+                    break;
+                case "SNO":
+                    dto.setSno(categoryNode.get("fcstValue").asText());
+                    break;
+                case "UUU":
+                    dto.setUuu(categoryNode.get("fcstValue").asDouble());
+                    break;
+                case "VVV":
+                    dto.setVvv(categoryNode.get("fcstValue").asDouble());
+                    break;
+                case "WAV":
+                    dto.setWav(categoryNode.get("fcstValue").asDouble());
+                    break;
+                case "VEC":
+                    dto.setVec(categoryNode.get("fcstValue").asDouble());
+                    break;
+                default:
+                    break;
+            }
+        }
+        return dto;
+    }
+
+
+    //dto리스트를 entity리스트로 변환한 뒤 mainEntityList에 저장
+    @Transactional
+    private void weatherShortDtoToEntity(WeatherShortRequestDTO weatherShortRequestDTO, List<WeatherShortMain> mainEntityList, List<WeatherShortSub> subEntityList) throws Exception {
+
+
+        for (WeatherShortAllDTO dto : jsonToFcstDateMap(weatherShortRequestDTO)) {
+            WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(dto.getNx(), dto.getNy());
+            mainEntityList.add(mainDtoToEntity(dto, weatherXY));
+            subEntityList.add(subDtoToEntity(dto, weatherXY));
+        }
+
+    }
+
 
     @Transactional
-    //dto리스트를 entity리스트로 변환한 뒤 db에 save하는 메서드
-    //컨트롤러에서 최종적으로 이 service를 호출함.
-    @Override
-    public String saveWeatherShortEntity(WeatherShortRequestDTO weatherShortRequestDTO) throws Exception {
-        //dto리스트를 entity리스트로 변환하는 부분
-        List<WeatherShortMain> mainEntityList = new ArrayList<>();
-        List<WeatherShortSub> subEntityList = new ArrayList<>();
-        Integer[] nxList = {53, 54, 54, 54};
-        Integer[] nyList = {125, 123, 126, 129};
-        String nx = "69";
-        String ny = "100";
-        System.out.println("xylist=====================================================================");
-        List<Object[]> xyList = weatherXYRepository.findAllNxAndNy();
-        List<Object[]> subList = xyList.subList(0, 3);
+    //entity리스트를 병렬처리하면서 db에 save하는 메서드
+    private void saveAllRepeatXYList(List<WeatherShortMain> mainEntityList, List<WeatherShortSub> subEntityList) throws Exception {
+        System.out.println("mainEntityList.parallelStream():" + mainEntityList.size());
+        mainEntityList.parallelStream().map(entity -> {
+                    try {
+                        weatherShortMainRepository.save(entity);
+                        System.out.println("mainEntityList.parallelStream()" + entity.getId());
+                        return entity.getId();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        log.warn("Failed to update entity: " + e.getMessage());
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
-        for (Object[] xy : subList) {
+        subEntityList.parallelStream().map(entity -> {
+                    try {
+                        weatherShortSubRepository.save(entity);
+                        System.out.println("subEntityList.parallelStream()" + entity.getId());
+                        return entity.getId();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        log.warn("Failed to update entity: " + e.getMessage());
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+    }
+
+    //모든 xy리스트에 대한 값 저장하는 메서드
+    @Override
+    public String getXYListWeatherAllSave(WeatherShortRequestDTO weatherShortRequestDTO, List<WeatherShortMain> mainEntityList, List<WeatherShortSub> subEntityList) throws Exception {
+
+        splitXyList().stream().map(xy -> {
             Integer nx2 = (Integer) xy[0];
             Integer ny2 = (Integer) xy[1];
-            // nx, ny 값 사용
+
             weatherShortRequestDTO.setNx(nx2);
             weatherShortRequestDTO.setNy(ny2);
+
             try {
-                for (WeatherShortAllDTO dto : getWeatherShortDto(weatherShortRequestDTO)) {
-                    //엔티티에 fcstdate, fcsttime, 격자x,y값이 동일한 엔티티가 존재하는지 판별하는 메서드
-                    WeatherShortMain mainExistingEntity = weatherShortMainRepository.findByFcstDateTimeAndWeatherXY(dto.getFcstDateTime(), dto.getWeatherXY());
-                    WeatherShortSub subExistingEntity = weatherShortSubRepository.findByFcstDateTimeAndWeatherXY(dto.getFcstDateTime(), dto.getWeatherXY());
-                    System.out.println("mainExistingEntity=========================================================="+mainExistingEntity);
-
-                    System.out.println(dto.getWeatherXY());
-                    if (mainExistingEntity != null) {
-                        mainExistingEntity.update(dto);
-                        subExistingEntity.update(dto);
-                        mainEntityList.add(mainExistingEntity);
-                        subEntityList.add(subExistingEntity);
-                    } else { //존재하지 않을 경우 엔티티 새로 생성
-                        WeatherShortMain mainEntity = mainDtoToEntity(dto);
-                        WeatherShortSub subEntity = subDtoToEntity(dto);
-                        mainEntityList.add(mainEntity);
-                        subEntityList.add(subEntity);
-
-                    }
-                }
-                weatherShortMainRepository.saveAll(mainEntityList);
-                weatherShortSubRepository.saveAll(subEntityList);
-            } catch (JsonParseException e) {
-                e.printStackTrace();
+                weatherShortDtoToEntity(weatherShortRequestDTO, mainEntityList, subEntityList);
+                return "성공";
             } catch (Exception e) {
-                throw new Exception("오류 발생", e);
+                e.printStackTrace();
+                return null;
             }
+        })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
 
-        }
+        saveAllRepeatXYList(mainEntityList, subEntityList);
+        System.out.println("mainEntityList==================="+mainEntityList);
         return "성공";
-
 
     }
 

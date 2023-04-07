@@ -1,5 +1,7 @@
 package com.weatherwhere.weatherservice.controller.weathershort;
 
+import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortMain;
+import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortSub;
 import com.weatherwhere.weatherservice.dto.ResultDTO;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainApiRequestDTO;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortRequestDTO;
@@ -8,6 +10,10 @@ import com.weatherwhere.weatherservice.service.weathershort.WeatherShortMainApiS
 import com.weatherwhere.weatherservice.service.weathershort.WeatherShortMainService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @RestController
 @RequestMapping("weather")
@@ -22,9 +28,14 @@ public class WeatherShortController {
     @GetMapping("/forecast/short")
     public String weatherShortMainEntityList(@ModelAttribute WeatherShortRequestDTO weatherShortRequestDTO) throws Exception {
         try {
-            return weatherShortMainService.saveWeatherShortEntity(weatherShortRequestDTO);
+
+            List<WeatherShortMain> mainEntityList = Collections.synchronizedList(new ArrayList<>());
+            List<WeatherShortSub> subEntityList = Collections.synchronizedList(new ArrayList<>());
+
+            return weatherShortMainService.getXYListWeatherAllSave(weatherShortRequestDTO, mainEntityList, subEntityList);
 
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception(e);
 
         }

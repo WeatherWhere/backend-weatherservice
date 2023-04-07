@@ -5,6 +5,7 @@ import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortSub;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -29,11 +30,13 @@ public class WeatherXY {
     private Integer weatherY;
 
 
- /*   @OneToMany(mappedBy = "weatherXY")
-    private List<WeatherShortMain> weatherShortMainList;
+    @OneToMany(mappedBy = "id.weatherXY", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private final List<WeatherShortMain> weatherShortMainList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "weatherXY")
-    private List<WeatherShortSub> weatherShortSubList;
-*/
+
+    @OneToMany(mappedBy = "id.weatherXY", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private final List<WeatherShortSub> weatherShortSubList = new ArrayList<>();
+
+
 
 }
