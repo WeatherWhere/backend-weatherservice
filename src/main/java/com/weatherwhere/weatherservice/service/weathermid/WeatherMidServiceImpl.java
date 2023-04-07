@@ -167,7 +167,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
                 }
             } catch (NullPointerException e) {
                 e.printStackTrace();
-                log.warn("OpenAPi returns null: " + regId + " , "  + regIdForMidFcst + e.getMessage());
+                log.warn("OpenAPi returns null: " + regId + " , " + regIdForMidFcst + e.getMessage());
             } catch (ParseException e) {
                 e.printStackTrace();
                 log.warn("Failed parsing JSON: " + e.getMessage());
@@ -182,7 +182,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
     @Override
     @Transactional
     public List<WeatherMidCompositeKey> updateWeatherMid(List<WeatherMidEntity> entities) {
-        /* 기존 메서드
+        /*
         List<WeatherMidCompositeKey> ids = new ArrayList<>();
         for (WeatherMidEntity entity : entities) {
             try {
@@ -194,8 +194,11 @@ public class WeatherMidServiceImpl implements WeatherMidService {
             }
         }
         return ids;
+
          */
+
         // 병렬 처리
+
         return entities.parallelStream().map(entity -> {
                     try {
                         weatherMidRepository.save(entity);
@@ -207,6 +210,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
                     }
                 }).filter(Objects::nonNull)
                 .collect(Collectors.toList());
+
     }
 
     @Override

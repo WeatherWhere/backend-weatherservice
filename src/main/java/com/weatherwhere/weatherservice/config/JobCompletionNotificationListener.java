@@ -18,9 +18,17 @@ public class JobCompletionNotificationListener implements JobExecutionListener {
 
     private final JdbcTemplate jdbcTemplate;
 
+    private Long startTime;
+    private Long endTime;
+
     @Autowired
     public JobCompletionNotificationListener(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    @Override
+    public void beforeJob(JobExecution jobExecution) {
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -30,6 +38,8 @@ public class JobCompletionNotificationListener implements JobExecutionListener {
             jdbcTemplate.query("select base_date, region_code from weather.weather_mid_term",
                     (rs, row) -> WeatherMidCompositeKey.builder().baseTime(rs.getString(1)).regionCode(rs.getString(2)).build()
             ).forEach(person -> log.info("Found <{{}}> in the database.", person));
+            endTime = System.currentTimeMillis();
+            System.out.println("Job took " + (endTime - startTime) + "ms");
         }
     }
 }

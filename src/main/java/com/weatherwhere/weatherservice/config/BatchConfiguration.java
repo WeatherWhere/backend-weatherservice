@@ -17,10 +17,12 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.database.JpaItemWriter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Log4j2
@@ -33,19 +35,32 @@ public class BatchConfiguration {
 
     private List<RegionCodeDTO> regionCodeDTOList;
     private String[] threeToSevenDays;
-    private List<WeatherMidEntity> collecData;
+    private List<WeatherMidEntity> collectData;
     private String tmfc;
 
     // 리스트의 데이터를 하나씩 인덱스를 통해 가져온다.
-    private int nextIndex = 0;
+    private int nextIndex;
 
+    public void initialize() {
+        regionCodeDTOList = parseCSVService.ParseCSV();
+        threeToSevenDays = dateService.getDaysAfterToday(3, 7);
+        tmfc = dateService.getTmfc();
+        collectData = new ArrayList<>();
+        collectData = weatherMidService.makeEntityList(regionCodeDTOList, threeToSevenDays, tmfc);
+        nextIndex = 0;
+    }
+
+    /*
     @PostConstruct
     private void initializeFields() {
         regionCodeDTOList = parseCSVService.ParseCSV();
         threeToSevenDays = dateService.getDaysAfterToday(3, 7);
         tmfc = dateService.getTmfc();
         collecData = weatherMidService.makeEntityList(regionCodeDTOList, threeToSevenDays, tmfc);
+        nextIndex = 0;
     }
+
+     */
 
     // ItemReader
     @Bean
@@ -57,9 +72,10 @@ public class BatchConfiguration {
                 // 하나씩 ItemWriter로 전달해야 한다.
                 WeatherMidEntity nextCollect = null;
 
-                if (nextIndex < collecData.size()) {
+                if (nextIndex < collectData.size()) {
                     // 전체 리스트에서 하나씩 추출해서, 하나씩 Writer로 전달한다.
-                    nextCollect = collecData.get(nextIndex);
+                    nextCollect = collectData.get(nextIndex);
+                    System.out.println(nextIndex);
                     nextIndex++;
                 }
                 return nextCollect;
