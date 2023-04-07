@@ -12,9 +12,8 @@ import java.time.LocalDateTime;
 @Data
 public class WeatherShortMainDTO {
 
-    private Long weatherShortId;
-
-    private Long weatherXYId;
+    //xy 외래키
+    private Long xyId;
 
     //예보날짜+예보시간
     private LocalDateTime fcstDateTime;

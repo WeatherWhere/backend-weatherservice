@@ -11,12 +11,13 @@ import java.time.LocalDateTime;
 
 public interface WeatherShortSubRepository extends JpaRepository<WeatherShortSub, WeatherShortCompositeKey> {
 
-/*
-    WeatherShortSub findByFcstDateTimeAndWeatherXY(LocalDateTime fcstDateTime, WeatherXY weatherXY);
+    /*
+        WeatherShortSub findByFcstDateTimeAndWeatherXY(LocalDateTime fcstDateTime, WeatherXY weatherXY);
 
-    @Query("SELECT wsm FROM WeatherShortSub wsm JOIN wsm.weatherXY wx WHERE wx.weatherX = :nx AND wx.weatherY = :ny AND wsm.fcstDateTime = :fcstDateTime")
-    WeatherShortSub findByWeatherXWeatherYAndFcstDateTime(Integer nx, Integer ny, LocalDateTime fcstDateTime);
-*/
+        @Query("SELECT wsm FROM WeatherShortSub wsm JOIN wsm.weatherXY wx WHERE wx.weatherX = :nx AND wx.weatherY = :ny AND wsm.fcstDateTime = :fcstDateTime")
+        WeatherShortSub findByWeatherXWeatherYAndFcstDateTime(Integer nx, Integer ny, LocalDateTime fcstDateTime);
+    */
+    WeatherShortSub findByIdWeatherXYWeatherXAndIdWeatherXYWeatherYAndIdFcstDateTime(Integer nx, Integer ny, LocalDateTime fcstDateTime);
 
 
 }

@@ -10,6 +10,8 @@ import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortSubDTO;
 import com.weatherwhere.weatherservice.repository.weathershort.WeatherShortMainRepository;
 import com.weatherwhere.weatherservice.repository.weathershort.WeatherShortSubRepository;
 import com.weatherwhere.weatherservice.repository.weathershort.WeatherXYRepository;
+import com.weatherwhere.weatherservice.repository.weathershort.mapping.TmnMapping;
+import com.weatherwhere.weatherservice.repository.weathershort.mapping.TmxMapping;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -89,13 +91,17 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
         try {
             getGridXY(requestDTO);
             List<WeatherShortMainDTO> mainDataList = new ArrayList<>();
-            WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(requestDTO.getNx(), requestDTO.getNy());
+            //WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(requestDTO.getNx(), requestDTO.getNy());
             for (int i = 0; i < 12; i++) {
                 LocalDateTime now = LocalDateTime.now();
                 LocalDateTime ldt = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), 0).plusHours(i);
                 requestDTO.setFcstDateTime(ldt);
-                //WeatherShortMain weatherShortMain = weatherShortMainRepository.findByFcstDateTimeAndWeatherXY(requestDTO.getFcstDateTime(), weatherXY);
-                //mainDataList.add(entityToDTO(weatherShortMain));
+                System.out.println(ldt);
+                WeatherShortMain weatherShortMain = weatherShortMainRepository.
+                        findByIdWeatherXYWeatherXAndIdWeatherXYWeatherYAndIdFcstDateTime(requestDTO.getNx(), requestDTO.getNy(),requestDTO.getFcstDateTime());
+                System.out.println("weatherShortMain"+weatherShortMain);
+                log.info(weatherShortMain);
+                mainDataList.add(entityToDTO(weatherShortMain));
             }
             return ResultDTO.of(HttpStatus.OK.value(),"메인 데이터(12시간)를 반환하는데 성공했습니다.",mainDataList);
         } catch (NullPointerException e) {
@@ -110,21 +116,22 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
     public ResultDTO<Object> getWeatherShortMainNowData(WeatherShortMainApiRequestDTO requestDTO) {
         try {
             getGridXY(requestDTO);
-            WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(requestDTO.getNx(), requestDTO.getNy());
+            //WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(requestDTO.getNx(), requestDTO.getNy());
             LocalDateTime now = LocalDateTime.now();
             LocalDateTime ldt = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), 0);
             LocalDateTime tmn = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 6, 0);
             LocalDateTime tmx = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 15, 0);
             requestDTO.setFcstDateTime(ldt);
-            //WeatherShortMain weatherShortMain = weatherShortMainRepository.findByFcstDateTimeAndWeatherXY(requestDTO.getFcstDateTime(), weatherXY);
+            WeatherShortMain weatherShortMain = weatherShortMainRepository.findByIdWeatherXYWeatherXAndIdWeatherXYWeatherYAndIdFcstDateTime(requestDTO.getNx(), requestDTO.getNy(), requestDTO.getFcstDateTime());
             //6시의 최저기온
-            //Double weatherShortMainTmn = weatherShortMainRepository.findTmnByFcstDateTimeAndWeatherXY(tmn, weatherXY);
+            TmnMapping weatherShortMainTmn = weatherShortMainRepository.findTmnByIdWeatherXYWeatherXAndIdWeatherXYWeatherYAndIdFcstDateTime(requestDTO.getNx(), requestDTO.getNy(), tmn);
+            System.out.println("weatherShortMainTmn"+weatherShortMainTmn);
             //15시의 최고기온
-            //Double weatherShortMainTmx = weatherShortMainRepository.findTmxByFcstDateTimeAndWeatherXY(tmx, weatherXY);
-            //System.out.println("최고기온: "+weatherShortMainTmx);
-            //WeatherShortMainDTO mainData = nowEntityToDTO(weatherShortMain, weatherShortMainTmn, weatherShortMainTmx);
-            //System.out.println("nowMainData: "+mainData);
-            return ResultDTO.of(HttpStatus.OK.value(),"메인 데이터(현재시간)를 반환하는데 성공했습니다.",null);
+            TmxMapping weatherShortMainTmx = weatherShortMainRepository.findTmxByIdWeatherXYWeatherXAndIdWeatherXYWeatherYAndIdFcstDateTime(requestDTO.getNx(), requestDTO.getNy(), tmx);
+            System.out.println("최고기온: "+weatherShortMainTmx);
+            WeatherShortMainDTO mainData = nowEntityToDTO(weatherShortMain, weatherShortMainTmn.getTmn(), weatherShortMainTmx.getTmx());
+            System.out.println("nowMainData: "+mainData);
+            return ResultDTO.of(HttpStatus.OK.value(),"메인 데이터(현재시간)를 반환하는데 성공했습니다.",mainData);
         } catch (NullPointerException e) {
             return ResultDTO.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "NullPointerExceptiond이 발생했습니다.", null);
         } catch (Exception e) {
@@ -139,14 +146,14 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
         try {
             getGridXY(requestDTO);
             List<WeatherShortSubDTO> subDataList = new ArrayList<>();
-            WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(requestDTO.getNx(), requestDTO.getNy());
+            //WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(requestDTO.getNx(), requestDTO.getNy());
             for (int i = 0; i < 12; i++) {
                 //분, 초는 0으로 만들어서 현재 시간 찍기
                 LocalDateTime now = LocalDateTime.now();
                 LocalDateTime ldt = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), 0).plusHours(i);
                 requestDTO.setFcstDateTime(ldt);
-                //WeatherShortSub weatherShortSub = weatherShortSubRepository.findByFcstDateTimeAndWeatherXY(requestDTO.getFcstDateTime(), weatherXY);
-                //subDataList.add(subEntityToDTO(weatherShortSub));
+                WeatherShortSub weatherShortSub = weatherShortSubRepository.findByIdWeatherXYWeatherXAndIdWeatherXYWeatherYAndIdFcstDateTime(requestDTO.getNx(), requestDTO.getNy(), requestDTO.getFcstDateTime());
+                subDataList.add(subEntityToDTO(weatherShortSub));
             }
             return ResultDTO.of(HttpStatus.OK.value(),"서브 데이터를 반환하는데 성공했습니다.",subDataList);
         } catch (NullPointerException e) {
