@@ -9,6 +9,7 @@ import com.weatherwhere.weatherservice.domain.weathershort.WeatherXY;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortAllDTO;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortRequestDTO;
 import jakarta.transaction.Transactional;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.net.URISyntaxException;
 import java.util.List;
@@ -51,6 +52,11 @@ public interface WeatherShortMainService {
                 .build();
         return weatherShortSub;
     }
+
+    //xylist 잘게 쪼개는 메서드
+    //xylist는 어플리케이션 실행 시 캐시에 저장해놓기 때문에 불필요한 select문을 줄임.
+    @Cacheable("xylist")
+    List<WeatherXY> splitXyList() throws Exception;
 
     String getXYListWeatherAllSave(WeatherShortRequestDTO weatherShortRequestDTO, List<WeatherShortMain> mainEntityList, List<WeatherShortSub> subEntityList) throws Exception;
 
