@@ -21,9 +21,10 @@ public class DateServiceImpl implements DateService {
         Calendar calendar = Calendar.getInstance();
 
         // 3일 뒤부터 7일 뒤까지 계산
+        calendar.add(Calendar.DAY_OF_MONTH, +start - 1);
         for (int i = 0; i <= end - start; i++) {
-            calendar.add(Calendar.DAY_OF_MONTH, +1);
             daysAfterToday[i] = sdf.format(calendar.getTime());
+            calendar.add(Calendar.DAY_OF_MONTH, +1);
         }
 
         return daysAfterToday;
