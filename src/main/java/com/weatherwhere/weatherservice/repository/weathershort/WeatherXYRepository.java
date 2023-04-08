@@ -15,7 +15,8 @@ public interface WeatherXYRepository extends JpaRepository<WeatherXY, Long> {
     List<WeatherXY> findByWeatherShortMainListFcstDateTimeAndWeatherXAndWeatherY(LocalDateTime fcstDateTime, Integer nx, Integer ny);
 */
 
+    //xy리스트 불러오기
+    List<WeatherXY> findAll();
 
-    @Query("SELECT wx.weatherX, wy.weatherY FROM WeatherXY wx, WeatherXY wy WHERE wx.id = wy.id")
-    List<Object[]> findAllNxAndNy();
+
 }

@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -36,9 +37,14 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
 
 
     //xylist 잘게 쪼개는 메서드
-    private List<Object[]> splitXyList() throws Exception {
-        List<Object[]> xyList = weatherXYRepository.findAllNxAndNy();
-        List<Object[]> subList = xyList.subList(0, 100);
+    //xylist는 어플리케이션 실행 시 캐시에 저장해놓기 때문에 불필요한 select문을 줄임.
+    @Cacheable("xylist")
+    @Override
+    @Transactional
+    public List<WeatherXY> splitXyList() throws Exception {
+        List<WeatherXY> xyList = weatherXYRepository.findAll();
+        System.out.println("xyList================================"+xyList);
+        List<WeatherXY> subList = xyList.subList(0, 100);
         return subList;
     }
 
@@ -56,7 +62,7 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
         String url = String.format("%s?serviceKey=%s&pageNo=%s&numOfRows=%s&dataType=%s&base_date=%s&base_time=%s&nx=%s&ny=%s",
                 apiUrl, serviceKey, pageNo, numOfRows, dataType,
                 weatherShortRequestDTO.getBaseDate(), weatherShortRequestDTO.getBaseTime(),
-                weatherShortRequestDTO.getNx(), weatherShortRequestDTO.getNy());
+                weatherShortRequestDTO.getWeatherXY().getWeatherX(), weatherShortRequestDTO.getWeatherXY().getWeatherY());
 
         //rest template이 String 문자열을 한 번 더 인코딩 해주는 걸 방지하기 위해 url 객체로 넣음
         URI endUrl = new URI(url);
@@ -117,8 +123,8 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
         WeatherShortAllDTO dto = WeatherShortAllDTO.builder()
                 .baseDate(weatherShortRequestDTO.getBaseDate())
                 .baseTime(weatherShortRequestDTO.getBaseTime())
-                .nx(weatherShortRequestDTO.getNx())
-                .ny(weatherShortRequestDTO.getNy())
+                .nx(weatherShortRequestDTO.getWeatherXY().getWeatherX())
+                .ny(weatherShortRequestDTO.getWeatherXY().getWeatherY())
                 .fcstDateTime(LocalDateTime.parse(time.get("fcstDate").asText() + time.get("fcstTime").asText(), dateFormatter))
                 .build();
 
@@ -181,9 +187,9 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
 
 
         for (WeatherShortAllDTO dto : jsonToFcstDateMap(weatherShortRequestDTO)) {
-            WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(dto.getNx(), dto.getNy());
-            mainEntityList.add(mainDtoToEntity(dto, weatherXY));
-            subEntityList.add(subDtoToEntity(dto, weatherXY));
+            //WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(dto.getNx(), dto.getNy());
+            mainEntityList.add(mainDtoToEntity(dto, weatherShortRequestDTO.getWeatherXY()));
+            subEntityList.add(subDtoToEntity(dto, weatherShortRequestDTO.getWeatherXY()));
         }
 
     }
@@ -228,26 +234,23 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
     public String getXYListWeatherAllSave(WeatherShortRequestDTO weatherShortRequestDTO, List<WeatherShortMain> mainEntityList, List<WeatherShortSub> subEntityList) throws Exception {
 
         splitXyList().stream().map(xy -> {
-            Integer nx2 = (Integer) xy[0];
-            Integer ny2 = (Integer) xy[1];
+                    WeatherXY weatherXY = xy;
+                    weatherShortRequestDTO.setWeatherXY(weatherXY);
 
-            weatherShortRequestDTO.setNx(nx2);
-            weatherShortRequestDTO.setNy(ny2);
-
-            try {
-                weatherShortDtoToEntity(weatherShortRequestDTO, mainEntityList, subEntityList);
-                return "성공";
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        })
+                    System.out.println("weatherShortRequestDTO==================="+weatherShortRequestDTO);
+                    try {
+                        weatherShortDtoToEntity(weatherShortRequestDTO, mainEntityList, subEntityList);
+                        return "성공";
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-
         saveAllRepeatXYList(mainEntityList, subEntityList);
-        System.out.println("mainEntityList==================="+mainEntityList);
+        System.out.println("mainEntityList===================" + mainEntityList);
         return "성공";
 
     }

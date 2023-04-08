@@ -19,8 +19,8 @@ public interface WeatherShortMainApiService {
 
     default WeatherShortMainDTO nowEntityToDTO(WeatherShortMain entity, Double tmn, Double tmx) {
         WeatherShortMainDTO dto = WeatherShortMainDTO.builder()
-/*                .weatherShortId(entity.getWeatherShortId())
-                .weatherXYId(entity.getWeatherXY().getId())*/
+                .xyId(entity.getId().getWeatherXY().getId())
+                .fcstDateTime(entity.getId().getFcstDateTime())
                 .pop(entity.getPop())
                 .pty(entity.getPty())
                 .reh(entity.getReh())
@@ -35,8 +35,8 @@ public interface WeatherShortMainApiService {
 
     default WeatherShortMainDTO entityToDTO(WeatherShortMain entity) {
         WeatherShortMainDTO dto = WeatherShortMainDTO.builder()
-/*                .weatherShortId(entity.getWeatherShortId())
-                .weatherXYId(entity.getWeatherXY().getId())*/
+                .xyId(entity.getId().getWeatherXY().getId())
+                .fcstDateTime(entity.getId().getFcstDateTime())
                 .pop(entity.getPop())
                 .pty(entity.getPty())
                 .reh(entity.getReh())
@@ -49,9 +49,8 @@ public interface WeatherShortMainApiService {
 
     default WeatherShortSubDTO subEntityToDTO(WeatherShortSub entity) {
         WeatherShortSubDTO dto = WeatherShortSubDTO.builder()
-/*                .weatherShortId(entity.getWeatherShortId())
-                .weatherXYId(entity.getWeatherXY().getId())
-                .fcstDateTime(entity.getFcstDateTime())*/
+                .xyId(entity.getId().getWeatherXY().getId())
+                .fcstDateTime(entity.getId().getFcstDateTime())
                 .pcp(entity.getPcp())
                 .sno(entity.getSno())
                 .uuu(entity.getUuu())

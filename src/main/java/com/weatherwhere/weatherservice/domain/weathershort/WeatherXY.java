@@ -1,12 +1,8 @@
 package com.weatherwhere.weatherservice.domain.weathershort;
 
-import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortMain;
-import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortSub;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name="weather_location", schema = "weather",
@@ -16,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @ToString
+@Cacheable
 public class WeatherXY {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,15 +25,17 @@ public class WeatherXY {
     //격자 y
     @Column(name = "weather_y")
     private Integer weatherY;
+/*
 
-
-    @OneToMany(mappedBy = "id.weatherXY", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonIgnore
+    @OneToMany(mappedBy = "id.weatherXY", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private final List<WeatherShortMain> weatherShortMainList = new ArrayList<>();
 
-
-    @OneToMany(mappedBy = "id.weatherXY", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonIgnore
+    @OneToMany(mappedBy = "id.weatherXY", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private final List<WeatherShortSub> weatherShortSubList = new ArrayList<>();
 
+*/
 
 
 }

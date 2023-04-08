@@ -1,5 +1,6 @@
 package com.weatherwhere.weatherservice.dto.weathershort;
 
+import com.weatherwhere.weatherservice.domain.weathershort.WeatherXY;
 import lombok.Data;
 import lombok.Getter;
 
@@ -12,7 +13,5 @@ public class WeatherShortRequestDTO {
     //발표시간
     private String baseTime;
 
-    private Integer nx;
-    private Integer ny;
-
+    private WeatherXY weatherXY;
 }

@@ -6,6 +6,7 @@ import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainApiReque
 import com.weatherwhere.weatherservice.repository.weathershort.WeatherShortMainRepository;
 import com.weatherwhere.weatherservice.repository.weathershort.WeatherXYRepository;
 import com.weatherwhere.weatherservice.service.weathershort.WeatherShortMainApiService;
+import jakarta.transaction.Transactional;
 import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
@@ -42,11 +43,11 @@ public class WeatherShortTests {
 
 
     @Test
-    @DisplayName("nx,ny별 단기예보 데이터 불러오기 테스트")
-    @Disabled
+    @DisplayName("nx,ny별 단기예보 데이터 저장하는 테스트")
+   @Disabled
     void testNxNyRepeat() throws Exception {
-        String baseDate = "20230406";
-        String baseTime = "2000";
+        String baseDate = "20230408";
+        String baseTime = "0200";
         MvcResult result = mockMvc.perform(get("/weather/forecast/short")
                         .param("baseDate", baseDate)
                         .param("baseTime", baseTime))
@@ -86,17 +87,11 @@ public class WeatherShortTests {
 
     @Test
     @DisplayName("테이블에서 모든 nx, ny값 불러오기")
+    @Transactional
     void testNxNyList() {
 
-        List<Object[]> xyList = weatherXYRepository.findAllNxAndNy();
+        List<WeatherXY> xyList = weatherXYRepository.findAll();
         System.out.println("xy리스트:" + xyList);
-        Integer count = 0;
-        for (Object[] xy : xyList) {
-            Integer nx = (Integer) xy[0];
-            Integer ny = (Integer) xy[1];
-            count++;
-            System.out.println(nx+", "+ny + "/" + count);
-        }
 
     }
 

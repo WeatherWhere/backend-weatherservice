@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 @Data
 public class WeatherShortSubDTO {
 
+    //xy 외래키
+    private Long xyId;
 
     private Long weatherShortId;
 
