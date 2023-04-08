@@ -22,6 +22,7 @@ import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -128,55 +129,28 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
                 .fcstDateTime(LocalDateTime.parse(time.get("fcstDate").asText() + time.get("fcstTime").asText(), dateFormatter))
                 .build();
 
+
+        Map<String, Consumer<JsonNode>> handlers = new HashMap<>();
+        handlers.put("POP", node -> dto.setPop(node.get("fcstValue").asDouble()));
+        handlers.put("PCP", node -> dto.setPcp(node.get("fcstValue").asText()));
+        handlers.put("PTY", node -> dto.setPty(node.get("fcstValue").asDouble()));
+        handlers.put("SKY", node -> dto.setSky(node.get("fcstValue").asDouble()));
+        handlers.put("WSD", node -> dto.setWsd(node.get("fcstValue").asDouble()));
+        handlers.put("REH", node -> dto.setReh(node.get("fcstValue").asDouble()));
+        handlers.put("TMP", node -> dto.setTmp(node.get("fcstValue").asDouble()));
+        handlers.put("TMN", node -> dto.setTmn(node.get("fcstValue").asDouble()));
+        handlers.put("TMX", node -> dto.setTmx(node.get("fcstValue").asDouble()));
+        handlers.put("SNO", node -> dto.setSno(node.get("fcstValue").asText()));
+        handlers.put("UUU", node -> dto.setUuu(node.get("fcstValue").asDouble()));
+        handlers.put("VVV", node -> dto.setVvv(node.get("fcstValue").asDouble()));
+        handlers.put("WAV", node -> dto.setWav(node.get("fcstValue").asDouble()));
+        handlers.put("VEC", node -> dto.setVec(node.get("fcstValue").asDouble()));
+
         for (JsonNode categoryNode : timeList) {
             String category = categoryNode.get("category").asText();
-            switch (category) {
-                case "POP":
-                    dto.setPop(categoryNode.get("fcstValue").asDouble());
-                    break;
-                case "PCP":
-                    dto.setPcp(categoryNode.get("fcstValue").asText());
-                    break;
-                case "PTY":
-                    dto.setPty(categoryNode.get("fcstValue").asDouble());
-                    break;
-                case "SKY":
-                    dto.setSky(categoryNode.get("fcstValue").asDouble());
-                    break;
-                case "WSD":
-                    dto.setWsd(categoryNode.get("fcstValue").asDouble());
-                    break;
-                case "REH":
-                    dto.setReh(categoryNode.get("fcstValue").asDouble());
-                    break;
-                case "TMP":
-                    dto.setTmp(categoryNode.get("fcstValue").asDouble());
-                    break;
-                case "TMN":
-                    dto.setTmn(categoryNode.get("fcstValue").asDouble());
-                    break;
-                case "TMX":
-                    dto.setTmx(categoryNode.get("fcstValue").asDouble());
-                    break;
-                case "SNO":
-                    dto.setSno(categoryNode.get("fcstValue").asText());
-                    break;
-                case "UUU":
-                    dto.setUuu(categoryNode.get("fcstValue").asDouble());
-                    break;
-                case "VVV":
-                    dto.setVvv(categoryNode.get("fcstValue").asDouble());
-                    break;
-                case "WAV":
-                    dto.setWav(categoryNode.get("fcstValue").asDouble());
-                    break;
-                case "VEC":
-                    dto.setVec(categoryNode.get("fcstValue").asDouble());
-                    break;
-                default:
-                    break;
-            }
+            handlers.getOrDefault(category, node -> {}).accept(categoryNode);
         }
+
         return dto;
     }
 
