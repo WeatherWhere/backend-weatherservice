@@ -23,6 +23,8 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     persistence-unit-name: my-persistence-unit
   batch:
+    job:
+      enabled: false
     jdbc:
       initialize-schema: always
 
