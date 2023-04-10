@@ -1,7 +1,7 @@
 name: Java CI with Gradle, Build and Push Docker Image to ECS and deploy in EC2
 on:
   push:
-    branches: [ "main"]
+    branches: [ "feat/edit-githubaction-containerverion" ]
 
 env:
   AWS_REGION: ap-northeast-2             # set this to your preferred AWS region, e.g. us-west-1
