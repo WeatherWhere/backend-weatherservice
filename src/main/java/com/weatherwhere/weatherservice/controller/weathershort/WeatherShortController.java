@@ -23,7 +23,7 @@ public class WeatherShortController {
     private final WeatherShortMainService weatherShortMainService;
     private final WeatherShortMainApiService weatherShortMainApiService;
 
-
+/*
     //nx, ny별 단기예보 데이터 저장하는 api
     @GetMapping("/forecast/short")
     public String weatherShortMainEntityList(@ModelAttribute WeatherShortRequestDTO weatherShortRequestDTO) throws Exception {
@@ -39,7 +39,7 @@ public class WeatherShortController {
             throw new Exception(e);
 
         }
-    }
+    }*/
 
     //단기예보 메인 api
     @GetMapping("/forecast/short/main")

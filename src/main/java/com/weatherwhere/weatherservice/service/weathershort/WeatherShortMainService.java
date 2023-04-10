@@ -7,6 +7,7 @@ import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortMain;
 import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortSub;
 import com.weatherwhere.weatherservice.domain.weathershort.WeatherXY;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortAllDTO;
+import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortEntityListDTO;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortRequestDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.cache.annotation.Cacheable;
@@ -58,8 +59,7 @@ public interface WeatherShortMainService {
     @Cacheable("xylist")
     List<WeatherXY> splitXyList() throws Exception;
 
-    String getXYListWeatherAllSave(WeatherShortRequestDTO weatherShortRequestDTO, List<WeatherShortMain> mainEntityList, List<WeatherShortSub> subEntityList) throws Exception;
 
-
-
+    //모든 xy리스트에 대한 값 저장하는 메서드
+    WeatherShortEntityListDTO getXYListWeatherAllSave(WeatherShortRequestDTO weatherShortRequestDTO, List<WeatherShortMain> mainEntityList, List<WeatherShortSub> subEntityList) throws Exception;
 }

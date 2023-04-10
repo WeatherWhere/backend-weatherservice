@@ -5,6 +5,7 @@ import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortMain;
 import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortSub;
 import com.weatherwhere.weatherservice.domain.weathershort.WeatherXY;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortAllDTO;
+import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortEntityListDTO;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortRequestDTO;
 import com.weatherwhere.weatherservice.repository.weathershort.WeatherShortMainRepository;
 import com.weatherwhere.weatherservice.repository.weathershort.WeatherShortSubRepository;
@@ -22,6 +23,7 @@ import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -45,8 +47,8 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
     public List<WeatherXY> splitXyList() throws Exception {
         List<WeatherXY> xyList = weatherXYRepository.findAll();
         System.out.println("xyList================================"+xyList);
-        List<WeatherXY> subList = xyList.subList(0, 100);
-        return subList;
+        List<WeatherXY> subList = xyList.subList(0, 1);
+        return xyList;
     }
 
 
@@ -155,20 +157,6 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
     }
 
 
-    //dto리스트를 entity리스트로 변환한 뒤 mainEntityList에 저장
-    @Transactional
-    private void weatherShortDtoToEntity(WeatherShortRequestDTO weatherShortRequestDTO, List<WeatherShortMain> mainEntityList, List<WeatherShortSub> subEntityList) throws Exception {
-
-
-        for (WeatherShortAllDTO dto : jsonToFcstDateMap(weatherShortRequestDTO)) {
-            //WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(dto.getNx(), dto.getNy());
-            mainEntityList.add(mainDtoToEntity(dto, weatherShortRequestDTO.getWeatherXY()));
-            subEntityList.add(subDtoToEntity(dto, weatherShortRequestDTO.getWeatherXY()));
-        }
-
-    }
-
-
     @Transactional
     //entity리스트를 병렬처리하면서 db에 save하는 메서드
     private void saveAllRepeatXYList(List<WeatherShortMain> mainEntityList, List<WeatherShortSub> subEntityList) throws Exception {
@@ -205,27 +193,34 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
 
     //모든 xy리스트에 대한 값 저장하는 메서드
     @Override
-    public String getXYListWeatherAllSave(WeatherShortRequestDTO weatherShortRequestDTO, List<WeatherShortMain> mainEntityList, List<WeatherShortSub> subEntityList) throws Exception {
+    public WeatherShortEntityListDTO getXYListWeatherAllSave(WeatherShortRequestDTO weatherShortRequestDTO, List<WeatherShortMain> mainEntityList, List<WeatherShortSub> subEntityList) throws Exception {
 
-        splitXyList().stream().map(xy -> {
-                    WeatherXY weatherXY = xy;
-                    weatherShortRequestDTO.setWeatherXY(weatherXY);
+        //entity list 병렬처리 + batch
+        splitXyList().parallelStream().forEach(xy -> {
+            WeatherXY weatherXY = xy;
+            weatherShortRequestDTO.setWeatherXY(weatherXY);
+            System.out.println("weatherShortRequestDTO==================="+weatherShortRequestDTO);
 
-                    System.out.println("weatherShortRequestDTO==================="+weatherShortRequestDTO);
-                    try {
-                        weatherShortDtoToEntity(weatherShortRequestDTO, mainEntityList, subEntityList);
-                        return "성공";
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        return null;
-                    }
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+            try {
+                ConcurrentHashMap<String, WeatherXY> weatherXYMap = new ConcurrentHashMap<>();
+                weatherXYMap.put("weatherXY", weatherXY);
+                for (WeatherShortAllDTO dto : jsonToFcstDateMap(weatherShortRequestDTO)) {
+                    //WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(dto.getNx(), dto.getNy());
+                    mainEntityList.add(mainDtoToEntity(dto, weatherXYMap.get("weatherXY")));
+                    subEntityList.add(subDtoToEntity(dto, weatherXYMap.get("weatherXY")));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.warn("Exception: " + e.getMessage());
+            }
+        });
 
-        saveAllRepeatXYList(mainEntityList, subEntityList);
-        System.out.println("mainEntityList===================" + mainEntityList);
-        return "성공";
+        //saveAllRepeatXYList(mainEntityList, subEntityList);
+        //System.out.println("mainEntityList===================" + mainEntityList);
+        WeatherShortEntityListDTO weatherShortEntityListDTO = new WeatherShortEntityListDTO();
+        weatherShortEntityListDTO.setMainEntityList(mainEntityList);
+        weatherShortEntityListDTO.setSubEntityList(subEntityList);
+        return weatherShortEntityListDTO;
 
     }
 
