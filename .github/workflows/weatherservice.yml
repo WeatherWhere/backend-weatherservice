@@ -1,4 +1,5 @@
-name: Java CI with Gradle, Build and Push Docker Image to ECS and commit to backend-kubernetes
+name: Java CI with Gradle, Build and Push Docker Image to ECR and commit to backend-kubernetes
+
 on:
   push:
     branches: [ "main" ]
