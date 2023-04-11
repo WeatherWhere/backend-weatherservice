@@ -1,6 +1,7 @@
-package com.weatherwhere.weatherservice.controller;
+package com.weatherwhere.weatherservice.controller.weathershort;
 
-import com.weatherwhere.weatherservice.config.BatchConfiguration;
+
+import com.weatherwhere.weatherservice.config.weathershort.ShortBatchConfiguration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -16,25 +17,31 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/batch")
 @RequiredArgsConstructor
-public class BatchController {
-    private final BatchConfiguration batchConfiguration;
+public class ShortBatchController {
+
+    private final ShortBatchConfiguration shortBatchConfiguration;
     private final JobLauncher jobLauncher;
+
     private Job job;
 
+    //특정 job만 실행시키기 위해 Qualifier어노테이션 사용 후 setJob해주기
     @Autowired
-    @Qualifier("jpaJob")
+    @Qualifier("jpaJobShort")
     public void setJob(Job job) {
         this.job = job;
     }
-
-    @GetMapping("/start")
-    public String startBatch() throws Exception {
-        batchConfiguration.initialize();
+    @GetMapping("/short")
+    public String shortStartBatch() throws Exception {
+        Long startTime = System.currentTimeMillis();
+        shortBatchConfiguration.initialize();
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis())
                 .toJobParameters();
         JobExecution jobExecution = jobLauncher.run(this.job, jobParameters);
+        Long endTime = System.currentTimeMillis();
 
-        return "!!!Batch Job Started: " + jobExecution.getStatus();
+        return "!!!Batch Job Started: " + jobExecution.getStatus() +"총 걸린시간:"+ (endTime-startTime);
     }
+
+
 }

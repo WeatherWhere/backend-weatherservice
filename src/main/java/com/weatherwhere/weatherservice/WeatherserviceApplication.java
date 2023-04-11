@@ -1,6 +1,7 @@
 package com.weatherwhere.weatherservice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
@@ -14,6 +15,7 @@ import java.util.Map;
 // JPA의 변화를 감시하는 어노테이션
 @EnableJpaAuditing
 @EnableCaching
+@EnableBatchProcessing
 public class WeatherserviceApplication {
 
     public static void main(String[] args) throws IOException {
