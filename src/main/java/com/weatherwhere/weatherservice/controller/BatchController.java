@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/batch")
+@RequestMapping("/weather")
 @RequiredArgsConstructor
 public class BatchController {
     private final BatchConfiguration batchConfiguration;
@@ -27,7 +27,7 @@ public class BatchController {
         this.job = job;
     }
 
-    @GetMapping("/start")
+    @GetMapping("/batch/mid")
     public String startBatch() throws Exception {
         batchConfiguration.initialize();
         JobParameters jobParameters = new JobParametersBuilder()

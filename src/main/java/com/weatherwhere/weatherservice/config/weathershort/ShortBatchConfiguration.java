@@ -23,8 +23,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Log4j2
@@ -34,19 +32,11 @@ public class ShortBatchConfiguration{
     private final WeatherShortMainService weatherShortMainService;
     private WeatherShortEntityListDTO collectData;
 
-    // 리스트의 데이터를 하나씩 인덱스를 통해 가져온다.
-    List<WeatherShortMain> mainEntityList = new ArrayList<>();
-    List<WeatherShortSub> subEntityList = new ArrayList<>();
+
 
     public void initialize() throws Exception {
 
-        WeatherShortRequestDTO weatherShortRequestDTO = new WeatherShortRequestDTO();
-        String baseDate = "20230409";
-        String baseTime = "0500";
-        weatherShortRequestDTO.setBaseDate(baseDate);
-        weatherShortRequestDTO.setBaseTime(baseTime);
-        collectData = weatherShortMainService.getXYListWeatherAllSave(weatherShortRequestDTO,
-                mainEntityList, subEntityList) ;
+        collectData = weatherShortMainService.getXYListWeatherAllSave() ;
 
     }
 

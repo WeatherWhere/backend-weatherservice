@@ -62,9 +62,17 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
         String numOfRows = "302";
         String pageNo = "1";
 
+        //현재 날짜와 시간 정각 계산
+        LocalDateTime now = LocalDateTime.now();
+        String baseDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String baseTime = now.format(DateTimeFormatter.ofPattern("0500"));
+
+        weatherShortRequestDTO.setBaseDate(baseDate);
+        weatherShortRequestDTO.setBaseTime(baseTime);
+
         String url = String.format("%s?serviceKey=%s&pageNo=%s&numOfRows=%s&dataType=%s&base_date=%s&base_time=%s&nx=%s&ny=%s",
                 apiUrl, serviceKey, pageNo, numOfRows, dataType,
-                weatherShortRequestDTO.getBaseDate(), weatherShortRequestDTO.getBaseTime(),
+                baseDate, baseTime,
                 weatherShortRequestDTO.getWeatherXY().getWeatherX(), weatherShortRequestDTO.getWeatherXY().getWeatherY());
 
         //rest template이 String 문자열을 한 번 더 인코딩 해주는 걸 방지하기 위해 url 객체로 넣음
@@ -193,8 +201,12 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
 
     //모든 xy리스트에 대한 값 저장하는 메서드
     @Override
-    public WeatherShortEntityListDTO getXYListWeatherAllSave(WeatherShortRequestDTO weatherShortRequestDTO, List<WeatherShortMain> mainEntityList, List<WeatherShortSub> subEntityList) throws Exception {
+    public WeatherShortEntityListDTO getXYListWeatherAllSave() throws Exception {
 
+        // 리스트의 데이터를 하나씩 인덱스를 통해 가져온다.
+        List<WeatherShortMain> mainEntityList = new ArrayList<>();
+        List<WeatherShortSub> subEntityList = new ArrayList<>();
+        WeatherShortRequestDTO weatherShortRequestDTO = new WeatherShortRequestDTO();
         //entity list 병렬처리 + batch
         splitXyList().parallelStream().forEach(xy -> {
             WeatherXY weatherXY = xy;
