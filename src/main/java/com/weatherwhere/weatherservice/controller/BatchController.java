@@ -27,7 +27,7 @@ public class BatchController {
         this.job = job;
     }
 
-    @GetMapping("/batch/start")
+    @GetMapping("/batch/mid")
     public String startBatch() throws Exception {
         batchConfiguration.initialize();
         JobParameters jobParameters = new JobParametersBuilder()
