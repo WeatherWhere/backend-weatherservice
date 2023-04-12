@@ -1,14 +1,15 @@
-name: Java CI with Gradle, Build and Push Docker Image to ECS and deploy in EC2
+name: Java CI with Gradle, Build and Push Docker Image to ECR and commit to backend-kubernetes
+
 on:
   push:
-    branches: [ "main"]
+    branches: [ "main" ]
 
 env:
   AWS_REGION: ap-northeast-2             # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY: weatherservice         # set this to your Amazon ECR repository name
   ECR_REGISTRY: public.ecr.aws/a5p8o7q9
   SSH_USERNAME: ubuntu
-  IMAGE_TAG: v1
+  IMAGE_TAG_PREFIX: v
 
 permissions:
   contents: read
@@ -59,18 +60,30 @@ jobs:
           # push it to ECR so that it can
           # be deployed to ECS.
           aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
-          docker build -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} -f Dockerfile .
-          docker push ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
-          echo "image=${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}" >> $GITHUB_OUTPUT
+          docker build -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG_PREFIX }}${{github.run_number}} -f Dockerfile .
+          docker push ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG_PREFIX }}${{github.run_number}}
+          echo "image=${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG_PREFIX }}${{github.run_number}}" >> $GITHUB_OUTPUT
 
-      - name: SSH into EC2 Instance
-        uses: appleboy/ssh-action@master
+      - name: Checkout Kubernetes YAML
+        uses: actions/checkout@v3
         with:
-          host: ${{ secrets.EC2_instance_publicIP }}
-          username: ${{ env.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
-            aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
-            docker pull ${{env.ECR_REGISTRY}}/weahterservice:${{ env.IMAGE_TAG }}
-            docker rm -f weatherservice || true && docker run -itd --name weatherservice -p 8080:8080 ${{env.ECR_REGISTRY}}/weatherservice:${{ env.IMAGE_TAG }}
+          repository: 'weatherwhere/backend-kubernetes'
+          ref: 'main'
+          token: ${{ secrets.ACTION_TOKEN }}
+
+      - name: Update Kubernetes YAML
+        run: |
+          ls
+          echo "BEFORE sed............"
+          cat weatherservice/deploy.yml
+          sed -i.bak -E 's|image: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG_PREFIX }}[0-9]+|image: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG_PREFIX }}${{github.run_number}}|g' weatherservice/deploy.yml
+          echo "AFTER sed............"
+          cat weatherservice/deploy.yml
+
+      - name: Commit changes
+        run: |
+          git config --global user.name "hwang-jubin"
+          git config --global user.email "hjb06288@gmail.com"
+          git add weatherservice/deploy.yml
+          git commit -m "Auto-commit new image tag - ${{ env.IMAGE_TAG_PREFIX }}${{github.run_number}}"
+          git push origin main
