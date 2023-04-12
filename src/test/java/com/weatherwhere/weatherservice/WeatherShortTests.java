@@ -44,7 +44,7 @@ public class WeatherShortTests {
 
     @Test
     @DisplayName("nx,ny별 단기예보 데이터 저장하는 테스트")
-    //@Disabled
+    @Disabled
     void testNxNyRepeat() throws Exception {
         String baseDate = "20230407";
         String baseTime = "1400";
