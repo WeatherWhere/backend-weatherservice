@@ -61,5 +61,5 @@ public interface WeatherShortMainService {
 
 
     //모든 xy리스트에 대한 값 저장하는 메서드
-    WeatherShortEntityListDTO getXYListWeatherAllSave(WeatherShortRequestDTO weatherShortRequestDTO, List<WeatherShortMain> mainEntityList, List<WeatherShortSub> subEntityList) throws Exception;
+    WeatherShortEntityListDTO getXYListWeatherAllSave() throws Exception;
 }

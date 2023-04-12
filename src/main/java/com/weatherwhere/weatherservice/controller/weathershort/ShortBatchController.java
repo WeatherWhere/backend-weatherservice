@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/batch")
+@RequestMapping("/weather")
 @RequiredArgsConstructor
 public class ShortBatchController {
 
@@ -30,7 +30,7 @@ public class ShortBatchController {
     public void setJob(Job job) {
         this.job = job;
     }
-    @GetMapping("/short")
+    @GetMapping("/batch/short")
     public String shortStartBatch() throws Exception {
         Long startTime = System.currentTimeMillis();
         shortBatchConfiguration.initialize();
