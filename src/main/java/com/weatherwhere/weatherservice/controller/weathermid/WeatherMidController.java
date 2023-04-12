@@ -30,11 +30,8 @@ public class WeatherMidController {
     }
 
     @GetMapping(value = "/tour/data", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResultDTO<WeatherMidDTO> getWeatherMidData(@RequestParam("regionCode") String regionCode, @RequestParam("baseDate") String baseDate) {
-        if (regionCode.length() != 8) {
-            throw new RestApiException(ErrorCode.BAD_REQUEST, "지역 코드는 8글자이어야 합니다.");
-        }
-        ResultDTO<WeatherMidDTO> data = tourApiService.getWeatherMidData(regionCode,baseDate);
-        return data;
+    public ResultDTO<List<WeatherMidDTO>> getWeatherMidData(@RequestParam("baseDate") String baseDate) {
+        ResultDTO<List<WeatherMidDTO>> list = tourApiService.getWeatherMidData(baseDate);
+        return list;
     }
 }
