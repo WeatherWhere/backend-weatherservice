@@ -1,13 +1,11 @@
 package com.weatherwhere.weatherservice.repository.weathershort;
 
-import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortCompositeKey;
-import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortMain;
-import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortSub;
-import com.weatherwhere.weatherservice.domain.weathershort.WeatherXY;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-
 import java.time.LocalDateTime;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortCompositeKey;
+import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortSub;
 
 public interface WeatherShortSubRepository extends JpaRepository<WeatherShortSub, WeatherShortCompositeKey> {
 

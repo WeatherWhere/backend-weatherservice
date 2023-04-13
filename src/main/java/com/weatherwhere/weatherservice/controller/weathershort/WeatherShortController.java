@@ -1,19 +1,21 @@
 package com.weatherwhere.weatherservice.controller.weathershort;
 
-import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortMain;
-import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortSub;
-import com.weatherwhere.weatherservice.dto.ResultDTO;
-import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainApiRequestDTO;
-import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortRequestDTO;
-import com.weatherwhere.weatherservice.service.weathershort.WeatherShortMainApiService;
-
-import com.weatherwhere.weatherservice.service.weathershort.WeatherShortMainService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.weatherwhere.weatherservice.dto.ResultDTO;
+import com.weatherwhere.weatherservice.dto.tour.RankWeatherShortMainDTO;
+import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainApiRequestDTO;
+import com.weatherwhere.weatherservice.service.tour.TourApiService;
+import com.weatherwhere.weatherservice.service.weathershort.WeatherShortMainApiService;
+import com.weatherwhere.weatherservice.service.weathershort.WeatherShortMainService;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("weather")
@@ -22,6 +24,7 @@ public class WeatherShortController {
 
     private final WeatherShortMainService weatherShortMainService;
     private final WeatherShortMainApiService weatherShortMainApiService;
+    private final TourApiService tourApiService;
 
 /*
     //nx, ny별 단기예보 데이터 저장하는 api
@@ -59,6 +62,12 @@ public class WeatherShortController {
     @GetMapping("/forecast/short/sub")
     public ResultDTO<Object> getWeatherShortSubResponse(@ModelAttribute WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO) throws Exception{
             return weatherShortMainApiService.getWeatherShortSubData(weatherShortMainApiRequestDTO);
+    }
+
+    @GetMapping(value = "/tour/data", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResultDTO<List<RankWeatherShortMainDTO>> getRankWeatherData() {
+        ResultDTO<List<RankWeatherShortMainDTO>> list = tourApiService.getRankWeatherShortMainData();
+        return list;
     }
 
 

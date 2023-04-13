@@ -1,14 +1,14 @@
 package com.weatherwhere.weatherservice.repository.weathershort;
 
-import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortCompositeKey;
-import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortMain;
-import com.weatherwhere.weatherservice.domain.weathershort.WeatherXY;
-import com.weatherwhere.weatherservice.repository.weathershort.mapping.TmnMapping;
-import com.weatherwhere.weatherservice.repository.weathershort.mapping.TmxMapping;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.time.LocalDateTime;
-
+import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortCompositeKey;
+import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortMain;
+import com.weatherwhere.weatherservice.repository.weathershort.mapping.TmnMapping;
+import com.weatherwhere.weatherservice.repository.weathershort.mapping.TmxMapping;
 
 public interface WeatherShortMainRepository extends JpaRepository<WeatherShortMain, WeatherShortCompositeKey> {
 
@@ -26,5 +26,7 @@ public interface WeatherShortMainRepository extends JpaRepository<WeatherShortMa
     TmnMapping findTmnByIdWeatherXYWeatherXAndIdWeatherXYWeatherYAndIdFcstDateTime(Integer nx, Integer ny, LocalDateTime fcstDateTime);
     TmxMapping findTmxByIdWeatherXYWeatherXAndIdWeatherXYWeatherYAndIdFcstDateTime(Integer nx, Integer ny, LocalDateTime fcstDateTime);
 
+    // tour
+    List<WeatherShortMain> findByIdWeatherXYWeatherXAndIdWeatherXYWeatherYAndIdFcstDateTimeBetween(Integer nx, Integer ny, LocalDateTime startDateTime, LocalDateTime endDateTime);
 
 }
