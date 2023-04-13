@@ -10,7 +10,7 @@ import com.weatherwhere.weatherservice.dto.weathermid.WeatherMidDTO;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainDTO;
 
 public interface TourApiService {
-    ResultDTO<List<RankWeatherShortMainDTO>> getRankgiWeatherShortMainData();
+    ResultDTO<List<RankWeatherShortMainDTO>> getRankWeatherShortMainData();
     default WeatherShortMainDTO entityToDTO(WeatherShortMain entity) {
         return WeatherShortMainDTO.builder()
             .sky(entity.getSky())
