@@ -17,6 +17,7 @@ import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortMain;
 import com.weatherwhere.weatherservice.dto.ResultDTO;
 import com.weatherwhere.weatherservice.dto.tour.RankLocationNXYDTO;
 import com.weatherwhere.weatherservice.dto.tour.RankWeatherShortMainDTO;
+import com.weatherwhere.weatherservice.dto.tour.ShortMainDTO;
 import com.weatherwhere.weatherservice.dto.weathermid.WeatherMidDTO;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainDTO;
 import com.weatherwhere.weatherservice.repository.weathermid.WeatherMidRepository;
@@ -30,41 +31,30 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @RequiredArgsConstructor
 public class TourApiServiceImpl implements TourApiService {
+
     private final WeatherShortMainRepository weatherShortMainRepository;
 
     private final ParseRankLocationCSVService parseRankLocationCSVService;
 
-    // entity List -> DTO List
-    private List<WeatherShortMainDTO> entityToDTOList(List<WeatherShortMain> list) {
-        List<WeatherShortMainDTO> dtoList = new ArrayList<>();
-        for(WeatherShortMain entity : list){
-            dtoList.add(entityToDTO(entity));
-        }
-        return dtoList;
-    }
-
     // 날씨 예보와 Rank에 지역 정보 합치기
-    private List<RankWeatherShortMainDTO> combineRankData(List<WeatherShortMainDTO> mainDTOList, RankLocationNXYDTO locationDTO) {
-        List<RankWeatherShortMainDTO> list = new ArrayList<>();
-        for (WeatherShortMainDTO mainDTO : mainDTOList) {
-            RankWeatherShortMainDTO dto = RankWeatherShortMainDTO.builder()
-                .level1(locationDTO.getLevel1())
-                .level2(locationDTO.getLevel2())
-                .sky(mainDTO.getSky())
-                .tmn(mainDTO.getTmn())
-                .tmp(mainDTO.getTmp())
-                .tmx(mainDTO.getTmx())
-                .weatherY(locationDTO.getWeatherY())
-                .weatherX(locationDTO.getWeatherX())
-                .wsd(mainDTO.getWsd())
-                .pop(mainDTO.getPop())
-                .pty(mainDTO.getPty())
-                .reh(mainDTO.getReh())
-                .fcstDateTime(mainDTO.getFcstDateTime())
-                .build();
-            list.add(dto);
-        }
-        return list;
+    private RankWeatherShortMainDTO combineRankData(Object[] shortMain, RankLocationNXYDTO dto, Double tmn, Double tmx, LocalDate searchDate) {
+        RankWeatherShortMainDTO shortMainDTO = RankWeatherShortMainDTO.builder()
+            .level1(dto.getLevel1())
+            .level2(dto.getLevel2())
+            .weatherX(dto.getWeatherX())
+            .weatherY(dto.getWeatherY())
+            .fcstDate(searchDate)
+            .pop((double)shortMain[2])
+            .pty((double)shortMain[3])
+            .sky((double)shortMain[4])
+            .tmp((double)shortMain[5])
+            .wsd((double)shortMain[6])
+            .reh((double)shortMain[7])
+            .tmn(tmn)
+            .tmx(tmx)
+            .build();
+
+        return shortMainDTO;
     }
 
 
@@ -72,15 +62,28 @@ public class TourApiServiceImpl implements TourApiService {
     private List<RankWeatherShortMainDTO> makeRankData(List<RankLocationNXYDTO> locationDTOList){
         LocalDate now = LocalDate.now();
         List<RankWeatherShortMainDTO> list = new ArrayList<>();
+        // 하루만 찾아준다. (3일로 수정 가능성 있어서)
         for (int i = 0 ; i < 1 ; i++) {
             LocalDate searchDate = now.plusDays(i);
             for (RankLocationNXYDTO dto : locationDTOList) {
                 // DB에서 찾기
-                List<WeatherShortMain> weatherShortMainList = weatherShortMainRepository
-                    .findByIdWeatherXYWeatherXAndIdWeatherXYWeatherYAndIdFcstDateTimeBetween(dto.getWeatherX(), dto.getWeatherY(), searchDate.atStartOfDay(), searchDate.atTime(
-                        LocalTime.MAX));
-                log.info("해당 날짜의 해당 격자 xy 리스트 : {}", weatherShortMainList);
-                list.addAll(combineRankData(entityToDTOList(weatherShortMainList), dto));
+                log.info("date : {}", searchDate);
+                try {
+                    Object [] shortMain = weatherShortMainRepository
+                        .findAveragesByCreatedAt(dto.getWeatherX(), dto.getWeatherY(), searchDate).get(0);
+                    Double tmn = weatherShortMainRepository.findTmnIdByIdXAndIdYAndDateRange(dto.getWeatherX(), dto.getWeatherY(), searchDate).get(0);
+                    Double tmx = weatherShortMainRepository.findTmxIdByIdXAndIdYAndDateRange(dto.getWeatherX(), dto.getWeatherY(), searchDate).get(0);
+
+                    log.info("tmn : {}", tmn);
+                    log.info("tmx : {}", tmx);
+
+                    // locationDTO랑 shortMainDTO 합치기
+                    RankWeatherShortMainDTO shortMainDTO = combineRankData(shortMain, dto, tmn, tmx, searchDate);
+                    log.info("해당 날짜, 해당 격자 xy 단기예보 리스트 : {}", shortMainDTO);
+                    list.add(shortMainDTO);
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         }
         return list;

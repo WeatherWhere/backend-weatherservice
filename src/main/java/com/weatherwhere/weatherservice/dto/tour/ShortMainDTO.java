@@ -1,29 +1,23 @@
 package com.weatherwhere.weatherservice.dto.tour;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
-public class RankWeatherShortMainDTO {
-    private String level1;
-    private String level2;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Data
+public class ShortMainDTO {
     //격자 x
     private Integer weatherX;
 
     //격자 y
     private Integer weatherY;
-
-    //예보날짜+예보시간
-    private LocalDate fcstDate;
 
     //강수확률
     private Double pop;
@@ -43,9 +37,13 @@ public class RankWeatherShortMainDTO {
     //습도
     private Double reh;
 
+    /*
     //일 최저기온
     private Double tmn;
 
     //일 최고기온
     private Double tmx;
+
+    // 예보 날짜
+    private LocalDate fcstDate;*/
 }
