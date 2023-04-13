@@ -10,7 +10,6 @@ import org.springframework.data.repository.query.Param;
 
 import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortCompositeKey;
 import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortMain;
-import com.weatherwhere.weatherservice.dto.tour.ShortMainDTO;
 import com.weatherwhere.weatherservice.repository.weathershort.mapping.TmnMapping;
 import com.weatherwhere.weatherservice.repository.weathershort.mapping.TmxMapping;
 
@@ -36,10 +35,8 @@ public interface WeatherShortMainRepository extends JpaRepository<WeatherShortMa
 
 
     // tour
-    List<WeatherShortMain> findByIdWeatherXYWeatherXAndIdWeatherXYWeatherYAndIdFcstDateTimeBetween(Integer nx,
-        Integer ny, LocalDateTime startDateTime, LocalDateTime endDateTime);
 
-
+    // 해당 격자 x, y 값과 해당 날짜에 해당하는 속성의 평균 값을 조회
     @Query("SELECT w.id.weatherXY.weatherX, w.id.weatherXY.weatherY, "
         + "AVG(w.pop), AVG(w.pty), AVG(w.sky), AVG(w.tmp), AVG(w.wsd), AVG(w.reh) "
         + "FROM WeatherShortMain w WHERE w.id.weatherXY.weatherX = :x AND "

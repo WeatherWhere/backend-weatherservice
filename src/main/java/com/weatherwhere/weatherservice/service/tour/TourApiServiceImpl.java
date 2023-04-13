@@ -1,28 +1,18 @@
 package com.weatherwhere.weatherservice.service.tour;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.weatherwhere.weatherservice.domain.weathermid.WeatherMidEntity;
-import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortMain;
 import com.weatherwhere.weatherservice.dto.ResultDTO;
 import com.weatherwhere.weatherservice.dto.tour.RankLocationNXYDTO;
 import com.weatherwhere.weatherservice.dto.tour.RankWeatherShortMainDTO;
-import com.weatherwhere.weatherservice.dto.tour.ShortMainDTO;
-import com.weatherwhere.weatherservice.dto.weathermid.WeatherMidDTO;
-import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainDTO;
-import com.weatherwhere.weatherservice.repository.weathermid.WeatherMidRepository;
 import com.weatherwhere.weatherservice.repository.weathershort.WeatherShortMainRepository;
-import com.weatherwhere.weatherservice.service.weathermid.WeatherMidService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
