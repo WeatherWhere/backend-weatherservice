@@ -40,7 +40,7 @@ public class TourApiServiceImpl implements TourApiService {
 
 
 
-        Double maxReh = weatherShortMainRepository.findRehnIdByIdXAndIdYAndDateRange(locationDTO.getWeatherX(),
+        Double minReh = weatherShortMainRepository.findRehnIdByIdXAndIdYAndDateRange(locationDTO.getWeatherX(),
             locationDTO.getWeatherY(), searchDate);
 
 
@@ -70,7 +70,7 @@ public class TourApiServiceImpl implements TourApiService {
             .avgWsd(avgWsd)
             .avgReh(avgReh)
             .maxTmp(maxTmp)
-            .minReh(maxReh)
+            .minReh(minReh)
             .build();
     }
 
