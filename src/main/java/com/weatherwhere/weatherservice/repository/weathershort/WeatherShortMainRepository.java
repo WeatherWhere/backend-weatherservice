@@ -34,29 +34,44 @@ public interface WeatherShortMainRepository extends JpaRepository<WeatherShortMa
         LocalDateTime fcstDateTime);
 
 
-    // tour
+    // 관광
+    // 해당 격자 x, y 값과 해당 날짜에 해당하는 값 조회
 
-    // 해당 격자 x, y 값과 해당 날짜에 해당하는 속성의 평균 값을 조회
-    @Query("SELECT w.id.weatherXY.weatherX, w.id.weatherXY.weatherY, "
-        + "AVG(w.pop), AVG(w.pty), AVG(w.sky), AVG(w.tmp), AVG(w.wsd), AVG(w.reh) "
+    // 일평균기온과 일평균습도
+    @Query("SELECT AVG(w.tmp), AVG(w.reh) "
         + "FROM WeatherShortMain w WHERE w.id.weatherXY.weatherX = :x AND "
-        + "w.id.weatherXY.weatherY = :y AND DATE(w.id.fcstDateTime) = :searchDate  "
-        + "GROUP BY w.id.weatherXY.weatherY, w.id.weatherXY.weatherX")
-    List<Object []> findAveragesByCreatedAt(
-        @Param("x") Integer x,
-        @Param("y") Integer y,
-        @Param("searchDate") LocalDate searchDate);
-
-    // 최저기온
-    @Query("SELECT AVG(w.tmn) as tmn FROM WeatherShortMain w WHERE w.id.weatherXY.weatherX = :x "
-        + "AND w.id.weatherXY.weatherY = :y AND DATE(w.id.fcstDateTime) = :searchDate  AND w.tmn IS NOT NULL GROUP BY w.id.weatherXY.weatherY, w.id.weatherXY.weatherX")
-    List<Double> findTmnIdByIdXAndIdYAndDateRange(@Param("x") Integer x, @Param("y") Integer y,
-        @Param("searchDate") LocalDate searchDate);
+        + "w.id.weatherXY.weatherY = :y AND DATE(w.id.fcstDateTime) = :searchDate ")
+    List<Double[]> findAvgTmpAndRehById(@Param("x") Integer x, @Param("y") Integer y, @Param("searchDate") LocalDate searchDate);
 
     // 최고기온
-    @Query("SELECT AVG(w.tmx) as tmx FROM WeatherShortMain w WHERE w.id.weatherXY.weatherX = :x "
+    @Query("SELECT MAX(w.tmx) as tmx FROM WeatherShortMain w WHERE w.id.weatherXY.weatherX = :x "
         + "AND w.id.weatherXY.weatherY = :y AND DATE(w.id.fcstDateTime) = :searchDate AND w.tmx IS NOT NULL GROUP BY w.id.weatherXY.weatherY, w.id.weatherXY.weatherX")
-    List<Double> findTmxIdByIdXAndIdYAndDateRange(@Param("x") Integer x, @Param("y") Integer y,
+    Double findTmxIdByIdXAndIdYAndDateRange(@Param("x") Integer x, @Param("y") Integer y,
     @Param("searchDate") LocalDate searchDate);
 
+    // 최고 습도
+    @Query("SELECT MAX(w.reh) as rehx FROM WeatherShortMain w WHERE w.id.weatherXY.weatherX = :x "
+        + "AND w.id.weatherXY.weatherY = :y AND DATE(w.id.fcstDateTime) = :searchDate GROUP BY w.id.weatherXY.weatherY, w.id.weatherXY.weatherX")
+    Double findRehxIdByIdXAndIdYAndDateRange(@Param("x") Integer x, @Param("y") Integer y,
+        @Param("searchDate") LocalDate searchDate);
+
+    // 6 ~ 18시 평균 하늘 상태(운량을 위해)
+    @Query("SELECT AVG(w.sky) FROM WeatherShortMain w WHERE w.id.weatherXY.weatherX = :x AND "
+        + "w.id.weatherXY.weatherY = :y AND w.id.fcstDateTime BETWEEN :startDateTime AND :endDateTime "
+        + "GROUP BY w.id.weatherXY.weatherY, w.id.weatherXY.weatherX")
+    Double findAvgSkyById(
+        @Param("x") Integer x,
+        @Param("y") Integer y,
+        @Param("startDateTime") LocalDateTime startDateTime,
+        @Param("endDateTime") LocalDateTime endDateTime);
+
+    // 6 ~ 18시 평균 풍속
+    @Query("SELECT AVG(w.wsd) FROM WeatherShortMain w WHERE w.id.weatherXY.weatherX = :x AND "
+        + "w.id.weatherXY.weatherY = :y AND w.id.fcstDateTime BETWEEN :startDateTime AND :endDateTime "
+        + "GROUP BY w.id.weatherXY.weatherY, w.id.weatherXY.weatherX")
+    Double findAvgWsdById(
+        @Param("x") Integer x,
+        @Param("y") Integer y,
+        @Param("startDateTime") LocalDateTime startDateTime,
+        @Param("endDateTime") LocalDateTime endDateTime);
 }

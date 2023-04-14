@@ -22,30 +22,27 @@ public class RankWeatherShortMainDTO {
     //격자 y
     private Integer weatherY;
 
-    //예보날짜+예보시간
+    //예보날짜
     private LocalDate fcstDate;
 
-    //강수확률
-    private Double pop;
+    // 6 ~ 18시 누적 강수량
+    private Double sumPcp;
 
-    //강수형태
-    private Double pty;
+    // 6 ~ 18시 하늘상태 평균
+    private Double avgSky;
 
-    //하늘상태
-    private Double sky;
+    // 일평균기온
+    private Double avgTmp;
 
-    //1시간단위 기온
-    private Double tmp;
+    // 6 ~ 18시 풍속 평균
+    private Double avgWsd;
 
-    //풍속
-    private Double wsd;
+    // 일평균 습도
+    private Double avgReh;
 
-    //습도
-    private Double reh;
-
-    //일 최저기온
-    private Double tmn;
+    // 최고 습도
+    private Double maxReh;
 
     //일 최고기온
-    private Double tmx;
+    private Double maxTmp;
 }
