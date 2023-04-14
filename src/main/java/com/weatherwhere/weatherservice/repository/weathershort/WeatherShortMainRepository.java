@@ -41,25 +41,25 @@ public interface WeatherShortMainRepository extends JpaRepository<WeatherShortMa
     @Query("SELECT AVG(w.tmp), AVG(w.reh) "
         + "FROM WeatherShortMain w WHERE w.id.weatherXY.weatherX = :x AND "
         + "w.id.weatherXY.weatherY = :y AND DATE(w.id.fcstDateTime) = :searchDate ")
-    List<Double[]> findAvgTmpAndRehById(@Param("x") Integer x, @Param("y") Integer y, @Param("searchDate") LocalDate searchDate);
+    List<Double[]> findAvgTmpAndRehById (@Param("x") Integer x, @Param("y") Integer y, @Param("searchDate") LocalDate searchDate);
 
     // 최고기온
     @Query("SELECT MAX(w.tmx) as tmx FROM WeatherShortMain w WHERE w.id.weatherXY.weatherX = :x "
         + "AND w.id.weatherXY.weatherY = :y AND DATE(w.id.fcstDateTime) = :searchDate AND w.tmx IS NOT NULL GROUP BY w.id.weatherXY.weatherY, w.id.weatherXY.weatherX")
-    Double findTmxIdByIdXAndIdYAndDateRange(@Param("x") Integer x, @Param("y") Integer y,
+    Double findTmxIdByIdXAndIdYAndDateRange (@Param("x") Integer x, @Param("y") Integer y,
     @Param("searchDate") LocalDate searchDate);
 
     // 최고 습도
     @Query("SELECT MAX(w.reh) as rehx FROM WeatherShortMain w WHERE w.id.weatherXY.weatherX = :x "
         + "AND w.id.weatherXY.weatherY = :y AND DATE(w.id.fcstDateTime) = :searchDate GROUP BY w.id.weatherXY.weatherY, w.id.weatherXY.weatherX")
-    Double findRehxIdByIdXAndIdYAndDateRange(@Param("x") Integer x, @Param("y") Integer y,
+    Double findRehxIdByIdXAndIdYAndDateRange (@Param("x") Integer x, @Param("y") Integer y,
         @Param("searchDate") LocalDate searchDate);
 
     // 6 ~ 18시 평균 하늘 상태(운량을 위해)
     @Query("SELECT AVG(w.sky) FROM WeatherShortMain w WHERE w.id.weatherXY.weatherX = :x AND "
         + "w.id.weatherXY.weatherY = :y AND w.id.fcstDateTime BETWEEN :startDateTime AND :endDateTime "
         + "GROUP BY w.id.weatherXY.weatherY, w.id.weatherXY.weatherX")
-    Double findAvgSkyById(
+    Double findAvgSkyById (
         @Param("x") Integer x,
         @Param("y") Integer y,
         @Param("startDateTime") LocalDateTime startDateTime,
@@ -69,7 +69,7 @@ public interface WeatherShortMainRepository extends JpaRepository<WeatherShortMa
     @Query("SELECT AVG(w.wsd) FROM WeatherShortMain w WHERE w.id.weatherXY.weatherX = :x AND "
         + "w.id.weatherXY.weatherY = :y AND w.id.fcstDateTime BETWEEN :startDateTime AND :endDateTime "
         + "GROUP BY w.id.weatherXY.weatherY, w.id.weatherXY.weatherX")
-    Double findAvgWsdById(
+    Double findAvgWsdById (
         @Param("x") Integer x,
         @Param("y") Integer y,
         @Param("startDateTime") LocalDateTime startDateTime,

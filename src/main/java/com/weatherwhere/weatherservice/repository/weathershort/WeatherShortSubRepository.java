@@ -23,28 +23,17 @@ public interface WeatherShortSubRepository extends JpaRepository<WeatherShortSub
     // 관광
     // 해당 격자 x, y 값과 해당 날짜에 해당하는 값 조회
 
-
     // 6 ~ 18시 누적 강수량
     @Query("SELECT SUM(CAST(CASE WHEN w.pcp = '강수없음' THEN '0' ELSE SUBSTR(w.pcp, 1, LENGTH(w.pcp) - 2) END AS DOUBLE)) " +
         "FROM WeatherShortSub w " +
         "WHERE w.id.weatherXY.weatherX = :x " +
         "  AND w.id.weatherXY.weatherY = :y " +
         "  AND w.id.fcstDateTime BETWEEN :startDateTime AND :endDateTime")
-    Double findSumPcpById(
+    Double findSumPcpById (
         @Param("x") Integer x,
         @Param("y") Integer y,
         @Param("startDateTime") LocalDateTime startDateTime,
         @Param("endDateTime") LocalDateTime endDateTime);
-
-    /*
-    @Query("SELECT SUM(CAST(SUBSTR(w.pcp, 1, LENGTH(w.pcp) - 2) AS DOUBLE)) FROM WeatherShortSub w WHERE w.id.weatherXY.weatherX = :x AND w.pcp <> '강수없음' AND "
-        + "w.id.weatherXY.weatherY = :y AND w.id.fcstDateTime BETWEEN :startDateTime AND :endDateTime "
-        + "GROUP BY w.id.weatherXY.weatherY, w.id.weatherXY.weatherX")
-    Double findSumPcpById(
-        @Param("x") Integer x,
-        @Param("y") Integer y,
-        @Param("startDateTime") LocalDateTime startDateTime,
-        @Param("endDateTime") LocalDateTime endDateTime);*/
 
 
 }
