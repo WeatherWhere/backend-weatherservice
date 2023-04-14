@@ -1,7 +1,6 @@
 package com.weatherwhere.weatherservice.dto.tour;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,8 +39,8 @@ public class RankWeatherShortMainDTO {
     // 일평균 습도
     private Double avgReh;
 
-    // 최고 습도
-    private Double maxReh;
+    // 최소 습도
+    private Double minReh;
 
     //일 최고기온
     private Double maxTmp;

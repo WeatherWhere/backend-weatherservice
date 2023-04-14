@@ -49,10 +49,10 @@ public interface WeatherShortMainRepository extends JpaRepository<WeatherShortMa
     Double findTmxIdByIdXAndIdYAndDateRange (@Param("x") Integer x, @Param("y") Integer y,
     @Param("searchDate") LocalDate searchDate);
 
-    // 최고 습도
-    @Query("SELECT MAX(w.reh) as rehx FROM WeatherShortMain w WHERE w.id.weatherXY.weatherX = :x "
+    // 최소 습도
+    @Query("SELECT MIN(w.reh) as rehn FROM WeatherShortMain w WHERE w.id.weatherXY.weatherX = :x "
         + "AND w.id.weatherXY.weatherY = :y AND DATE(w.id.fcstDateTime) = :searchDate GROUP BY w.id.weatherXY.weatherY, w.id.weatherXY.weatherX")
-    Double findRehxIdByIdXAndIdYAndDateRange (@Param("x") Integer x, @Param("y") Integer y,
+    Double findRehnIdByIdXAndIdYAndDateRange(@Param("x") Integer x, @Param("y") Integer y,
         @Param("searchDate") LocalDate searchDate);
 
     // 6 ~ 18시 평균 하늘 상태(운량을 위해)
