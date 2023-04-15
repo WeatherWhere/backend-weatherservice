@@ -10,6 +10,7 @@ import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortRequestDTO;
 import com.weatherwhere.weatherservice.repository.weathershort.WeatherShortMainRepository;
 import com.weatherwhere.weatherservice.repository.weathershort.WeatherShortSubRepository;
 import com.weatherwhere.weatherservice.repository.weathershort.WeatherXYRepository;
+import com.weatherwhere.weatherservice.service.date.DateService;
 import jakarta.transaction.Transactional;
 
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,7 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
 
     private final WeatherXYRepository weatherXYRepository;
 
+    private final DateService dateService;
 
     //xylist 잘게 쪼개는 메서드
     //xylist는 어플리케이션 실행 시 캐시에 저장해놓기 때문에 불필요한 select문을 줄임.
@@ -62,17 +64,11 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
         String numOfRows = "302";
         String pageNo = "1";
 
-        //현재 날짜와 시간 정각 계산
-        LocalDateTime now = LocalDateTime.now();
-        String baseDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        String baseTime = now.format(DateTimeFormatter.ofPattern("0500"));
-
-        weatherShortRequestDTO.setBaseDate(baseDate);
-        weatherShortRequestDTO.setBaseTime(baseTime);
+        dateService.getBaseDateTime(weatherShortRequestDTO);
 
         String url = String.format("%s?serviceKey=%s&pageNo=%s&numOfRows=%s&dataType=%s&base_date=%s&base_time=%s&nx=%s&ny=%s",
                 apiUrl, serviceKey, pageNo, numOfRows, dataType,
-                baseDate, baseTime,
+                weatherShortRequestDTO.getBaseDate(), weatherShortRequestDTO.getBaseTime(),
                 weatherShortRequestDTO.getWeatherXY().getWeatherX(), weatherShortRequestDTO.getWeatherXY().getWeatherY());
 
         //rest template이 String 문자열을 한 번 더 인코딩 해주는 걸 방지하기 위해 url 객체로 넣음
