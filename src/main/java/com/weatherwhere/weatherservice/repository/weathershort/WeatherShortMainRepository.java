@@ -44,8 +44,9 @@ public interface WeatherShortMainRepository extends JpaRepository<WeatherShortMa
     List<Double[]> findAvgTmpAndRehById (@Param("x") Integer x, @Param("y") Integer y, @Param("searchDate") LocalDate searchDate);
 
     // 최고기온
-    @Query("SELECT MAX(w.tmx) as tmx FROM WeatherShortMain w WHERE w.id.weatherXY.weatherX = :x "
-        + "AND w.id.weatherXY.weatherY = :y AND DATE(w.id.fcstDateTime) = :searchDate AND w.tmx IS NOT NULL GROUP BY w.id.weatherXY.weatherY, w.id.weatherXY.weatherX")
+    @Query("SELECT MAX(w.tmp) as tmx FROM WeatherShortMain w WHERE w.id.weatherXY.weatherX = :x "
+        + "AND w.id.weatherXY.weatherY = :y AND DATE(w.id.fcstDateTime) = :searchDate GROUP BY w.id.weatherXY.weatherY, w.id.weatherXY.weatherX")
+
     Double findTmxIdByIdXAndIdYAndDateRange (@Param("x") Integer x, @Param("y") Integer y,
     @Param("searchDate") LocalDate searchDate);
 
