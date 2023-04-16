@@ -1,14 +1,10 @@
 package com.weatherwhere.weatherservice;
 
-import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortMain;
-import com.weatherwhere.weatherservice.domain.weathershort.WeatherXY;
-import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainApiRequestDTO;
-import com.weatherwhere.weatherservice.repository.weathershort.WeatherShortMainRepository;
-import com.weatherwhere.weatherservice.repository.weathershort.WeatherXYRepository;
-import com.weatherwhere.weatherservice.service.weathershort.WeatherShortMainApiService;
-import jakarta.transaction.Transactional;
-import org.junit.Ignore;
-import org.junit.jupiter.api.Assertions;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.List;
+
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,11 +14,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import com.weatherwhere.weatherservice.domain.weathershort.WeatherXY;
+import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainApiRequestDTO;
+import com.weatherwhere.weatherservice.repository.weathershort.WeatherShortMainRepository;
+import com.weatherwhere.weatherservice.repository.weathershort.WeatherXYRepository;
+import com.weatherwhere.weatherservice.service.weathershort.WeatherShortMainApiService;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import jakarta.transaction.Transactional;
 
 @SpringBootTest
 @AutoConfigureMockMvc
