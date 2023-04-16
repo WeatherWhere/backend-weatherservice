@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -119,17 +120,16 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
             //WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(requestDTO.getNx(), requestDTO.getNy());
             LocalDateTime now = LocalDateTime.now();
             LocalDateTime ldt = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), 0);
-            LocalDateTime tmn = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 6, 0);
-            LocalDateTime tmx = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 15, 0);
+            LocalDate nowDate = LocalDate.of(now.getYear(), now.getMonth(), now.getDayOfMonth());
+
             requestDTO.setFcstDateTime(ldt);
             WeatherShortMain weatherShortMain = weatherShortMainRepository.findByIdWeatherXYWeatherXAndIdWeatherXYWeatherYAndIdFcstDateTime(requestDTO.getNx(), requestDTO.getNy(), requestDTO.getFcstDateTime());
             //6시의 최저기온
-            TmnMapping weatherShortMainTmn = weatherShortMainRepository.findTmnByIdWeatherXYWeatherXAndIdWeatherXYWeatherYAndIdFcstDateTime(requestDTO.getNx(), requestDTO.getNy(), tmn);
-            System.out.println("weatherShortMainTmn"+weatherShortMainTmn);
+            Double weatherTmx = weatherShortMainRepository.findTmxIdByIdXAndIdYAndDateRange(requestDTO.getNx(), requestDTO.getNy(),nowDate);
             //15시의 최고기온
-            TmxMapping weatherShortMainTmx = weatherShortMainRepository.findTmxByIdWeatherXYWeatherXAndIdWeatherXYWeatherYAndIdFcstDateTime(requestDTO.getNx(), requestDTO.getNy(), tmx);
-            System.out.println("최고기온: "+weatherShortMainTmx);
-            WeatherShortMainDTO mainData = nowEntityToDTO(weatherShortMain, weatherShortMainTmn.getTmn(), weatherShortMainTmx.getTmx());
+            Double weatherTmn = weatherShortMainRepository.findTmnIdByIdXAndIdYAndDateRange(requestDTO.getNx(), requestDTO.getNy(),nowDate);
+
+            WeatherShortMainDTO mainData = nowEntityToDTO(weatherShortMain, weatherTmn, weatherTmx);
             System.out.println("nowMainData: "+mainData);
             return ResultDTO.of(HttpStatus.OK.value(),"메인 데이터(현재시간)를 반환하는데 성공했습니다.",mainData);
         } catch (NullPointerException e) {

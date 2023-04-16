@@ -50,6 +50,14 @@ public interface WeatherShortMainRepository extends JpaRepository<WeatherShortMa
     Double findTmxIdByIdXAndIdYAndDateRange (@Param("x") Integer x, @Param("y") Integer y,
     @Param("searchDate") LocalDate searchDate);
 
+    // 최저기온
+    @Query("SELECT MIN(w.tmp) as tmx FROM WeatherShortMain w WHERE w.id.weatherXY.weatherX = :x "
+            + "AND w.id.weatherXY.weatherY = :y AND DATE(w.id.fcstDateTime) = :searchDate GROUP BY w.id.weatherXY.weatherY, w.id.weatherXY.weatherX")
+
+    Double findTmnIdByIdXAndIdYAndDateRange (@Param("x") Integer x, @Param("y") Integer y,
+                                             @Param("searchDate") LocalDate searchDate);
+
+
     // 최소 습도
     @Query("SELECT MIN(w.reh) as rehn FROM WeatherShortMain w WHERE w.id.weatherXY.weatherX = :x "
         + "AND w.id.weatherXY.weatherY = :y AND DATE(w.id.fcstDateTime) = :searchDate GROUP BY w.id.weatherXY.weatherY, w.id.weatherXY.weatherX")
