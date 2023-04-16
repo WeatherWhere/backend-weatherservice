@@ -1,5 +1,6 @@
 package com.weatherwhere.weatherservice.service.date;
 
+import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortRequestDTO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
@@ -49,4 +50,67 @@ public class DateServiceImpl implements DateService {
         }
         return tmfc;
     }
+
+    @Override
+    public WeatherShortRequestDTO getBaseDateTime(WeatherShortRequestDTO weatherShortRequestDTO){
+
+        LocalDateTime now = LocalDateTime.now();
+
+        Integer currentHour = now.getHour();
+        Integer currentMinute = now.getMinute();
+
+        String baseDate;
+        String baseTime;
+
+        if ((currentHour == 2 && currentMinute >= 10) ||
+                (currentHour > 2 && currentHour < 5) ||
+                (currentHour == 5 && currentMinute < 10)) {
+
+//            System.out.println("2시10분 이상 5시10분 미만");
+            baseDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            baseTime = now.format(DateTimeFormatter.ofPattern("0200"));
+
+        } else if ((currentHour == 5 && currentMinute >= 10) ||
+                (currentHour > 5 && currentHour < 8) ||
+                (currentHour == 8 && currentMinute < 10)) {
+//            System.out.println("5시10분 이상 8시10분 미만");
+            baseDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            baseTime = now.format(DateTimeFormatter.ofPattern("0500"));
+
+        } else if ((currentHour == 8 && currentMinute >= 10) ||
+                (currentHour > 8 && currentHour < 10) ||
+                (currentHour == 14 && currentMinute < 10)) {
+//            System.out.println("8시10분 이상 14시10분 미만");
+            baseDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            baseTime = now.format(DateTimeFormatter.ofPattern("0800"));
+
+        } else if ((currentHour == 14 && currentMinute >= 10) ||
+                (currentHour > 14 && currentHour < 17) ||
+                (currentHour == 17 && currentMinute < 10)) {
+//            System.out.println("14시10분 이상 17시10분 미만");
+            baseDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            baseTime = now.format(DateTimeFormatter.ofPattern("1400"));
+
+        } else if ((currentHour == 17 && currentMinute >= 10) ||
+                (currentHour > 17 && currentHour < 24)) {
+//            System.out.println("17시10분 이상 24시 미만");
+            baseDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            baseTime = now.format(DateTimeFormatter.ofPattern("1700"));
+
+        } else {
+//            System.out.println("24시이상 2시 10분 미만");
+            baseDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            baseTime = now.format(DateTimeFormatter.ofPattern("0200"));
+
+        }
+
+        weatherShortRequestDTO.setBaseDate(baseDate);
+        weatherShortRequestDTO.setBaseTime(baseTime);
+
+        return weatherShortRequestDTO;
+
+    }
+
+
+
 }
