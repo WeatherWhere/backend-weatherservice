@@ -2,11 +2,11 @@ name: Java CI with Gradle, Build and Push Docker Image to ECR and commit to back
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["feat/cors"]
 
 env:
-  AWS_REGION: ap-northeast-2             # set this to your preferred AWS region, e.g. us-west-1
-  ECR_REPOSITORY: weatherservice         # set this to your Amazon ECR repository name
+  AWS_REGION: ap-northeast-2 # set this to your preferred AWS region, e.g. us-west-1
+  ECR_REPOSITORY: weatherservice # set this to your Amazon ECR repository name
   ECR_REGISTRY: public.ecr.aws/a5p8o7q9
   SSH_USERNAME: ubuntu
   IMAGE_TAG_PREFIX: v
@@ -16,7 +16,6 @@ permissions:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     # Ref: https://github.com/gradle/gradle-build-action
@@ -41,7 +40,6 @@ jobs:
         run: |
           sudo apt-get install git-secret -y
           git-secret reveal -fp ${{ secrets.GPG_PASSPHRASE }}
-          
 
       - name: Execute Gradle build
         run: ./gradlew build
@@ -67,8 +65,8 @@ jobs:
       - name: Checkout Kubernetes YAML
         uses: actions/checkout@v3
         with:
-          repository: 'weatherwhere/backend-kubernetes'
-          ref: 'main'
+          repository: "weatherwhere/backend-kubernetes"
+          ref: "main"
           token: ${{ secrets.ACTION_TOKEN }}
 
       - name: Update Kubernetes YAML
