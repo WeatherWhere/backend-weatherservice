@@ -6,8 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.weatherwhere.weatherservice.dto.ResultDTO;
 import com.weatherwhere.weatherservice.dto.weathermid.WeatherMidDTO;
@@ -21,12 +19,10 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/weather")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class WeatherMidController {
     private final WeatherMidService weatherMidService;
 
     @GetMapping("/forecast/week")
-    @CrossOrigin(origins = "*", methods = {RequestMethod.GET})
     public ResultDTO<List<WeatherMidDTO>> getWeatherMidForecast(@RequestParam("regionCode") String regionCode) {
         if (regionCode.length() != 8) {
             throw new RestApiException(ErrorCode.BAD_REQUEST, "지역 코드는 8글자이어야 합니다.");
