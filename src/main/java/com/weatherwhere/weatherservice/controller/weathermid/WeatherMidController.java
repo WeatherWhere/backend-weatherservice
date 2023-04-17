@@ -25,6 +25,7 @@ public class WeatherMidController {
     private final WeatherMidService weatherMidService;
 
     @GetMapping("/forecast/week")
+    @CrossOrigin(origins = "*")
     public ResultDTO<List<WeatherMidDTO>> getWeatherMidForecast(@RequestParam("regionCode") String regionCode) {
         if (regionCode.length() != 8) {
             throw new RestApiException(ErrorCode.BAD_REQUEST, "지역 코드는 8글자이어야 합니다.");

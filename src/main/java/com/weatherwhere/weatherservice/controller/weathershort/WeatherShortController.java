@@ -48,12 +48,14 @@ public class WeatherShortController {
 
     //단기예보 메인 api
     @GetMapping("/forecast/short/main")
+    @CrossOrigin(origins = "*")
     public ResultDTO<Object> getWeatherShortMainResponse(@ModelAttribute WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO) throws Exception{
             return weatherShortMainApiService.getWeatherShortMainData(weatherShortMainApiRequestDTO);
     }
 
     //단기예보 메인(현재시간) api
     @GetMapping("/forecast/short/main/now")
+    @CrossOrigin(origins = "*")
     public ResultDTO<Object> getWeatherShortMainNowResponse(@ModelAttribute WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO) throws Exception{
          return weatherShortMainApiService.getWeatherShortMainNowData(weatherShortMainApiRequestDTO);
     }
@@ -62,11 +64,13 @@ public class WeatherShortController {
 
     //단기예보 서브 api
     @GetMapping("/forecast/short/sub")
+    @CrossOrigin(origins = "*")
     public ResultDTO<Object> getWeatherShortSubResponse(@ModelAttribute WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO) throws Exception{
             return weatherShortMainApiService.getWeatherShortSubData(weatherShortMainApiRequestDTO);
     }
 
     @GetMapping(value = "/tour/data", produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "*")
     public ResultDTO<List<RankWeatherShortMainDTO>> getRankWeatherData() {
         ResultDTO<List<RankWeatherShortMainDTO>> list = tourApiService.getRankWeatherShortMainData();
         return list;
