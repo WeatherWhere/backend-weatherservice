@@ -63,6 +63,8 @@ public class TourApiServiceImpl implements TourApiService {
             .level2(locationDTO.getLevel2())
             .weatherX(locationDTO.getWeatherX())
             .weatherY(locationDTO.getWeatherY())
+            .locationX(locationDTO.getLocationX())
+            .locationY(locationDTO.getLocationY())
             .fcstDate(searchDate)
             .sumPcp(sumPcp)
             .avgSky(avgSky)

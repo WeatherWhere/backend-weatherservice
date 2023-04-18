@@ -42,6 +42,8 @@ public class ParseRankLocationCSVServiceImpl implements ParseRankLocationCSVServ
                     .level2(ar[1])
                     .weatherX(Integer.parseInt(ar[2]))
                     .weatherY(Integer.parseInt(ar[3]))
+                    .locationX(Double.parseDouble(ar[4]))
+                    .locationY(Double.parseDouble(ar[5]))
                     .build();
 
                 locations.add(dto);

@@ -15,11 +15,17 @@ public class RankWeatherShortMainDTO {
     private String level1;
     private String level2;
 
-    //격자 x
+    // 격자 x
     private Integer weatherX;
 
-    //격자 y
+    // 격자 y
     private Integer weatherY;
+
+    // 경도
+    private Double locationX;
+
+    // 위도
+    private Double locationY;
 
     //예보날짜
     private LocalDate fcstDate;
