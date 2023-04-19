@@ -3,6 +3,7 @@ package com.weatherwhere.weatherservice;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.Disabled;
@@ -93,7 +94,13 @@ public class WeatherShortTests {
 
     }
 
-
+//    @Test
+//    @DisplayName("테이블 일정 주기 데이터 삭제")
+//    void deleteShortData(){
+//        LocalDateTime baseDate = LocalDateTime.now().minusDays(4);
+//        System.out.println(baseDate);
+//        weatherShortMainRepository.deleteOldData(baseDate);
+//    }
 
 
 
