@@ -224,4 +224,57 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         }
         return ResultDTO.of(HttpStatus.OK.value(), "날씨 중기 예보를 조회하는데 성공하였습니다.", dtoList);
     }
+
+    //행정동 주소로 mid data 조회
+    @Override
+    public ResultDTO<List<WeatherMidDTO>> getMidForecastAddress(String region1, String region2) {
+        String[] weeks = dateService.getDaysAfterToday(3, 7);
+        List<WeatherMidDTO> dtoList = new ArrayList<>();
+        region2 = region2.substring(0, region2.length()-1);
+        log.info(region1 + region2);
+        for (int i = 0; i < weeks.length; i++) {
+            if(region1.equals("서울")){
+                WeatherMidEntity result = weatherMidRepository.findByRegionNameAndIdBaseTime(region1,weeks[i]).orElseThrow(() -> new NoSuchElementException());
+                dtoList.add(entityToDTO(result));
+                log.info("서울");
+            }
+            else if(region1.equals("경기") && region2.equals("광주")){
+                System.out.println(region2);
+                WeatherMidEntity result = weatherMidRepository.findByRegionNameAndIdBaseTimeAndCity("광주", weeks[i], "경기남부").orElseThrow(() -> new NoSuchElementException());
+                dtoList.add(entityToDTO(result));
+                log.info("경기 광주");
+            }
+            else if(region1.equals("광주")){
+                WeatherMidEntity result = weatherMidRepository.findByRegionNameAndIdBaseTimeAndCity("광주", weeks[i], "전남").orElseThrow(() -> new NoSuchElementException());
+                dtoList.add(entityToDTO(result));
+                log.info("광주");
+
+            }
+            else if(region2.equals("고성") && region1.equals("경남")){
+                WeatherMidEntity result = weatherMidRepository.findByRegionNameAndIdBaseTimeAndCity(region2, weeks[i], "경남").orElseThrow(() -> new NoSuchElementException());
+                dtoList.add(entityToDTO(result));
+                log.info("경남 고성");
+
+            }
+            else if(region2.equals("고성") && region1.equals("강원")){
+                    WeatherMidEntity result = weatherMidRepository.findByRegionNameAndIdBaseTimeAndCity(region2, weeks[i], "강원영동").orElseThrow(() -> new NoSuchElementException());
+                    dtoList.add(entityToDTO(result));
+                    log.info("강원 고성");
+            }else{
+                WeatherMidEntity result = weatherMidRepository.findByRegionNameAndIdBaseTime(region2, weeks[i]).orElseThrow(() -> new NoSuchElementException());
+                dtoList.add(entityToDTO(result));
+                System.out.println(result);
+                log.info("기본");
+
+            }
+
+        }
+        return ResultDTO.of(HttpStatus.OK.value(), "날씨 중기 예보를 조회하는데 성공하였습니다.", dtoList);
+    }
+
+
+
+
+
+
 }
