@@ -57,4 +57,7 @@ public interface WeatherMidService {
                 .build();
         return dto;
     }
+
+    //행정동 주소로 mid data 조회
+    ResultDTO<List<WeatherMidDTO>> getMidForecastAddress(String region1, String region2);
 }
