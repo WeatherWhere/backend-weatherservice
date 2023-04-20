@@ -31,7 +31,7 @@ public class WeatherMidController {
 //        return data;
 //    }
 
-    @GetMapping("/forecast/week")
+    @GetMapping("/forecast/mid")
     public ResultDTO<List<WeatherMidDTO>> getWeatherMidForecastAddress(@RequestParam("region1") String region1, @RequestParam("region2") String region2) {
         ResultDTO<List<WeatherMidDTO>> data = weatherMidService.getMidForecastAddress(region1, region2);
         return data;
