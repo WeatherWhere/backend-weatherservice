@@ -2,7 +2,7 @@ name: Java CI with Gradle, Build and Push Docker Image to ECR and commit to back
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "feat/add-cors,http" ]
 
 env:
   AWS_REGION: ap-northeast-2             # set this to your preferred AWS region, e.g. us-west-1
