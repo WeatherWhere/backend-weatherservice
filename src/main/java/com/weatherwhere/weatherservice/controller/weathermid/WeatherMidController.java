@@ -22,16 +22,16 @@ import lombok.RequiredArgsConstructor;
 public class WeatherMidController {
     private final WeatherMidService weatherMidService;
 
-    @GetMapping("/forecast/week")
-    public ResultDTO<List<WeatherMidDTO>> getWeatherMidForecast(@RequestParam("regionCode") String regionCode) {
-        if (regionCode.length() != 8) {
-            throw new RestApiException(ErrorCode.BAD_REQUEST, "지역 코드는 8글자이어야 합니다.");
-        }
-        ResultDTO<List<WeatherMidDTO>> data = weatherMidService.getMidForecast(regionCode);
-        return data;
-    }
+//    @GetMapping("/forecast/week")
+//    public ResultDTO<List<WeatherMidDTO>> getWeatherMidForecast(@RequestParam("regionCode") String regionCode) {
+//        if (regionCode.length() != 8) {
+//            throw new RestApiException(ErrorCode.BAD_REQUEST, "지역 코드는 8글자이어야 합니다.");
+//        }
+//        ResultDTO<List<WeatherMidDTO>> data = weatherMidService.getMidForecast(regionCode);
+//        return data;
+//    }
 
-    @GetMapping("/forecast/week/address")
+    @GetMapping("/forecast/week")
     public ResultDTO<List<WeatherMidDTO>> getWeatherMidForecastAddress(@RequestParam("region1") String region1, @RequestParam("region2") String region2) {
         ResultDTO<List<WeatherMidDTO>> data = weatherMidService.getMidForecastAddress(region1, region2);
         return data;
