@@ -85,5 +85,5 @@ jobs:
           git config --global user.name "hwang-jubin"
           git config --global user.email "hjb06288@gmail.com"
           git add weatherservice/deploy.yml
-          git commit -m "Auto-commit new image tag - ${{ env.IMAGE_TAG_PREFIX }}${{github.run_number}}"
+          git commit -m "weatherservice: Auto-commit new image tag - ${{ env.IMAGE_TAG_PREFIX }}${{github.run_number}}"
           git push origin main
