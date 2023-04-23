@@ -14,6 +14,9 @@ ARG JAR_FILE=./build/libs/backend-weatherservice-0.0.1-SNAPSHOT.jar
 COPY ${JAR_FILE} /app/weatherservice.jar
 COPY ./env.json /app/env.json
 
+# 기본시간대를 한국으로 변경
+RUN ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+
 EXPOSE 8080
 
 # 컨테이너가 시작될 때 실행될 명령어
