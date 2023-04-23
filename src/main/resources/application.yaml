@@ -29,5 +29,6 @@ spring:
       initialize-schema: always
 
 logging:
+  config: classpath:log4j2.yml
   level:
     org.hibernate.type.descriptor.sql: trace
