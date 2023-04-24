@@ -42,6 +42,7 @@ public class WeatherShortMainDTO {
     //일 최고기온
     private Double tmx;
 
+    private Double beforeTmx;
 
 
 }

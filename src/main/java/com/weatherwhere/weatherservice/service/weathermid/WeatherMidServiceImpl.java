@@ -228,7 +228,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
     //행정동 주소로 mid data 조회
     @Override
     public ResultDTO<List<WeatherMidDTO>> getMidForecastAddress(String region1, String region2) {
-        String[] weeks = dateService.getDaysAfterToday(3, 7);
+        String[] weeks = dateService.getDaysAfterToday(2, 6);
         List<WeatherMidDTO> dtoList = new ArrayList<>();
         region2 = region2.substring(0, region2.length()-1);
         log.info(region1 + region2);
