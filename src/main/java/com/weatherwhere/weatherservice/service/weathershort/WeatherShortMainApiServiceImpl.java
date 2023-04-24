@@ -121,15 +121,16 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
             LocalDateTime now = LocalDateTime.now();
             LocalDateTime ldt = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), 0);
             LocalDate nowDate = LocalDate.of(now.getYear(), now.getMonth(), now.getDayOfMonth());
-
+            LocalDate nowMinusOneDate = LocalDate.of(now.getYear(), now.getMonth(), now.getDayOfMonth()).minusDays(1);
+            System.out.println(nowDate + " " + nowMinusOneDate);
             requestDTO.setFcstDateTime(ldt);
             WeatherShortMain weatherShortMain = weatherShortMainRepository.findByIdWeatherXYWeatherXAndIdWeatherXYWeatherYAndIdFcstDateTime(requestDTO.getNx(), requestDTO.getNy(), requestDTO.getFcstDateTime());
-            //6시의 최저기온
+            //최고기온
             Double weatherTmx = weatherShortMainRepository.findTmxIdByIdXAndIdYAndDateRange(requestDTO.getNx(), requestDTO.getNy(),nowDate);
-            //15시의 최고기온
+            //최저기온
             Double weatherTmn = weatherShortMainRepository.findTmnIdByIdXAndIdYAndDateRange(requestDTO.getNx(), requestDTO.getNy(),nowDate);
-
-            WeatherShortMainDTO mainData = nowEntityToDTO(weatherShortMain, weatherTmn, weatherTmx);
+            Double weatherBeforeTmx = weatherShortMainRepository.findTmxIdByIdXAndIdYAndDateRange(requestDTO.getNx(), requestDTO.getNy(), nowMinusOneDate);
+            WeatherShortMainDTO mainData = nowEntityToDTO(weatherShortMain, weatherTmn, weatherTmx, weatherBeforeTmx);
             System.out.println("nowMainData: "+mainData);
             return ResultDTO.of(HttpStatus.OK.value(),"메인 데이터(현재시간)를 반환하는데 성공했습니다.",mainData);
         } catch (NullPointerException e) {
