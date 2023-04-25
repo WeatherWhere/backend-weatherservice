@@ -41,11 +41,15 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
 
     private final DateService dateService;
 
-    //xylist 잘게 쪼개는 메서드
-    //xylist는 어플리케이션 실행 시 캐시에 저장해놓기 때문에 불필요한 select문을 줄임.
+
     @Cacheable("xylist")
     @Override
     @Transactional
+    /**
+     * db에 있는 모든 지역의 격자 x,y 불러와서 list에 저장한 뒤 캐싱
+     *
+     * @return xyList 리턴
+     */
     public List<WeatherXY> splitXyList() throws Exception {
         List<WeatherXY> xyList = weatherXYRepository.findAll();
         System.out.println("xyList================================"+xyList);
@@ -54,7 +58,13 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
     }
 
 
-    //uri 생성하는 메서드
+    /**
+     * 공공데이터 api에 요청할 url 만들어서 리턴하는 메서드
+     *
+     * @param weatherShortRequestDTO
+     * @return url 형식으로 변환한 값 endUrl로 리턴, 예외발생시 호출한 메서드로 Exception 던짐
+     * @throws Exception
+     */
     private URI makeUri(WeatherShortRequestDTO weatherShortRequestDTO) throws Exception {
 
         String apiUrl = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst";
@@ -78,7 +88,13 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
     }
 
 
-    //공공데이터 api로부터 json값 받아와서 파싱하는 메서드
+    /**
+     * 공공데이터 api로부터 json값 받아와서 파싱한 뒤 날씨 data만 리턴
+     *
+     * @param weatherShortRequestDTO
+     * @return 받은 json data의 resultCode가 00일때는 itemNode(날씨데이터)리턴, 아닐시 예외 처리
+     * @throws Exception
+     */
     private JsonNode weatherShortJsonParsing(WeatherShortRequestDTO weatherShortRequestDTO) throws Exception {
 
         //http 통신방식 = rest template
@@ -104,7 +120,13 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
 
     }
 
-    //파싱한 json값을 fcstDate+fcstTime을 key로 한 dto리스트에 저장(12시간)
+    /**
+     * 파싱한 json(날씨 데이터)값을 fcstDate+fcstTime을 key로 한 weatherShortAllDTOList에 담아 리턴
+     *
+     * @param weatherShortRequestDTO
+     * @return fcstDate+fcstTime을 key로 한 weatherShortAllDTOList에 날씨 데이터를 담아 리턴, 예외 발생시 Exception 던짐
+     * @throws Exception
+     */
     private List<WeatherShortAllDTO> jsonToFcstDateMap(WeatherShortRequestDTO weatherShortRequestDTO) throws Exception {
 
         JsonNode itemNode = weatherShortJsonParsing(weatherShortRequestDTO);
@@ -121,7 +143,13 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
         return weatherShortAllDTOList;
     }
 
-    //weatherShortAllDTOList의 시간 당 하나의 dto 요소 저장하는 메서드
+    /**
+     * weatherShortAllDTOList의 시간 당 하나의 dto 요소들 저장한 뒤 WeatherShortAllDTO dto 리턴
+     *
+     * @param weatherShortRequestDTO
+     * @param timeList (12시간)
+     * @return WeatherShortAllDTO dto에 baseDate, baseTime, nx, ny, fcstDateTime, pop, pcp ··· 등등 한시간에 들어갈 날씨 데이터들을 담아 리턴
+     */
     private WeatherShortAllDTO JsonToDTOWeatherShort(WeatherShortRequestDTO weatherShortRequestDTO, List<JsonNode> timeList) {
 
         JsonNode time = timeList.get(0);
@@ -161,8 +189,10 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
     }
 
 
+    /**
+     * @deprecated batch를 사용하여 날씨 데이터를 저장하는 걸로 바꿔서 이 메서드는 더이상 사용하지 않음.
+     */
     @Transactional
-    //entity리스트를 병렬처리하면서 db에 save하는 메서드
     private void saveAllRepeatXYList(List<WeatherShortMain> mainEntityList, List<WeatherShortSub> subEntityList) throws Exception {
         System.out.println("mainEntityList.parallelStream():" + mainEntityList.size());
         mainEntityList.parallelStream().map(entity -> {
@@ -195,11 +225,16 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
 
     }
 
-    //모든 xy리스트에 대한 값 저장하는 메서드
     @Override
+    /**
+     * 컨트롤러에서 실질적으로 호출하는 메서드로 이 메서드 내에서 xylist를 불러온 뒤 병렬처리를 하여
+     * 하나의 격자 x,y 좌표마다 파싱된 날씨 데이터를 mainEntityList, subEntityList에 담아 batch 메서드로 리턴하는 메서드
+     *
+     * @return weatherShortEntityListDTO에 mainEntityList, subEntityList를 담아 batch 메서드로 리턴, 실패시 예외 처리
+     * @throws Exception
+     */
     public WeatherShortEntityListDTO getXYListWeatherAllSave() throws Exception {
 
-        // 리스트의 데이터를 하나씩 인덱스를 통해 가져온다.
         List<WeatherShortMain> mainEntityList = new ArrayList<>();
         List<WeatherShortSub> subEntityList = new ArrayList<>();
         WeatherShortRequestDTO weatherShortRequestDTO = new WeatherShortRequestDTO();
@@ -235,6 +270,9 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
 
     //ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
+    /**
+     * @deprecated 한 번만 저장하면 되는 메서드라 더이상 사용하지 않음.
+     */
     //격자 x,y값이 담긴 csv를 postgres내의 테이블에 저장하는 메서드
 /*    @Override
     public String readWeatherXYLocation() throws IOException {

@@ -24,12 +24,24 @@ public class ShortBatchController {
 
     private Job job;
 
-    //특정 job만 실행시키기 위해 Qualifier어노테이션 사용 후 setJob해주기
+    /**
+     * 특정 job만 실행시키기 위해 Qualifier어노테이션 사용 후 setJob해주기
+     *
+     * @param job
+     */
     @Autowired
     @Qualifier("jpaJobShort")
     public void setJob(Job job) {
         this.job = job;
     }
+
+
+    /**
+     * 단기예보 batch 돌리는 api
+     *
+     * @return 성공했는지 여부와 총 걸린시간 String으로 리턴
+     * @throws Exception
+     */
     @GetMapping("/batch/short")
     public String shortStartBatch() throws Exception {
         Long startTime = System.currentTimeMillis();

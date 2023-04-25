@@ -2,7 +2,6 @@ package com.weatherwhere.weatherservice.service.weathershort;
 
 import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortMain;
 import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortSub;
-import com.weatherwhere.weatherservice.domain.weathershort.WeatherXY;
 import com.weatherwhere.weatherservice.dto.ResultDTO;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainApiRequestDTO;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainDTO;
@@ -10,8 +9,6 @@ import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortSubDTO;
 import com.weatherwhere.weatherservice.repository.weathershort.WeatherShortMainRepository;
 import com.weatherwhere.weatherservice.repository.weathershort.WeatherShortSubRepository;
 import com.weatherwhere.weatherservice.repository.weathershort.WeatherXYRepository;
-import com.weatherwhere.weatherservice.repository.weathershort.mapping.TmnMapping;
-import com.weatherwhere.weatherservice.repository.weathershort.mapping.TmxMapping;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -37,7 +34,10 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
 
 
     /**
-     * 위경도 좌표로 격자 X Y 좌표 구하기
+     *  클라이언트에서 받은 위경도 좌표로 격자 X Y 좌표 구해서 리턴하는 메서드
+     *
+     * @param requestDTO 속에 있는 locationX,locationY(위경도)
+     * @return requestDTO에 변환된 격자 X,Y값을 nx,ny에 set해서 리턴
      */
     private WeatherShortMainApiRequestDTO getGridXY(WeatherShortMainApiRequestDTO requestDTO) throws Exception {
 
@@ -86,8 +86,14 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
 
     }
 
+
     @Override
-    //단기예보 메인 데이터(12시간) 반환하는 서비스
+    /**
+     *  (단기예보 메인 12시간) 변환된 격자 x,y 값으로 현재 시간부터 12시간 후까지의 메인 날씨 정보를 찾은 뒤 mainDataList에 담아 리턴
+     *
+     * @param requestDTO 에서 set된 격자 x,y 값 받음
+     * @return ResultDTO<Object>에 mainDataList를 담아 리턴, 실패시 예외처리
+     */
     public ResultDTO<Object> getWeatherShortMainData(WeatherShortMainApiRequestDTO requestDTO){
         try {
             getGridXY(requestDTO);
@@ -112,8 +118,13 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
         }
     }
 
+
     @Override
-    //단기예보 메인 데이터(현재 시간만) 반환하는 서비스
+    /**
+     * (단기예보 실시간) 변환된 격자 x,y 값으로 현재 날씨 정보를 찾은 뒤 mainData에 담아 리턴
+     * @param requestDTO 에서 set된 격자 x,y 값 받음
+     * @return ResultDTO<Object>에 mainData를 담아 리턴, 실패시 예외처리
+     */
     public ResultDTO<Object> getWeatherShortMainNowData(WeatherShortMainApiRequestDTO requestDTO) {
         try {
             getGridXY(requestDTO);
@@ -141,7 +152,11 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
 
 
     @Override
-    //단기예보 서브 데이터 반환하는 서비스
+    /**
+     * (단기예보 서브 12시간) 변환된 격자 x,y 값으로 현재 시간부터 12시간 후까지의 서브 날씨 정보를 찾은 뒤 subDataList에 담아 리턴
+     * @param requestDTO 에서 set된 격자 x,y 값 받음
+     * @return ResultDTO<Object>에 subDataList를 담아 리턴, 실패시 예외처리
+     */
     public ResultDTO<Object> getWeatherShortSubData(WeatherShortMainApiRequestDTO requestDTO) {
         try {
             getGridXY(requestDTO);
