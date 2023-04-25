@@ -63,6 +63,8 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.0'
 	//implementation 'org.springframework.boot:spring-boot-starter-data-redis:3.0.4'
+
+    implementation 'io.sentry:sentry-log4j2:6.17.0'
 }
 tasks.named('test') {
     useJUnitPlatform()

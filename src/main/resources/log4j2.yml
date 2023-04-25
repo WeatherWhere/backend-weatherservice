@@ -18,13 +18,18 @@ Configutation:
       fileName: ${log-path}/logfile.log
       PatternLayout:
         pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+    Sentry:
+      name: Sentry_Appender
+      dsn: https://4f08c27f9cde45d4918ce8518a639f05@o4505075119947776.ingest.sentry.io/4505075137576960
+      minimumBreadcrumbLevel: info
+      minimumEventLevel: info
   Loggers:
     Root:
       level: info
       AppenderRef:
         - ref: Console_Appender
         - ref: File_Appender
-        - ref: RollingFile_Appender
+        - ref: Sentry_Appender
     Logger:
       - name: edu.project
         additivity: false
@@ -32,4 +37,4 @@ Configutation:
         AppenderRef:
           - ref: Console_Appender
           - ref: File_Appender
-          - ref: RollingFile_Appender
+          - ref: Sentry_Appender
