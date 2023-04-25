@@ -5,6 +5,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.sentry.Sentry;
+
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
@@ -51,6 +53,7 @@ public class ParseRankLocationCSVServiceImpl implements ParseRankLocationCSVServ
 
 
         } catch (Exception e) {
+            Sentry.captureException(e);
             System.out.println(e.getLocalizedMessage());
             e.printStackTrace();
         }

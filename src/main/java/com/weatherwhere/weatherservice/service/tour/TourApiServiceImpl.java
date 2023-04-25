@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import io.sentry.Sentry;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -93,6 +95,7 @@ public class TourApiServiceImpl implements TourApiService {
                     log.info("rankWeatherShortMainDTO : {}", rankWeatherShortMainDTO);
                     list.add(rankWeatherShortMainDTO);
                 } catch (Exception e) {
+                    Sentry.captureException(e);
                     e.printStackTrace();
                 }
             }
@@ -113,9 +116,11 @@ public class TourApiServiceImpl implements TourApiService {
             log.info("rank 전체 데이터 리스트 : {}",list);
         } catch (NoSuchElementException e) {
             // db에서 찾는 데이터 없을 경우
+            Sentry.captureException(e);
             e.getStackTrace();
             log.error("db에 날씨 단기예보 데이터 없음");
         } catch (Exception e) {
+            Sentry.captureException(e);
             log.error(e.getMessage());
         }
         return ResultDTO.of(HttpStatus.OK.value(),"Rank 날씨 단기예보를 조회하는데 성공하였습니다.", list);

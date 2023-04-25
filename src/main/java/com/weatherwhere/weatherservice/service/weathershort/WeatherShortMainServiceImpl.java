@@ -13,6 +13,7 @@ import com.weatherwhere.weatherservice.repository.weathershort.WeatherXYReposito
 import com.weatherwhere.weatherservice.service.date.DateService;
 import jakarta.transaction.Transactional;
 
+import io.sentry.Sentry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.cache.annotation.Cacheable;
@@ -171,6 +172,7 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
                         System.out.println("mainEntityList.parallelStream()" + entity.getId());
                         return entity.getId();
                     } catch (Exception e) {
+                        Sentry.captureException(e);
                         e.printStackTrace();
                         log.warn("Failed to update entity: " + e.getMessage());
                         return null;
@@ -185,6 +187,7 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
                         System.out.println("subEntityList.parallelStream()" + entity.getId());
                         return entity.getId();
                     } catch (Exception e) {
+                        Sentry.captureException(e);
                         e.printStackTrace();
                         log.warn("Failed to update entity: " + e.getMessage());
                         return null;
@@ -218,6 +221,7 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
                     subEntityList.add(subDtoToEntity(dto, weatherXYMap.get("weatherXY")));
                 }
             } catch (Exception e) {
+                Sentry.captureException(e);
                 e.printStackTrace();
                 log.warn("Exception: " + e.getMessage());
             }

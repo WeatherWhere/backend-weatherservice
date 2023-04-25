@@ -1,5 +1,6 @@
 package com.weatherwhere.weatherservice.exception;
 
+import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,6 +31,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(NoSuchElementException.class)
     protected ResponseEntity<ErrorResponse> handleNoSuchElementException(Exception ex) {
         log.warn(ex.getMessage());
+        Sentry.captureException(ex);
         ErrorCode errorCode = ErrorCode.NOT_FOUND;
         return handleExceptionInternal(errorCode);
     }

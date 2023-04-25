@@ -8,6 +8,7 @@ import com.weatherwhere.weatherservice.dto.weathermid.WeatherMidDTO;
 import com.weatherwhere.weatherservice.repository.weathermid.WeatherMidRepository;
 import com.weatherwhere.weatherservice.service.date.DateService;
 import jakarta.transaction.Transactional;
+import io.sentry.Sentry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.json.simple.JSONArray;
@@ -166,12 +167,15 @@ public class WeatherMidServiceImpl implements WeatherMidService {
                     entities.add(dtoToEntity(dto));
                 }
             } catch (NullPointerException e) {
+                Sentry.captureException(e);
                 e.printStackTrace();
                 log.warn("OpenAPi returns null: " + regId + " , " + regIdForMidFcst + e.getMessage());
             } catch (ParseException e) {
+                Sentry.captureException(e);
                 e.printStackTrace();
                 log.warn("Failed parsing JSON: " + e.getMessage());
             } catch (Exception e) {
+                Sentry.captureException(e);
                 e.printStackTrace();
                 log.warn("UnExpected Exception: " + e.getMessage());
             }
@@ -204,6 +208,7 @@ public class WeatherMidServiceImpl implements WeatherMidService {
                         weatherMidRepository.save(entity);
                         return entity.getId();
                     } catch (Exception e) {
+                        Sentry.captureException(e);
                         e.printStackTrace();
                         log.warn("Failed to update entity: " + e.getMessage());
                         return null;

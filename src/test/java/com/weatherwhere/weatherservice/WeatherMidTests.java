@@ -5,6 +5,7 @@ import com.weatherwhere.weatherservice.domain.weathermid.WeatherMidEntity;
 import com.weatherwhere.weatherservice.service.date.DateService;
 import com.weatherwhere.weatherservice.service.weathermid.WeatherMidService;
 import com.weatherwhere.weatherservice.service.weathermid.ParseCSVService;
+import io.sentry.Sentry;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ public class WeatherMidTests {
             System.out.println(weatherMidService.getWeatherMidTa("11111111", dateService.getTmfc()));
             System.out.println(weatherMidService.getWeatherMidLandFcst("11H20000", dateService.getTmfc()));
         } catch (Exception e) {
+            Sentry.captureException(e);
             System.out.println(e.getLocalizedMessage());
             e.printStackTrace();
         }

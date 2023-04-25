@@ -1,6 +1,7 @@
 package com.weatherwhere.weatherservice.service.weathermid;
 
 import com.weatherwhere.weatherservice.dto.weathermid.RegionCodeDTO;
+import io.sentry.Sentry;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,7 @@ public class ParseCSVServiceImpl implements ParseCSVService {
 
 
         } catch (Exception e) {
+            Sentry.captureException(e);
             System.out.println(e.getLocalizedMessage());
             e.printStackTrace();
         }

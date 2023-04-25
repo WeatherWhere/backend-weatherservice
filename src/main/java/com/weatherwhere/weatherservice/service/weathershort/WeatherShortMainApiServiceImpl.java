@@ -12,6 +12,7 @@ import com.weatherwhere.weatherservice.repository.weathershort.WeatherShortSubRe
 import com.weatherwhere.weatherservice.repository.weathershort.WeatherXYRepository;
 import com.weatherwhere.weatherservice.repository.weathershort.mapping.TmnMapping;
 import com.weatherwhere.weatherservice.repository.weathershort.mapping.TmxMapping;
+import io.sentry.Sentry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -106,8 +107,10 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
             }
             return ResultDTO.of(HttpStatus.OK.value(),"메인 데이터(12시간)를 반환하는데 성공했습니다.",mainDataList);
         } catch (NullPointerException e) {
+            Sentry.captureException(e);
             return ResultDTO.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "NullPointerExceptiond이 발생했습니다.", null);
         } catch (Exception e) {
+            Sentry.captureException(e);
             return ResultDTO.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "예기치 못한 에러가 발생했습니다.", null);
         }
     }
@@ -133,8 +136,10 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
             System.out.println("nowMainData: "+mainData);
             return ResultDTO.of(HttpStatus.OK.value(),"메인 데이터(현재시간)를 반환하는데 성공했습니다.",mainData);
         } catch (NullPointerException e) {
+            Sentry.captureException(e);
             return ResultDTO.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "NullPointerExceptiond이 발생했습니다.", null);
         } catch (Exception e) {
+            Sentry.captureException(e);
             return ResultDTO.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "예기치 못한 에러가 발생했습니다.", null);
         }
     }
@@ -157,8 +162,10 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
             }
             return ResultDTO.of(HttpStatus.OK.value(),"서브 데이터를 반환하는데 성공했습니다.",subDataList);
         } catch (NullPointerException e) {
+            Sentry.captureException(e);
             return ResultDTO.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "NullPointerExceptiond이 발생했습니다.", null);
         } catch (Exception e) {
+            Sentry.captureException(e);
             return ResultDTO.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "예기치 못한 에러가 발생했습니다.", null);
         }
     }
