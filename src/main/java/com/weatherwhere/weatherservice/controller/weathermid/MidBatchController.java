@@ -1,6 +1,6 @@
-package com.weatherwhere.weatherservice.controller;
+package com.weatherwhere.weatherservice.controller.weathermid;
 
-import com.weatherwhere.weatherservice.config.BatchConfiguration;
+import com.weatherwhere.weatherservice.config.weathermid.MidBatchConfiguration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -16,20 +16,31 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/weather")
 @RequiredArgsConstructor
-public class BatchController {
-    private final BatchConfiguration batchConfiguration;
+public class MidBatchController {
+    private final MidBatchConfiguration midBatchConfiguration;
     private final JobLauncher jobLauncher;
     private Job job;
 
+    /**
+     * 특정 job만 실행시키기 위해 Qualifier 어노테이션 사용후 setJob 설정
+     *
+     * @param job
+     */
     @Autowired
-    @Qualifier("jpaJob")
+    @Qualifier("jpaJobMid")
     public void setJob(Job job) {
         this.job = job;
     }
 
+    /**
+     * 중기예보 batch 돌리는 api
+     *
+     * @return Batch 작업이 성공적으로 수행을 시작했음을 알리는 String 리턴
+     * @throws Exception
+     */
     @GetMapping("/batch/mid")
     public String startBatch() throws Exception {
-        batchConfiguration.initialize();
+        midBatchConfiguration.initialize();
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis())
                 .toJobParameters();

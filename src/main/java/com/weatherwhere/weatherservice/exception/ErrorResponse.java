@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 
 @Getter
+/**
+ * 전역 예외처리에 해당할 경우 커스터마이징한 ErrorResponse를 리턴하기 위한 클래스
+ */
 public class ErrorResponse {
     private final LocalDateTime timestamp = LocalDateTime.now();
     private final int statusCode;

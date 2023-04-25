@@ -3,6 +3,9 @@ package com.weatherwhere.weatherservice.exception;
 import lombok.Getter;
 
 @Getter
+/**
+ * API 호출이 잘못되었을 경우 커스터마이징한 Exception
+ */
 public class RestApiException extends RuntimeException{
     private ErrorCode errorCode;
     private String customMessage;
