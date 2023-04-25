@@ -92,9 +92,9 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
      *  (단기예보 메인 12시간) 변환된 격자 x,y 값으로 현재 시간부터 12시간 후까지의 메인 날씨 정보를 찾은 뒤 mainDataList에 담아 리턴
      *
      * @param requestDTO 에서 set된 격자 x,y 값 받음
-     * @return ResultDTO<Object>에 mainDataList를 담아 리턴, 실패시 예외처리
+     * @return ResultDTO<List<WeatherShortMainDTO>>에 mainDataList를 담아 리턴, 실패시 예외처리
      */
-    public ResultDTO<Object> getWeatherShortMainData(WeatherShortMainApiRequestDTO requestDTO){
+    public ResultDTO<List<WeatherShortMainDTO>> getWeatherShortMainData(WeatherShortMainApiRequestDTO requestDTO){
         try {
             getGridXY(requestDTO);
             List<WeatherShortMainDTO> mainDataList = new ArrayList<>();
@@ -123,9 +123,9 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
     /**
      * (단기예보 실시간) 변환된 격자 x,y 값으로 현재 날씨 정보를 찾은 뒤 mainData에 담아 리턴
      * @param requestDTO 에서 set된 격자 x,y 값 받음
-     * @return ResultDTO<Object>에 mainData를 담아 리턴, 실패시 예외처리
+     * @return ResultDTO<WeatherShortMainDTO>에 mainData를 담아 리턴, 실패시 예외처리
      */
-    public ResultDTO<Object> getWeatherShortMainNowData(WeatherShortMainApiRequestDTO requestDTO) {
+    public ResultDTO<WeatherShortMainDTO> getWeatherShortMainNowData(WeatherShortMainApiRequestDTO requestDTO) {
         try {
             getGridXY(requestDTO);
             //WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(requestDTO.getNx(), requestDTO.getNy());
@@ -155,9 +155,9 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
     /**
      * (단기예보 서브 12시간) 변환된 격자 x,y 값으로 현재 시간부터 12시간 후까지의 서브 날씨 정보를 찾은 뒤 subDataList에 담아 리턴
      * @param requestDTO 에서 set된 격자 x,y 값 받음
-     * @return ResultDTO<Object>에 subDataList를 담아 리턴, 실패시 예외처리
+     * @return ResultDTO<List<WeatherShortSubDTO>>에 subDataList를 담아 리턴, 실패시 예외처리
      */
-    public ResultDTO<Object> getWeatherShortSubData(WeatherShortMainApiRequestDTO requestDTO) {
+    public ResultDTO<List<WeatherShortSubDTO>> getWeatherShortSubData(WeatherShortMainApiRequestDTO requestDTO) {
         try {
             getGridXY(requestDTO);
             List<WeatherShortSubDTO> subDataList = new ArrayList<>();

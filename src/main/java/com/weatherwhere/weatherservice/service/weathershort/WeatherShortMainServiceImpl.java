@@ -271,7 +271,7 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
     //ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
     /**
-     * @deprecated 한 번만 저장하면 되는 메서드라 더이상 사용하지 않음.
+     * 한 번만 저장하면 되는 메서드라 더이상 사용하지 않음.
      */
     //격자 x,y값이 담긴 csv를 postgres내의 테이블에 저장하는 메서드
 /*    @Override
