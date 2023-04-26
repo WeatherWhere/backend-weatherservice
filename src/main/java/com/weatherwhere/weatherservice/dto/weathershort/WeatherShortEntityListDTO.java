@@ -10,7 +10,14 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class WeatherShortEntityListDTO {
+    /**
+     * 단기예보 메인데이터 리스트
+     */
     List<WeatherShortMain> mainEntityList;
+
+    /**
+     * 단기예보 서브데이터 리스트
+     */
     List<WeatherShortSub> subEntityList;
 
 }

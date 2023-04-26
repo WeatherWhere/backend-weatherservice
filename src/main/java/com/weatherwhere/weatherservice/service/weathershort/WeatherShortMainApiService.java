@@ -7,15 +7,9 @@ import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainApiReque
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortMainDTO;
 import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortSubDTO;
 
+import java.util.List;
+
 public interface WeatherShortMainApiService {
-    //단기예보 메인 데이터 반환하는 서비스
-    ResultDTO<Object> getWeatherShortMainData(WeatherShortMainApiRequestDTO requestDTO) throws Exception;
-
-    //단기예보 메인 데이터(현재 시간만) 반환하는 서비스
-    ResultDTO<Object> getWeatherShortMainNowData(WeatherShortMainApiRequestDTO requestDTO) throws Exception;
-
-    //단기예보 서브 데이터 반환하는 서비스
-    ResultDTO<Object> getWeatherShortSubData(WeatherShortMainApiRequestDTO requestDTO) throws Exception;
 
     default WeatherShortMainDTO nowEntityToDTO(WeatherShortMain entity, Double tmn, Double tmx, Double beforeTmx) {
         WeatherShortMainDTO dto = WeatherShortMainDTO.builder()
@@ -62,4 +56,26 @@ public interface WeatherShortMainApiService {
         return dto;
     }
 
+
+    /**
+     *  (단기예보 메인 12시간) 변환된 격자 x,y 값으로 현재 시간부터 12시간 후까지의 메인 날씨 정보를 찾은 뒤 mainDataList에 담아 리턴
+     *
+     * @param requestDTO 에서 set된 격자 x,y 값 받음
+     * @return ResultDTO<List<WeatherShortMainDTO>>에 mainDataList를 담아 리턴, 실패시 예외처리
+     */
+    ResultDTO<List<WeatherShortMainDTO>> getWeatherShortMainData(WeatherShortMainApiRequestDTO requestDTO);
+
+    /**
+     * (단기예보 실시간) 변환된 격자 x,y 값으로 현재 날씨 정보를 찾은 뒤 mainData에 담아 리턴
+     * @param requestDTO 에서 set된 격자 x,y 값 받음
+     * @return ResultDTO<WeatherShortMainDTO>에 mainData를 담아 리턴, 실패시 예외처리
+     */
+    ResultDTO<WeatherShortMainDTO> getWeatherShortMainNowData(WeatherShortMainApiRequestDTO requestDTO);
+
+    /**
+     * (단기예보 서브 12시간) 변환된 격자 x,y 값으로 현재 시간부터 12시간 후까지의 서브 날씨 정보를 찾은 뒤 subDataList에 담아 리턴
+     * @param requestDTO 에서 set된 격자 x,y 값 받음
+     * @return ResultDTO<List<WeatherShortSubDTO>>에 subDataList를 담아 리턴, 실패시 예외처리
+     */
+    ResultDTO<List<WeatherShortSubDTO>> getWeatherShortSubData(WeatherShortMainApiRequestDTO requestDTO);
 }
