@@ -33,6 +33,19 @@ public class WeatherMidServiceImpl implements WeatherMidService {
     private final WeatherMidRepository weatherMidRepository;
     private final DateService dateService;
 
+    /**
+     * 중기 예보 조회, 육상 정보 조회 openAPI를 호출하기 위해 URI를 생성하는 메서드
+     *
+     * @param apiUrl openAPI url
+     * @param serviceKey oepnAPI에 등록한 계정 key값
+     * @param pageNo 페이지 수
+     * @param numOfRows 행 수
+     * @param dataType 데이터 포맷
+     * @param regId 지역 코드
+     * @param tmFc 발표 시간
+     *
+     * @return 여러 param을 기준으로 URI를 만들어 return
+     */
     private URI makeUriForWeatherMid(String apiUrl, String serviceKey, String pageNo, String numOfRows, String dataType,
                                      String regId, String tmFc) {
         // 중기 예보 조회와 육상 정보 조회의 요청 URI 형태는 동일하므로 공통 로직을 분리
@@ -51,6 +64,15 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         return uri;
     }
 
+    /**
+     * openAPI로부터 받아온 JSON 문자열을 JSON으로 파싱하는 메서드로 JSONObject로 리턴
+     *
+     * @param jsonString openAPI를 통해 받아오는 JSON 형태의 문자열
+     *
+     * @return response.body.items.item의 첫 번째 object를 JSONObject로 파싱하여 리턴
+     * @throws ParseException 파싱할 때 발생하는 예외
+     * @throws NullPointerException 값이 없을 때 발생하는 예외
+     */
     private JSONObject customJsonParser(String jsonString) throws ParseException, NullPointerException {
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonObject = (JSONObject) jsonParser.parse(jsonString);
@@ -71,6 +93,12 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         return (JSONObject) jsonItemList.get(0);
     }
 
+    /**
+     * 중기 예보 조회 openAPI에 전달하는 '지역코드' 매개변수를 육상 예보 조회 openAPI에 매개변수로 전달할 적절한 '구역 코드'로 변환하여 리턴
+     *
+     * @param regId 중기 예보 조회 openAPI에 전달하는 지역코드
+     * @return regId 지역에 해당하는 구역 코드를 regIdForMidFcst로 리턴
+     */
     private String changeRegIdForFcst(String regId) {
         String prefix = regId.substring(0, 4);
         String regIdForMidFcst;
@@ -90,6 +118,11 @@ public class WeatherMidServiceImpl implements WeatherMidService {
     }
 
     @Override
+    /**
+     * 중기 예보 조회 openAPI를 호출하여 JSONObject를 리턴하는 메서드
+     *
+     * @return result
+     */
     public JSONObject getWeatherMidTa(String regId, String tmFc) throws ParseException, NullPointerException {
         // 예보 구역코드와, 발표 시각은 변수어야 한다. - 매개변수로 받음 -
         String apiUrl = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidTa";
@@ -108,6 +141,11 @@ public class WeatherMidServiceImpl implements WeatherMidService {
     }
 
     @Override
+    /**
+     * 육상 예보 조회 openAPI를 호출하여 JSONObject를 리턴하는 메서드
+     *
+     * @return result
+     */
     public JSONObject getWeatherMidLandFcst(String regId, String tmFc) throws ParseException, NullPointerException {
         String apiUrl = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst";
         String serviceKey = System.getProperty("WEATHER_MID_SERVICE_KEY");
@@ -123,6 +161,14 @@ public class WeatherMidServiceImpl implements WeatherMidService {
     }
 
     @Override
+    /**
+     * DB에 저장할 중기 날씨 예보 데이터들을 List<WeatherMidEntity>로 리턴
+     *
+     * @param regionCodeDTOList csv 파일로부터 읽어온 지역 데이터
+     * @param threeToSevenDays 3일 후부터 7일 후까지의 날짜 문자열을 담은 리스트
+     * @param tmfc 발표 날짜
+     * @return List<WeatherMidEntity>
+     */
     public List<WeatherMidEntity> makeEntityList(List<RegionCodeDTO> regionCodeDTOList, String[] threeToSevenDays, String tmfc) {
         List<WeatherMidEntity> entities = new ArrayList<>();
         Integer dtoListLength = regionCodeDTOList.size();
@@ -179,6 +225,9 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         return entities;
     }
 
+    /**
+     * @deprecated Spring Batch를 활용하기 전에 DB를 업데이트 하는 메서드.
+     */
     @Override
     @Transactional
     public List<WeatherMidCompositeKey> updateWeatherMid(List<WeatherMidEntity> entities) {
@@ -214,6 +263,12 @@ public class WeatherMidServiceImpl implements WeatherMidService {
     }
 
     @Override
+    /**
+     * 중기 예보 조회 openAPI를 호출하여 데이터를 담아 ResultDTO<List<WeatherMidDTO>>를 리턴
+     *
+     * @param regionCode 지역코드
+     * @return ResultDTO<List<WeatherMidDTO>>
+     */
     public ResultDTO<List<WeatherMidDTO>> getMidForecast(String regionCode) {
         String[] weeks = dateService.getDaysAfterToday(3, 7);
         List<WeatherMidDTO> dtoList = new ArrayList<>();
@@ -226,7 +281,15 @@ public class WeatherMidServiceImpl implements WeatherMidService {
     }
 
     //행정동 주소로 mid data 조회
+
     @Override
+    /**
+     * 지역 이름과 도시 이름을 매개변수로 받아 해당하는 위치의 2일 후부터 6일 후까지의 중기 예보를 ResultDTO<List<WeatherMidDTO>>로 리턴하는 메서드
+     *
+     * @param region1 지역 이름
+     * @param region2 도시 이름
+     * @return ResultDTO<List<WeatherMidDTO>>
+     */
     public ResultDTO<List<WeatherMidDTO>> getMidForecastAddress(String region1, String region2) {
         String[] weeks = dateService.getDaysAfterToday(2, 6);
         List<WeatherMidDTO> dtoList = new ArrayList<>();
@@ -257,9 +320,9 @@ public class WeatherMidServiceImpl implements WeatherMidService {
 
             }
             else if(region2.equals("고성") && region1.equals("강원")){
-                    WeatherMidEntity result = weatherMidRepository.findByRegionNameAndIdBaseTimeAndCity(region2, weeks[i], "강원영동").orElseThrow(() -> new NoSuchElementException());
-                    dtoList.add(entityToDTO(result));
-                    log.info("강원 고성");
+                WeatherMidEntity result = weatherMidRepository.findByRegionNameAndIdBaseTimeAndCity(region2, weeks[i], "강원영동").orElseThrow(() -> new NoSuchElementException());
+                dtoList.add(entityToDTO(result));
+                log.info("강원 고성");
             }else{
                 WeatherMidEntity result = weatherMidRepository.findByRegionNameAndIdBaseTime(region2, weeks[i]).orElseThrow(() -> new NoSuchElementException());
                 dtoList.add(entityToDTO(result));
@@ -271,7 +334,6 @@ public class WeatherMidServiceImpl implements WeatherMidService {
         }
         return ResultDTO.of(HttpStatus.OK.value(), "날씨 중기 예보를 조회하는데 성공하였습니다.", dtoList);
     }
-
 
 
 

@@ -12,6 +12,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+/**
+ * DB에 regionCode를 기준으로 중기 예보 데이터를 저장할 DTO
+ */
 public class WeatherMidDTO {
     private String regionCode;
     private String baseTime;

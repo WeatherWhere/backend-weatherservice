@@ -13,6 +13,13 @@ import java.util.Calendar;
 @Log4j2
 public class DateServiceImpl implements DateService {
     @Override
+    /**
+     * (start일 후 - end일 후) 까지의 날짜를 'yyyyMMdd' 형식의 List<String>으로 리턴하는 메서드
+     *
+     * @param start 시작 날짜
+     * @param end 마지막 날짜
+     * @return 현재 시간을 기준으로 (start일 후 - end일 후)의 리스트를 담은 daysAfterToday를 리턴
+     */
     public String[] getDaysAfterToday(int start, int end) {
         String[] daysAfterToday = new String[end - start + 1];
 
@@ -32,6 +39,11 @@ public class DateServiceImpl implements DateService {
     }
 
     @Override
+    /**
+     * openAPI를 호출할 때 매개변수로 전달할 tmfc를 'yyyyMMdd0600' 혹은 'yyyyMMdd1800'으로 리턴하는 메서드
+     *
+     * @return 현재 시간 이후를 기준으로 가장 가까운 06시 혹은 18시를 찾아 tmfc로 리턴
+     */
     public String getTmfc() {
         String tmfc;
         LocalDateTime now = LocalDateTime.now();

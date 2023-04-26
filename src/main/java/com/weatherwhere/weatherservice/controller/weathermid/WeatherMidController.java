@@ -22,15 +22,13 @@ import lombok.RequiredArgsConstructor;
 public class WeatherMidController {
     private final WeatherMidService weatherMidService;
 
-//    @GetMapping("/forecast/week")
-//    public ResultDTO<List<WeatherMidDTO>> getWeatherMidForecast(@RequestParam("regionCode") String regionCode) {
-//        if (regionCode.length() != 8) {
-//            throw new RestApiException(ErrorCode.BAD_REQUEST, "지역 코드는 8글자이어야 합니다.");
-//        }
-//        ResultDTO<List<WeatherMidDTO>> data = weatherMidService.getMidForecast(regionCode);
-//        return data;
-//    }
-
+    /**
+     * 위치를 기반으로 날씨 중기예보(3일 후 - 7일 후) 데이터를 리턴합니다.
+     *
+     * @param region1 DB 조회를 위한 '지역이름'
+     * @param region2 DB 조회를 위한 '도시이름'
+     * @return 성공 시 ResultDTO<List<WeatherMidDTO>>에 statusCode=200, message, data를 리턴, 실패 시 statusCode 404와 message 리턴
+     */
     @GetMapping("/forecast/mid")
     public ResultDTO<List<WeatherMidDTO>> getWeatherMidForecastAddress(@RequestParam("region1") String region1, @RequestParam("region2") String region2) {
         ResultDTO<List<WeatherMidDTO>> data = weatherMidService.getMidForecastAddress(region1, region2);

@@ -10,6 +10,9 @@ import java.util.NoSuchElementException;
 
 @RestControllerAdvice
 @Slf4j
+/**
+ * @RestControllerAdvice 전역 예외처리를 하기 위한 ExceptionHandler
+ */
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     // 상황에 맞게 최적화 및 커스터마이징
 

@@ -14,6 +14,11 @@ import java.util.List;
 @Log4j2
 public class ParseCSVServiceImpl implements ParseCSVService {
     @Override
+    /**
+     * csv 파일로부터 데이터를 읽어와 List<RegionCodeDTO>로 리턴하는 메서드
+     *
+     * @return List<RegionCodeDTO>
+     */
     public List<RegionCodeDTO> ParseCSV() {
         ClassPathResource resource = new ClassPathResource("weatherMidRegionCodeEx.csv");
         List<RegionCodeDTO> regionCodes = new ArrayList<>();

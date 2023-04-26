@@ -1,11 +1,11 @@
-package com.weatherwhere.weatherservice.config;
+package com.weatherwhere.weatherservice.config.weathermid;
 
+import com.weatherwhere.weatherservice.config.JobCompletionNotificationListener;
 import com.weatherwhere.weatherservice.domain.weathermid.WeatherMidEntity;
 import com.weatherwhere.weatherservice.dto.weathermid.RegionCodeDTO;
 import com.weatherwhere.weatherservice.service.date.DateService;
 import com.weatherwhere.weatherservice.service.weathermid.ParseCSVService;
 import com.weatherwhere.weatherservice.service.weathermid.WeatherMidService;
-import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -17,18 +17,16 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.database.JpaItemWriter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Log4j2
 @Configuration
 @RequiredArgsConstructor
-public class BatchConfiguration {
+public class MidBatchConfiguration {
     private final WeatherMidService weatherMidService;
     private final ParseCSVService parseCSVService;
     private final DateService dateService;
@@ -51,7 +49,7 @@ public class BatchConfiguration {
 
     // ItemReader
     @Bean
-    public ItemReader<WeatherMidEntity> restItCollectReader() {
+    public ItemReader<WeatherMidEntity> restItCollectReaderMid() {
         return new ItemReader<WeatherMidEntity>() {
             @Override
             public WeatherMidEntity read() {
@@ -71,7 +69,7 @@ public class BatchConfiguration {
     }
     // ItemWriter
     @Bean
-    public JpaItemWriter<WeatherMidEntity> jpaItemWriter(EntityManagerFactory entityManagerFactory) {
+    public JpaItemWriter<WeatherMidEntity> jpaItemWriterMid(EntityManagerFactory entityManagerFactory) {
         JpaItemWriter<WeatherMidEntity> jpaItemWriter = new JpaItemWriter<>();
         jpaItemWriter.setEntityManagerFactory(entityManagerFactory);
         return jpaItemWriter;
@@ -79,22 +77,22 @@ public class BatchConfiguration {
 
     // step
     @Bean
-    public Step jpaStep(JobRepository jobRepository,
+    public Step jpaStepMid(JobRepository jobRepository,
                         PlatformTransactionManager transactionManager, JpaItemWriter<WeatherMidEntity> writer) {
-        return new StepBuilder("jpaStep", jobRepository)
-                .<WeatherMidEntity, WeatherMidEntity>chunk(1, transactionManager)
-                .reader(restItCollectReader())
+        return new StepBuilder("jpaStepMid", jobRepository)
+                .<WeatherMidEntity, WeatherMidEntity>chunk(30, transactionManager)
+                .reader(restItCollectReaderMid())
                 .writer(writer)
                 .build();
     }
 
     // job
     @Bean
-    public Job jpaJob(JobRepository jobRepository, JobCompletionNotificationListener listener, Step jpaStep) {
-        return new JobBuilder("jpaJob", jobRepository)
+    public Job jpaJobMid(JobRepository jobRepository, JobCompletionNotificationListener listener, Step jpaStepMid) {
+        return new JobBuilder("jpaJobMid", jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .listener(listener)
-                .flow(jpaStep)
+                .flow(jpaStepMid)
                 .end()
                 .build();
     }
