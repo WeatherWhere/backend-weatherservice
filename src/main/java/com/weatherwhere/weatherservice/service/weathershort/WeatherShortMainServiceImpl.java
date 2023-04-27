@@ -75,14 +75,22 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
         String pageNo = "1";
 
         dateService.getBaseDateTime(weatherShortRequestDTO);
+        String url;
+        if(weatherShortRequestDTO.getWeatherXY() != null) {
+            url = String.format("%s?serviceKey=%s&pageNo=%s&numOfRows=%s&dataType=%s&base_date=%s&base_time=%s&nx=%s&ny=%s",
+                    apiUrl, serviceKey, pageNo, numOfRows, dataType,
+                    weatherShortRequestDTO.getBaseDate(), weatherShortRequestDTO.getBaseTime(),
+                    weatherShortRequestDTO.getWeatherXY().getWeatherX(), weatherShortRequestDTO.getWeatherXY().getWeatherY());
 
-        String url = String.format("%s?serviceKey=%s&pageNo=%s&numOfRows=%s&dataType=%s&base_date=%s&base_time=%s&nx=%s&ny=%s",
-                apiUrl, serviceKey, pageNo, numOfRows, dataType,
-                weatherShortRequestDTO.getBaseDate(), weatherShortRequestDTO.getBaseTime(),
-                weatherShortRequestDTO.getWeatherXY().getWeatherX(), weatherShortRequestDTO.getWeatherXY().getWeatherY());
-
+        }else{
+            url = String.format("%s?serviceKey=%s&pageNo=%s&numOfRows=%s&dataType=%s&base_date=%s&base_time=%s&nx=%s&ny=%s",
+                    apiUrl, serviceKey, pageNo, numOfRows, dataType,
+                    weatherShortRequestDTO.getBaseDate(), weatherShortRequestDTO.getBaseTime(),
+                    weatherShortRequestDTO.getNx(), weatherShortRequestDTO.getNy());
+        }
         //rest template이 String 문자열을 한 번 더 인코딩 해주는 걸 방지하기 위해 url 객체로 넣음
         URI endUrl = new URI(url);
+        log.info("endUrl: " + endUrl);
         return endUrl;
 
     }
@@ -120,14 +128,14 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
 
     }
 
+    @Override
     /**
      * 파싱한 json(날씨 데이터)값을 fcstDate+fcstTime을 key로 한 weatherShortAllDTOList에 담아 리턴
      *
      * @param weatherShortRequestDTO
      * @return fcstDate+fcstTime을 key로 한 weatherShortAllDTOList에 날씨 데이터를 담아 리턴, 예외 발생시 Exception 던짐
      * @throws Exception
-     */
-    private List<WeatherShortAllDTO> jsonToFcstDateMap(WeatherShortRequestDTO weatherShortRequestDTO) throws Exception {
+     */ public List<WeatherShortAllDTO> jsonToFcstDateMap(WeatherShortRequestDTO weatherShortRequestDTO) throws Exception {
 
         JsonNode itemNode = weatherShortJsonParsing(weatherShortRequestDTO);
 
@@ -140,9 +148,12 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
                         .thenComparing((List<JsonNode> timeList) -> timeList.get(0).get("fcstTime").asText()))*/
                 .map(timeList -> JsonToDTOWeatherShort(weatherShortRequestDTO, timeList))
                 .collect(Collectors.toList());
+                log.info("weatherShortAllDTOList ========"+weatherShortAllDTOList);
         return weatherShortAllDTOList;
     }
 
+
+    @Override
     /**
      * weatherShortAllDTOList의 시간 당 하나의 dto 요소들 저장한 뒤 WeatherShortAllDTO dto 리턴
      *
@@ -150,18 +161,29 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
      * @param timeList (12시간)
      * @return WeatherShortAllDTO dto에 baseDate, baseTime, nx, ny, fcstDateTime, pop, pcp ··· 등등 한시간에 들어갈 날씨 데이터들을 담아 리턴
      */
-    private WeatherShortAllDTO JsonToDTOWeatherShort(WeatherShortRequestDTO weatherShortRequestDTO, List<JsonNode> timeList) {
+    public WeatherShortAllDTO JsonToDTOWeatherShort(WeatherShortRequestDTO weatherShortRequestDTO, List<JsonNode> timeList) {
 
         JsonNode time = timeList.get(0);
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+        WeatherShortAllDTO dto;
 
-        WeatherShortAllDTO dto = WeatherShortAllDTO.builder()
-                .baseDate(weatherShortRequestDTO.getBaseDate())
-                .baseTime(weatherShortRequestDTO.getBaseTime())
-                .nx(weatherShortRequestDTO.getWeatherXY().getWeatherX())
-                .ny(weatherShortRequestDTO.getWeatherXY().getWeatherY())
-                .fcstDateTime(LocalDateTime.parse(time.get("fcstDate").asText() + time.get("fcstTime").asText(), dateFormatter))
-                .build();
+        if(weatherShortRequestDTO.getWeatherXY() != null){
+            dto = WeatherShortAllDTO.builder()
+                    .baseDate(weatherShortRequestDTO.getBaseDate())
+                    .baseTime(weatherShortRequestDTO.getBaseTime())
+                    .nx(weatherShortRequestDTO.getWeatherXY().getWeatherX())
+                    .ny(weatherShortRequestDTO.getWeatherXY().getWeatherY())
+                    .fcstDateTime(LocalDateTime.parse(time.get("fcstDate").asText() + time.get("fcstTime").asText(), dateFormatter))
+                    .build();
+        }else{
+            dto = WeatherShortAllDTO.builder()
+                    .baseDate(weatherShortRequestDTO.getBaseDate())
+                    .baseTime(weatherShortRequestDTO.getBaseTime())
+                    .nx(weatherShortRequestDTO.getNx())
+                    .ny(weatherShortRequestDTO.getNy())
+                    .fcstDateTime(LocalDateTime.parse(time.get("fcstDate").asText() + time.get("fcstTime").asText(), dateFormatter))
+                    .build();
+        }
 
 
         Map<String, Consumer<JsonNode>> handlers = new HashMap<>();

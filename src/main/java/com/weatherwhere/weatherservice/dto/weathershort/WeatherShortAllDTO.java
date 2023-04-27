@@ -11,6 +11,9 @@ import java.time.LocalDateTime;
 @Data
 public class WeatherShortAllDTO {
 
+    //xy 외래키
+    private Long xyId;
+
     /**
      * 발표날짜
      */
@@ -105,6 +108,8 @@ public class WeatherShortAllDTO {
      * 격자 y
      */
     private Integer ny;
+
+    private Double beforeTmx;
 
 
 }

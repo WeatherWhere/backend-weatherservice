@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.weatherwhere.weatherservice.dto.weathershort.WeatherShortRequestDTO;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -58,30 +59,30 @@ public class WeatherShortTests {
     @Test
     @DisplayName("단기에보 메인 api 테스트")
     void testGetMainData() throws Exception {
-        WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO = new WeatherShortMainApiRequestDTO();
-        weatherShortMainApiRequestDTO.setLocationX(37.489325);
-        weatherShortMainApiRequestDTO.setLocationY(126.554234);
-        weatherShortMainApiService.getWeatherShortMainData(weatherShortMainApiRequestDTO);
-        System.out.println(weatherShortMainApiService.getWeatherShortMainData(weatherShortMainApiRequestDTO));
+        WeatherShortRequestDTO weatherShortRequestDTO = new WeatherShortRequestDTO();
+        weatherShortRequestDTO.setLocationX(37.489325);
+        weatherShortRequestDTO.setLocationY(126.554234);
+        weatherShortMainApiService.getWeatherShortMainData(weatherShortRequestDTO);
+        System.out.println(weatherShortMainApiService.getWeatherShortMainData(weatherShortRequestDTO));
     }
 
     @Test
     @DisplayName("단기에보 메인 api(현재 시간) 테스트")
     void testGetMainDataNow() throws Exception {
-        WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO = new WeatherShortMainApiRequestDTO();
-        weatherShortMainApiRequestDTO.setLocationX(37.489325);
-        weatherShortMainApiRequestDTO.setLocationY(126.554234);
-        System.out.println(weatherShortMainApiService.getWeatherShortMainNowData(weatherShortMainApiRequestDTO));
+        WeatherShortRequestDTO weatherShortRequestDTO = new WeatherShortRequestDTO();
+        weatherShortRequestDTO.setLocationX(37.489325);
+        weatherShortRequestDTO.setLocationY(126.554234);
+        System.out.println(weatherShortMainApiService.getWeatherShortMainNowData(weatherShortRequestDTO));
     }
 
 
     @Test
     @DisplayName("단기에보 서브 api 테스트")
     void testGetSubData() throws Exception {
-        WeatherShortMainApiRequestDTO weatherShortMainApiRequestDTO = new WeatherShortMainApiRequestDTO();
-        weatherShortMainApiRequestDTO.setLocationX(37.489325);
-        weatherShortMainApiRequestDTO.setLocationY(126.554234);
-        System.out.println(weatherShortMainApiService.getWeatherShortSubData(weatherShortMainApiRequestDTO));
+        WeatherShortRequestDTO weatherShortRequestDTO = new WeatherShortRequestDTO();
+        weatherShortRequestDTO.setLocationX(37.489325);
+        weatherShortRequestDTO.setLocationY(126.554234);
+        System.out.println(weatherShortMainApiService.getWeatherShortSubData(weatherShortRequestDTO));
     }
 
     @Test

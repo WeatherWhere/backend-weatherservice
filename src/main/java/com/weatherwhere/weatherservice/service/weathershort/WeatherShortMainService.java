@@ -1,6 +1,7 @@
 package com.weatherwhere.weatherservice.service.weathershort;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.weatherwhere.weatherservice.domain.weathermid.WeatherMidCompositeKey;
 import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortCompositeKey;
 import com.weatherwhere.weatherservice.domain.weathershort.WeatherShortMain;
@@ -63,6 +64,24 @@ public interface WeatherShortMainService {
      * @return xyList 리턴
      */
     List<WeatherXY> splitXyList() throws Exception;
+
+    /**
+     * 파싱한 json(날씨 데이터)값을 fcstDate+fcstTime을 key로 한 weatherShortAllDTOList에 담아 리턴
+     *
+     * @param weatherShortRequestDTO
+     * @return fcstDate+fcstTime을 key로 한 weatherShortAllDTOList에 날씨 데이터를 담아 리턴, 예외 발생시 Exception 던짐
+     * @throws Exception
+     */
+    List<WeatherShortAllDTO> jsonToFcstDateMap(WeatherShortRequestDTO weatherShortRequestDTO) throws Exception;
+
+    /**
+     * weatherShortAllDTOList의 시간 당 하나의 dto 요소들 저장한 뒤 WeatherShortAllDTO dto 리턴
+     *
+     * @param weatherShortRequestDTO
+     * @param timeList (12시간)
+     * @return WeatherShortAllDTO dto에 baseDate, baseTime, nx, ny, fcstDateTime, pop, pcp ··· 등등 한시간에 들어갈 날씨 데이터들을 담아 리턴
+     */
+    WeatherShortAllDTO JsonToDTOWeatherShort(WeatherShortRequestDTO weatherShortRequestDTO, List<JsonNode> timeList);
 
     /**
      * 컨트롤러에서 실질적으로 호출하는 메서드로 이 메서드 내에서 xylist를 불러온 뒤 병렬처리를 하여
