@@ -100,7 +100,7 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
         try {
             getGridXY(requestDTO);
             List<WeatherShortAllDTO> mainDataList = new ArrayList<>();
-
+            log.info("getWeatherShortMainData/nx:ny: "+ requestDTO.getNx()+":"+requestDTO.getNy());
             //WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(requestDTO.getNx(), requestDTO.getNy());
             for (int i = 0; i < 12; i++) {
                 LocalDateTime now = LocalDateTime.now();
@@ -109,8 +109,7 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
                 System.out.println(ldt);
                 WeatherShortMain weatherShortMain = weatherShortMainRepository.
                         findByIdWeatherXYWeatherXAndIdWeatherXYWeatherYAndIdFcstDateTime(requestDTO.getNx(), requestDTO.getNy(),requestDTO.getFcstDateTime());
-                System.out.println("weatherShortMain"+weatherShortMain);
-                log.info(weatherShortMain);
+                log.info("for문 12시간 weatherShortMain: "+weatherShortMain);
                 if(weatherShortMain != null){
                     mainDataList.add(entityToDTO(weatherShortMain));
                 }else{
@@ -123,9 +122,19 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
                 log.info("nx, ny값 존재" + mainDataList);
                 return ResultDTO.of(HttpStatus.OK.value(),"메인 데이터(12시간)를 반환하는데 성공했습니다.",mainDataList);
             }else{
+                LocalDateTime now = LocalDateTime.now();
+                LocalDateTime ldt = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), 0);
                 List<WeatherShortAllDTO> data = weatherShortMainService.jsonToFcstDateMap(requestDTO);
                 log.info("nx, ny값 존재하지 않음" + data);
-                return ResultDTO.of(HttpStatus.OK.value(),"메인 데이터(12시간)를 반환하는데 성공했습니다.",data);
+                List<WeatherShortAllDTO> found = data.stream()
+                        .filter(d -> {
+                            LocalDateTime allFcstDateTime = d.getFcstDateTime();
+                            return allFcstDateTime.isAfter(ldt) && allFcstDateTime.isBefore(ldt.plusHours(12));
+                        })
+                        .sorted(Comparator.comparing(d -> d.getFcstDateTime()))
+                        .collect(Collectors.toList());
+
+                return ResultDTO.of(HttpStatus.OK.value(),"메인 데이터(12시간)를 반환하는데 성공했습니다.",found);
             }
         } catch (NullPointerException e) {
             return ResultDTO.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "NullPointerExceptiond이 발생했습니다.", null);
@@ -159,7 +168,7 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
                 Double weatherTmn = weatherShortMainRepository.findTmnIdByIdXAndIdYAndDateRange(requestDTO.getNx(), requestDTO.getNy(),nowDate);
                 Double weatherBeforeTmx = weatherShortMainRepository.findTmxIdByIdXAndIdYAndDateRange(requestDTO.getNx(), requestDTO.getNy(), nowMinusOneDate);
                 WeatherShortAllDTO mainData = nowEntityToDTO(weatherShortMain, weatherTmn, weatherTmx, weatherBeforeTmx);
-                System.out.println("nowMainData: "+mainData);
+                log.info("mainData: "+mainData);
                 return ResultDTO.of(HttpStatus.OK.value(),"메인 데이터(현재시간)를 반환하는데 성공했습니다.",mainData);
             }else{
                 List<WeatherShortAllDTO> data = weatherShortMainService.jsonToFcstDateMap(requestDTO);
