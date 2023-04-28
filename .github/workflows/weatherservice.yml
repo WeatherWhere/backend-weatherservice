@@ -4,20 +4,22 @@ on:
   push:
     branches: [ "main" ]
 
+# 변수
 env:
-  AWS_REGION: ap-northeast-2             # set this to your preferred AWS region, e.g. us-west-1
-  ECR_REPOSITORY: weatherservice         # set this to your Amazon ECR repository name
+  AWS_REGION: ap-northeast-2
+  ECR_REPOSITORY: weatherservice
   ECR_REGISTRY: public.ecr.aws/a5p8o7q9
   SSH_USERNAME: ubuntu
   IMAGE_TAG_PREFIX: v
 
+# 권한설정
 permissions:
   contents: read
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+
 
     # Ref: https://github.com/gradle/gradle-build-action
     steps:
@@ -30,6 +32,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
 
+      # git secret reaveal 단계
       # https://github.com/marketplace/actions/import-gpg
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@v3
@@ -42,7 +45,7 @@ jobs:
           sudo apt-get install git-secret -y
           git-secret reveal -fp ${{ secrets.GPG_PASSPHRASE }}
           
-
+      # 프로젝트 빌드
       - name: Execute Gradle build
         run: ./gradlew build
 
@@ -53,6 +56,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
+      # ECR에 image push
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         run: |
@@ -64,6 +68,7 @@ jobs:
           docker push ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG_PREFIX }}${{github.run_number}}
           echo "image=${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG_PREFIX }}${{github.run_number}}" >> $GITHUB_OUTPUT
 
+      # backend-kubernetes repo 에 new verion commit
       - name: Checkout Kubernetes YAML
         uses: actions/checkout@v3
         with:
