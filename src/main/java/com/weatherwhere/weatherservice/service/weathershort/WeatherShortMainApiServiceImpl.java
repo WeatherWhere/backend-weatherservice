@@ -7,11 +7,13 @@ import com.weatherwhere.weatherservice.dto.weathershort.*;
 import com.weatherwhere.weatherservice.repository.weathershort.WeatherShortMainRepository;
 import com.weatherwhere.weatherservice.repository.weathershort.WeatherShortSubRepository;
 import com.weatherwhere.weatherservice.repository.weathershort.WeatherXYRepository;
+import com.weatherwhere.weatherservice.service.date.DateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.expression.Dates;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,6 +33,8 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
     private final WeatherShortSubRepository weatherShortSubRepository;
 
     private final WeatherShortMainService weatherShortMainService;
+
+    private final DateService dateService;
 
     /**
      *  클라이언트에서 받은 위경도 좌표로 격자 X Y 좌표 구해서 리턴하는 메서드
@@ -151,13 +155,17 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
             getGridXY(requestDTO);
             //WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(requestDTO.getNx(), requestDTO.getNy());
             LocalDateTime now = LocalDateTime.now();
+            LocalDateTime yesterday = LocalDateTime.now().minusDays(1);
             LocalDateTime ldt = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), 0).plusHours(1);
+            LocalDateTime beforeTmxHour = LocalDateTime.of(yesterday.getYear(), yesterday.getMonth(), yesterday.getDayOfMonth(), 15, 0);
+
             LocalDate nowDate = LocalDate.of(now.getYear(), now.getMonth(), now.getDayOfMonth());
             LocalDate nowMinusOneDate = LocalDate.of(now.getYear(), now.getMonth(), now.getDayOfMonth()).minusDays(1);
             System.out.println(nowDate + " " + nowMinusOneDate);
             requestDTO.setFcstDateTime(ldt);
             WeatherShortMain weatherShortMain = weatherShortMainRepository.findByIdWeatherXYWeatherXAndIdWeatherXYWeatherYAndIdFcstDateTime(requestDTO.getNx(), requestDTO.getNy(), requestDTO.getFcstDateTime());
             if(weatherShortMain != null){
+                //nx, ny 존재
                 //최고기온
                 Double weatherTmx = weatherShortMainRepository.findTmxIdByIdXAndIdYAndDateRange(requestDTO.getNx(), requestDTO.getNy(),nowDate);
                 //최저기온
@@ -167,7 +175,19 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
                 log.info("mainData: "+mainData);
                 return ResultDTO.of(HttpStatus.OK.value(),"메인 데이터(현재시간)를 반환하는데 성공했습니다.",mainData);
             }else{
+                //nx, ny 존재안함
+                //오늘 데이터 조회
                 List<WeatherShortAllDTO> data = weatherShortMainService.jsonToFcstDateMap(requestDTO);
+
+                //어제 데이터 조회
+                dateService.getMinusBaseDateTime(requestDTO);
+                List<WeatherShortAllDTO> yesterdayData = weatherShortMainService.jsonToFcstDateMap(requestDTO);
+
+                OptionalDouble yesterdayTmx = yesterdayData.stream()
+                        .filter(d -> beforeTmxHour.equals(d.getFcstDateTime()))
+                        .mapToDouble(d -> d.getTmx())
+                        .findFirst();
+                log.info("yesterdayTmx"+yesterdayTmx);
 
                 Optional<WeatherShortAllDTO> found = data.stream()
                         .filter(d -> ldt.equals(d.getFcstDateTime()))
@@ -179,14 +199,18 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
                 OptionalDouble maxTmp = data.stream()
                         .mapToDouble(WeatherShortAllDTO::getTmp)
                         .max();
+
                 log.info("minTmp: "+minTmp+" maxTmp: "+maxTmp);
+
                 WeatherShortAllDTO weatherShortAllDTO;
+
                 log.info("nx, ny값 존재하지 않음:MainNow "+found);
 
-                if (found.isPresent() && minTmp.isPresent() && maxTmp.isPresent()) {
+                if (found.isPresent() && minTmp.isPresent() && maxTmp.isPresent() && yesterdayTmx.isPresent()) {
                     weatherShortAllDTO = found.get();
                     weatherShortAllDTO.setTmx(maxTmp.getAsDouble());
                     weatherShortAllDTO.setTmn(minTmp.getAsDouble());
+                    weatherShortAllDTO.setBeforeTmx(yesterdayTmx.getAsDouble());
                     log.info(weatherShortAllDTO);
                 } else {
                     weatherShortAllDTO = null;

@@ -74,18 +74,26 @@ public class WeatherShortMainServiceImpl implements WeatherShortMainService {
         String numOfRows = "302";
         String pageNo = "1";
 
-        dateService.getBaseDateTime(weatherShortRequestDTO);
         String url;
+        //nx, ny 존재할때
         if(weatherShortRequestDTO.getWeatherXY() != null) {
+            dateService.getBaseDateTime(weatherShortRequestDTO);
             url = String.format("%s?serviceKey=%s&pageNo=%s&numOfRows=%s&dataType=%s&base_date=%s&base_time=%s&nx=%s&ny=%s",
                     apiUrl, serviceKey, pageNo, numOfRows, dataType,
                     weatherShortRequestDTO.getBaseDate(), weatherShortRequestDTO.getBaseTime(),
                     weatherShortRequestDTO.getWeatherXY().getWeatherX(), weatherShortRequestDTO.getWeatherXY().getWeatherY());
-
-        }else{
+        //nx, ny 존재 안하고 오늘
+        }else if(weatherShortRequestDTO.getWeatherXY() == null && weatherShortRequestDTO.getBeforeBaseDate() == null){
+            dateService.getBaseDateTime(weatherShortRequestDTO);
             url = String.format("%s?serviceKey=%s&pageNo=%s&numOfRows=%s&dataType=%s&base_date=%s&base_time=%s&nx=%s&ny=%s",
                     apiUrl, serviceKey, pageNo, numOfRows, dataType,
                     weatherShortRequestDTO.getBaseDate(), weatherShortRequestDTO.getBaseTime(),
+                    weatherShortRequestDTO.getNx(), weatherShortRequestDTO.getNy());
+        //nx, ny 존재 안하고 어제
+        }else{
+            url = String.format("%s?serviceKey=%s&pageNo=%s&numOfRows=%s&dataType=%s&base_date=%s&base_time=%s&nx=%s&ny=%s",
+                    apiUrl, serviceKey, pageNo, numOfRows, dataType,
+                    weatherShortRequestDTO.getBeforeBaseDate(), weatherShortRequestDTO.getBaseTime(),
                     weatherShortRequestDTO.getNx(), weatherShortRequestDTO.getNy());
         }
         //rest template이 String 문자열을 한 번 더 인코딩 해주는 걸 방지하기 위해 url 객체로 넣음

@@ -12,6 +12,9 @@ public class WeatherShortRequestDTO {
     //발표날짜
     private String baseDate;
 
+    //어제 발표날짜
+    private String beforeBaseDate;
+
     //발표시간
     private String baseTime;
 
