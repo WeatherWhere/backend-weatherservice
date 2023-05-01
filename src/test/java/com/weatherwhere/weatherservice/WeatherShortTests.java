@@ -1,6 +1,7 @@
 package com.weatherwhere.weatherservice;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -23,6 +25,7 @@ import com.weatherwhere.weatherservice.repository.weathershort.WeatherXYReposito
 import com.weatherwhere.weatherservice.service.weathershort.WeatherShortMainApiService;
 
 import jakarta.transaction.Transactional;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -32,13 +35,13 @@ public class WeatherShortTests {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
+    @MockBean
     private WeatherShortMainApiService weatherShortMainApiService;
 
-    @Autowired
+    @MockBean
     private WeatherXYRepository weatherXYRepository;
 
-    @Autowired
+    @MockBean
     private WeatherShortMainRepository weatherShortMainRepository;
 
 
@@ -53,6 +56,20 @@ public class WeatherShortTests {
                         .param("baseTime", baseTime))
                 .andExpect(status().isOk())
                 .andReturn();
+    }
+
+    @Test
+    @DisplayName("단기예보 현재시간 테스트")
+    void shortNowApiTest() throws Exception {
+        //http://localhost:8080/weather/forecast/short/main?locationX=37.4405&locationY=127.1358
+        String locationX = "37.4405";
+        String locationY = "127.1358";
+        mockMvc.perform(get("/weather/forecast/short/main/now")
+                        .param("locationX", locationX)
+                        .param("locationY", locationY))
+                .andExpect(status().isOk())
+                .andDo(print());
+
     }
 
 
