@@ -8,4 +8,6 @@ public interface DateService {
     String getTmfc();
 
     WeatherShortRequestDTO getBaseDateTime(WeatherShortRequestDTO weatherShortRequestDTO);
+
+    WeatherShortRequestDTO getMinusBaseDateTime(WeatherShortRequestDTO weatherShortRequestDTO);
 }

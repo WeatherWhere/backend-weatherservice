@@ -123,6 +123,19 @@ public class DateServiceImpl implements DateService {
 
     }
 
+    //어제 발표날짜 조회(최고기온 비교용)
+    @Override
+    public WeatherShortRequestDTO getMinusBaseDateTime(WeatherShortRequestDTO weatherShortRequestDTO) {
+        LocalDateTime yesterday = LocalDateTime.now().minusDays(1);
+
+        String beforeBaseDate = yesterday.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String baseTime = yesterday.format(DateTimeFormatter.ofPattern("1100"));
+        weatherShortRequestDTO.setBeforeBaseDate(beforeBaseDate);
+        weatherShortRequestDTO.setBaseTime(baseTime);
+        return weatherShortRequestDTO;
+    }
+
+
 
 
 }
