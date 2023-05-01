@@ -15,10 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -125,7 +122,6 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
                 LocalDateTime now = LocalDateTime.now();
                 LocalDateTime ldt = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), 0);
                 List<WeatherShortAllDTO> data = weatherShortMainService.jsonToFcstDateMap(requestDTO);
-                log.info("nx, ny값 존재하지 않음" + data);
                 List<WeatherShortAllDTO> found = data.stream()
                         .filter(d -> {
                             LocalDateTime allFcstDateTime = d.getFcstDateTime();
@@ -133,7 +129,7 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
                         })
                         .sorted(Comparator.comparing(d -> d.getFcstDateTime()))
                         .collect(Collectors.toList());
-
+                log.info("nx, ny값 존재하지 않음: 정렬" + found);
                 return ResultDTO.of(HttpStatus.OK.value(),"메인 데이터(12시간)를 반환하는데 성공했습니다.",found);
             }
         } catch (NullPointerException e) {
@@ -155,7 +151,7 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
             getGridXY(requestDTO);
             //WeatherXY weatherXY = weatherXYRepository.findByWeatherXAndWeatherY(requestDTO.getNx(), requestDTO.getNy());
             LocalDateTime now = LocalDateTime.now();
-            LocalDateTime ldt = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), 0);
+            LocalDateTime ldt = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), 0).plusHours(1);
             LocalDate nowDate = LocalDate.of(now.getYear(), now.getMonth(), now.getDayOfMonth());
             LocalDate nowMinusOneDate = LocalDate.of(now.getYear(), now.getMonth(), now.getDayOfMonth()).minusDays(1);
             System.out.println(nowDate + " " + nowMinusOneDate);
@@ -176,11 +172,21 @@ public class WeatherShortMainApiServiceImpl implements WeatherShortMainApiServic
                 Optional<WeatherShortAllDTO> found = data.stream()
                         .filter(d -> ldt.equals(d.getFcstDateTime()))
                         .findFirst();
-                WeatherShortAllDTO weatherShortAllDTO;
-                log.info("nx, ny값 존재하지 않음");
 
-                if (found.isPresent()) {
+                OptionalDouble minTmp = data.stream()
+                        .mapToDouble(WeatherShortAllDTO::getTmp)
+                        .min();
+                OptionalDouble maxTmp = data.stream()
+                        .mapToDouble(WeatherShortAllDTO::getTmp)
+                        .max();
+                log.info("minTmp: "+minTmp+" maxTmp: "+maxTmp);
+                WeatherShortAllDTO weatherShortAllDTO;
+                log.info("nx, ny값 존재하지 않음:MainNow "+found);
+
+                if (found.isPresent() && minTmp.isPresent() && maxTmp.isPresent()) {
                     weatherShortAllDTO = found.get();
+                    weatherShortAllDTO.setTmx(maxTmp.getAsDouble());
+                    weatherShortAllDTO.setTmn(minTmp.getAsDouble());
                     log.info(weatherShortAllDTO);
                 } else {
                     weatherShortAllDTO = null;
