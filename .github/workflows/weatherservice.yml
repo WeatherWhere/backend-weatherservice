@@ -5,8 +5,8 @@ on:
     branches: [ "main" ]
 
 env:
-  AWS_REGION: ap-northeast-2             # set this to your preferred AWS region, e.g. us-west-1
-  ECR_REPOSITORY: weatherservice         # set this to your Amazon ECR repository name
+  AWS_REGION: ap-northeast-2
+  ECR_REPOSITORY: weatherservice
   ECR_REGISTRY: public.ecr.aws/a5p8o7q9
   SSH_USERNAME: ubuntu
   IMAGE_TAG_PREFIX: v
